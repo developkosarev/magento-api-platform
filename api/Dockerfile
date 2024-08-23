@@ -41,9 +41,14 @@ RUN set -eux; \
 ###> recipes ###
 ###> doctrine/doctrine-bundle ###
 RUN set -eux; \
-	install-php-extensions pdo_pgsql
+	install-php-extensions pdo_pgsql pdo_mysql
 ###< doctrine/doctrine-bundle ###
 ###< recipes ###
+
+###> symfony/messenger ###
+RUN set -eux; \
+	install-php-extensions amqp
+###< symfony/messenger ###
 
 COPY --link frankenphp/conf.d/app.ini $PHP_INI_DIR/conf.d/
 COPY --link --chmod=755 frankenphp/docker-entrypoint.sh /usr/local/bin/docker-entrypoint

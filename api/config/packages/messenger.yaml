@@ -5,6 +5,25 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
+            async_magento:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                serializer: messenger.transport.symfony_serializer
+                
+                # default configuration
+                retry_strategy:
+                    max_retries: 10
+                    # 60 sec delay
+                    delay: 60000
+                    # causes the delay to be higher before each retry
+                    # e.g. 10 second delay, 20 seconds, 40 seconds, 80 seconds
+                    #multiplier: 2
+                    # e.g. 10 second delay, 10 seconds, 10 seconds, 10 seconds
+                    multiplier: 1
+                    max_delay: 0
+                    # override all of this with a service that
+                    # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
+                    # service: null
+
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
             # failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
@@ -12,6 +31,7 @@ framework:
         routing:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
+            'App\Message\StatusUpdate': async_magento
 
 # when@test:
 #    framework:
