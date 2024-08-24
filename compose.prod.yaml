@@ -1,6 +1,7 @@
 # Production environment override
 services:
   php:
+    #command: php /app/bin/console messenger:consume --limit=5 -vv
     build:
       context: ./api
       target: frankenphp_prod
@@ -8,3 +9,8 @@ services:
       APP_SECRET: ${APP_SECRET}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
+  
+  worker_php:
+    image: magento-api-platform:v0.0.1
+    restart: unless-stopped
+    command: php /app/bin/console messenger:consume --limit=5 -vv
