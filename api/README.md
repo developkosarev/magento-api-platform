@@ -25,4 +25,10 @@ docker images ghcr.io/developkosarev/*
 docker push ghcr.io/developkosarev/magento-api-platform:v0.0.1
 docker run -d -p 80:80 -p 443:443 --name magento-api-platform magento-api-platform:v0.0.1
 docker run -d -p 80:80 -p 443:443 --name magento-api-platform magento-api-platform:v0.0.2
-```     
+```
+
+## Tags
+```
+git tag v0.0.3
+git push --tags
+```
