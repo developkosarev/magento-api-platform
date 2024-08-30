@@ -12,6 +12,8 @@ docker compose run --user www-data php bash
 php bin/console app:send
 php bin/console messenger:consume async_magento -vv
 
+php bin/console cache:clear --env=dev
+
 ## Build
 ```
 docker build --tag magento-api-platform:v0.0.1 --file Dockerfile .

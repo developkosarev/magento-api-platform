@@ -34,6 +34,11 @@ docker exec -it sn-php-1 php bin/console app:send
 docker exec -it sn-php-1 bash
 ```
 
+## Queue
+```
+php bin/console messenger:consume -vv external_magento
+```
+
 ## Docs
 https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
 https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014
