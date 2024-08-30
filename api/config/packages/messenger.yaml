@@ -29,10 +29,10 @@ framework:
                 dsn: '%env(EXTERNAL_MESSENGER_TRANSPORT_DSN)%'
                 serializer: App\Messenger\ExternalMagentoJsonMessengerSerializer
                 options:
+                    auto_setup: false
                     exchange:
                         type: topic
-                    queues:
-                        auto_setup: false
+                    queues:                        
                         transactional-email.bloomreach.all: ~                        
                     
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
