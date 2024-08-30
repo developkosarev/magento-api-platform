@@ -1,3 +1,49 @@
+
+## Build compose
+```
+docker compose build --no-cache
+docker compose up --wait 
+
+docker compose -f compose.yaml -f compose.prod.yaml build --no-cache
+docker compose -f compose.yaml -f compose.prod.yaml up --wait
+
+SERVER_NAME=your-domain-name.example.com \
+APP_SECRET=ChangeMe \
+CADDY_MERCURE_JWT_SECRET=ChangeThisMercureHubJWTSecretKey \
+docker compose -f compose.yaml -f compose.prod.yaml up -d --wait
+
+SERVER_NAME=localhost \
+APP_SECRET=ChangeMe \
+CADDY_MERCURE_JWT_SECRET=ChangeThisMercureHubJWTSecretKey \
+docker compose -f compose.yaml -f compose.prod.yaml up -d --wait
+
+docker compose -f compose.yaml -f compose.prod.yaml down
+```
+
+## PHP
+```
+php bin/console app:send
+docker exec -it sn-php-1 php bin/console app:send
+docker exec -it sn-php-1 php bin/console messenger:stop-workers 
+docker exec -it sn-php-1 bash
+```
+
+## Docker
+```
+docker exec -it sn-php-1 php bin/console app:send
+docker exec -it sn-php-1 bash
+```
+
+## Queue
+```
+php bin/console messenger:consume -vv external_magento
+```
+
+## Docs
+https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
+https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014
+
+
 <h1 align="center"><a href="https://api-platform.com"><img src="https://api-platform.com/images/logos/Logo_Circle%20webby%20text%20blue.png" alt="API Platform" width="250" height="250"></a></h1>
 
 API Platform is a next-generation web framework designed to easily create API-first projects without compromising extensibility

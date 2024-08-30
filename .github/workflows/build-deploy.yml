@@ -1,0 +1,56 @@
+name: Publish Docker image
+env:
+  DEPLOY_PACKAGE_NAME : "magento-api-platform-${{ github.sha }}"
+  DEPLOY_VERSION : "v0.0.1"
+  DEPLOY_FOLDER : "docker"
+
+#on:
+#  release:
+#    types: [published]
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [master]
+    tags:
+        - 'v*'
+
+jobs:
+  push_to_registries:
+    name: Push Docker image to multiple registries
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: 01. Check out the repo
+        uses: actions/checkout@v3
+            
+      - name: 02. Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 03. Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+
+      - name: 04. Execute few commands
+        run : |
+          echo "Deploy package name: ${{ env.DEPLOY_PACKAGE_NAME }}"
+          echo "Deploy version: ${{ env.DEPLOY_VERSION }}"
+          echo "Tags: ${{ steps.meta.outputs.tags }}"
+          echo "Labels: ${{ steps.meta.outputs.labels }}"
+
+      #- name: 05. Build and push Docker images
+      #  uses: docker/build-push-action@v4
+      #  with:
+      #    context: .
+      #    push: true
+      #    tags: ${{ steps.meta.outputs.tags }}
+      #    labels: ${{ steps.meta.outputs.labels }}

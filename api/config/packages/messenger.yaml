@@ -23,7 +23,18 @@ framework:
                     # override all of this with a service that
                     # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
                     # service: null
-
+            
+            #External        
+            external_magento:
+                dsn: '%env(EXTERNAL_MESSENGER_TRANSPORT_DSN)%'
+                serializer: App\Messenger\ExternalMagentoJsonMessengerSerializer
+                options:
+                    exchange:
+                        type: topic
+                    queues:
+                        auto_setup: false
+                        transactional-email.bloomreach.all: ~                        
+                    
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
             # failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
@@ -32,6 +43,7 @@ framework:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
             'App\Message\StatusUpdate': async_magento
+            'App\Message\Email': external_magento
 
 # when@test:
 #    framework:
