@@ -8,10 +8,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class StatusUpdateHandler
+readonly class StatusUpdateHandler
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
+        private LoggerInterface $logger,
     ) {}
 
     public function __invoke(StatusUpdate $statusUpdate): void
