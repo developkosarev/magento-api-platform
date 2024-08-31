@@ -30,6 +30,7 @@ help:
 	@echo "$(call red,===============================)"
 	@echo "$(call format,app-consume,'App consume workers')"
 	@echo "$(call format,app-stop-workers,'App stop workers')"
+	@echo "$(call format,app-tests,'App tests')"
 	@echo "$(call red,===============================)"
 	@echo "$(call format,start-apps,'Start apps')"
 	@echo "$(call format,stop-apps,'Stop apps')"
@@ -62,6 +63,10 @@ app-consume: ## app-consume
 app-stop-workers: ## app-stop-workers
 	docker exec -it sn-php-1 php bin/console messenger:stop-workers
 .PHONY: app-stop-workers
+
+app-tests: ## app-tests
+	docker exec -it sn-php-1 php bin/phpunit --colors --verbose --testdox
+.PHONY: app-tests
 
 
 start-apps: ## Start apps
