@@ -39,6 +39,11 @@ docker exec -it sn-php-1 bash
 php bin/console messenger:consume -vv external_magento
 ```
 
+## RabbitMQ
+```json
+{"email_type":"NEWSLETTER_SUBSCRIBE_CONFIRM", "store_id":1}
+```
+
 ## Docs
 https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
 https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014
