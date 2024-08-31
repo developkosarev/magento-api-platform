@@ -24,10 +24,11 @@ help:
 	@echo "$(call red,===============================)"
 	@echo "$(call format,build,'Build dev')"
 	@echo "$(call format,start,'Start dev')"
-	@echo "$(call format,start,'Start dev')"
+	@echo "$(call format,stop,'Stop dev')"
 	@echo "$(call format,down,'Down dev')"
 	@echo "$(call format,bash,'Bash dev')"
 	@echo "$(call red,===============================)"
+	@echo "$(call format,app-consume,'App consume workers')"
 	@echo "$(call format,app-stop-workers,'App stop workers')"
 	@echo "$(call red,===============================)"
 	@echo "$(call format,start-apps,'Start apps')"
@@ -52,6 +53,11 @@ down: ## Down dev
 bash: ## Bash dev
 	docker exec -it sn-php-1 bash
 .PHONY: bash
+
+
+app-consume: ## app-consume
+	docker exec -it sn-php-1 php bin/console messenger:consume -vv external_magento
+.PHONY: app-consume
 
 app-stop-workers: ## app-stop-workers
 	docker exec -it sn-php-1 php bin/console messenger:stop-workers
