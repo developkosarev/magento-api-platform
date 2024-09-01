@@ -20,7 +20,7 @@ class SendEmailCommand extends Command
 {
     public function __construct(
         private readonly SenderServiceInterface $senderService,
-        string                                  $name = null
+        string $name = null
     ) {
         parent::__construct($name);
     }

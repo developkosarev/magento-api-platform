@@ -23,6 +23,7 @@ class RequestSender implements RequestSenderInterface
     private ResponseFactory $responseFactory;
 
     public function __construct(
+        private readonly Config $config,
         private readonly LoggerInterface $logger,
         ClientFactoryInterface $clientFactory,
         ResponseFactory $responseFactory
