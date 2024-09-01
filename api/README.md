@@ -32,3 +32,9 @@ docker run -d -p 80:80 -p 443:443 --name magento-api-platform magento-api-platfo
 git tag v0.0.3
 git push --tags
 ```
+
+## Commands
+```
+php bin/console app:send:email xx.yy@gmail.com
+```
+

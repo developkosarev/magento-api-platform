@@ -23,6 +23,6 @@ readonly class EmailHandler
         $email = $this->emailFactory->create($emailType);
         //$email->populate();
 
-        $this->logger->warning('APP1: {EMAIL_TYPE} - '.$body['email_type']);
+        $this->logger->warning('APP1-v1: {EMAIL_TYPE} - '.$body['email_type']);
     }
 }

@@ -11,7 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: "app:send"
+    name: "app:send:message",
+    description: "Send message status update",
+    hidden: false
 )]
 class SendStatusCommand extends Command
 {

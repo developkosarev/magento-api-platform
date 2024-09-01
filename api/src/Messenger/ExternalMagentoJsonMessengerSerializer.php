@@ -8,11 +8,6 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
 class ExternalMagentoJsonMessengerSerializer implements SerializerInterface
 {
-    //{
-    //   "email_type":"NEWSLETTER_SUBSCRIBE_CONFIRM",
-    //   "store_id":1
-    //}
-
     public function decode(array $encodedEnvelope): Envelope
     {
         $body = $encodedEnvelope['body'];
@@ -24,7 +19,6 @@ class ExternalMagentoJsonMessengerSerializer implements SerializerInterface
 
     public function encode(Envelope $envelope): array
     {
-        return [];
-        //throw new \Exception('Transport & serializer not meant for sending messages');
+        throw new \Exception('Transport & serializer not meant for sending messages');
     }
 }
