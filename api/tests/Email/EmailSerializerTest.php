@@ -19,7 +19,6 @@ class EmailSerializerTest extends KernelTestCase
         self::$emailSerializer = $container->get(EmailSerializer::class);
     }
 
-
     public function testSubscribeConfirmSerialize()
     {
         $subscribeConfirm = new SubscribeConfirm();
@@ -35,12 +34,18 @@ class EmailSerializerTest extends KernelTestCase
         $this->assertEquals($body, $result);
     }
 
-    //public function testSubscribeConfirmDeserialize()
-    //{
-    //    $body = '{"properties":{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},"body":{"email":"test@test.test","website_id":1}}';
+    public function testSubscribeConfirmDeserialize()
+    {
+        $subscribeConfirm = new SubscribeConfirm();
+        $subscribeConfirm
+            ->setEmail(self::EMAIL)
+            ->setWebsiteId(1)
+            ->setStoreId(1);
 
-    //    $result = self::$emailSerializer->deserialize($body);
+        $body = '{"properties":{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},"body":{"email":"test@test.test","website_id":1,"store_id":1}}';
 
-    //    $this->assertEquals($body, $result);
-    //}
+        $result = self::$emailSerializer->deserialize($body);
+
+        $this->assertEquals($subscribeConfirm, $result);
+    }
 }

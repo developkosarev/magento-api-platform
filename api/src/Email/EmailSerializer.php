@@ -32,12 +32,15 @@ readonly class EmailSerializer implements EmailSerializerInterface
 
     public function deserialize(string $message): EmailInterface
     {
-        $data = $this->serializer->deserialize($message, 'array', JsonEncoder::FORMAT);
+        //$data = $this->serializer->deserialize($message, 'array', JsonEncoder::FORMAT);
+        $data = json_decode($message, true);
 
-        $type = $data['properties']['type'];
+        $properties = $data['properties'];
+        $body = $data['body'];
 
-        $emailObj = $this->emailFactory->create($type);
-        //$emailObj->addData($data['body']);
+        $emailObj = $this->emailFactory->create($properties['type']);
+        //$emailObj = $this->serializer->denormalize($body, SubscribeConfirm::class);
+        $emailObj = $this->serializer->denormalize($body, get_class($emailObj));
 
         return $emailObj;
     }
