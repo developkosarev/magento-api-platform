@@ -12,7 +12,7 @@ class SenderService implements SenderServiceInterface
 
     public function __construct(
         private readonly Config $config,
-        private readonly optionsBuilder $optionsBuilder,
+        private readonly OptionsBuilder $optionsBuilder,
         private readonly RequestSenderInterface $requestSender
     ) {}
 

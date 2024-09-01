@@ -19,12 +19,11 @@ class Config
         return $_ENV["BLOOMREACH_API_PROJECT_TOKEN"];
     }
 
+    public function getAuthData(int $websiteId): array
+    {
+        return [$this->getApiKeyId($websiteId), $this->getApiSecret($websiteId)];
+    }
 
-//    public function getAuthData(int $websiteId): array
-//    {
-//        return $_ENV["GOOGLE_GEOCODING_API_KEY"];
-//    }
-//
 //    public function getApiTarget(int $websiteId): string
 //    {
 //        return $_ENV["GOOGLE_GEOCODING_API_KEY"];
@@ -32,7 +31,7 @@ class Config
 
     public function getEmailIntegrationId(int $websiteId): string
     {
-        return '';
+        return $_ENV["BLOOMREACH_API_INTEGRATION_ID"];
     }
 
     public function getEmailStatusByType(string $emailType, int $websiteId): bool
@@ -42,6 +41,6 @@ class Config
 
     public function getEmailTemplateIdByType(string $emailType, int $websiteId): string
     {
-        return '';
+        return '66c4711aab26787e28c120fb';
     }
 }

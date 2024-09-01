@@ -2,15 +2,20 @@
 
 namespace App\Service\BloomreachMailer;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\ResponseFactory;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
 
 class RequestSender implements RequestSenderInterface
 {
+    public const CONFIG_BASE_URI = 'base_uri';
+    public const CONFIG_AUTH = 'auth';
+    public const CONFIG_HEADERS = 'headers';
+    public const OPTIONS_CONTENT_TYPE_JSON = 'json';
+
     private const STATUS_CODE_500 = 500;
     private const MAP_ERROR_MESSAGE_TO_CODE = [
         'curl error 28' => 504,
@@ -19,28 +24,26 @@ class RequestSender implements RequestSenderInterface
         'curl error 7' => 502
     ];
 
-    private ClientFactoryInterface $clientFactory;
-    private ResponseFactory $responseFactory;
-
     public function __construct(
         private readonly Config $config,
-        private readonly LoggerInterface $logger,
-        ClientFactoryInterface $clientFactory,
-        ResponseFactory $responseFactory
-    ) {
-        $this->clientFactory = $clientFactory;
-        $this->responseFactory = $responseFactory;
-    }
+        private readonly LoggerInterface $logger
+    ){}
 
     public function execute(string $endpoint, string $requestType, array $options, int $websiteId): Response
     {
+        $client = new Client(
+            [
+                self::CONFIG_BASE_URI => $endpoint,
+                self::CONFIG_AUTH => $this->config->getAuthData($websiteId),
+                self::CONFIG_HEADERS => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ]
+            ]
+        );
+
         try {
-            $client = $this->clientFactory->create($endpoint, $websiteId);
-            $response = $client->request(
-                $requestType,
-                $client->getConfig(ClientFactoryInterface::CONFIG_BASE_URI),
-                $this->getRequestOptions($options, $websiteId)
-            );
+            $response = $client->post($endpoint, $this->getRequestOptions($options, $websiteId));
         } catch (ConnectException $e) {
             $this->logger->error($e->getMessage(), ['error' => $e]);
             $statusCode = $e->getCode() ?: $this->getErrorCode($e->getMessage());
@@ -55,19 +58,14 @@ class RequestSender implements RequestSenderInterface
     private function getRequestOptions(array $params, int $websiteId): array
     {
         return [
-            RequestOptions::TIMEOUT => $this->config->getRequestTimeout($websiteId),
-            ClientFactoryInterface::OPTIONS_CONTENT_TYPE_JSON => $params,
+            RequestOptions::TIMEOUT => 2.0,
+            'json' => $params,
         ];
     }
 
     private function getResponse(int $statusCode, string $reason): Response
     {
-        return $this->responseFactory->create(
-            [
-                'status' => $statusCode,
-                'reason' => $reason
-            ]
-        );
+        return new Response($statusCode, ['status' => $statusCode, 'reason' => $reason]);
     }
 
     private function getErrorCode(string $errorMessage): int
