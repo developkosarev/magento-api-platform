@@ -3,19 +3,19 @@
 namespace App\Handler;
 
 use App\Email\EmailFactoryInterface;
-use App\Message\Email;
+use App\Message\ExternalEmail;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class EmailHandler
+readonly class ExternalEmailHandler
 {
     public function __construct(
         private LoggerInterface $logger,
         private EmailFactoryInterface $emailFactory
     ) {}
 
-    public function __invoke(Email $email): void
+    public function __invoke(ExternalEmail $email): void
     {
         $body = $email->getBody();
         $emailType = $body['email_type'];

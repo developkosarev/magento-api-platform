@@ -2,8 +2,6 @@
 
 namespace App\Email;
 
-use App\Message\Email\Newsletter as NewsletterEmail;
-
 class EmailFactory implements EmailFactoryInterface
 {
     private ?EmailInterface $emailObj;
@@ -24,6 +22,9 @@ class EmailFactory implements EmailFactoryInterface
         switch ($emailType) {
             case Newsletter\SubscribeConfirmInterface::EMAIL_TYPE:
                 $this->emailObj = new Newsletter\SubscribeConfirm();
+                break;
+            case Newsletter\SubscribeSuccessInterface::EMAIL_TYPE:
+                $this->emailObj = new Newsletter\SubscribeSuccess();
                 break;
         }
     }
