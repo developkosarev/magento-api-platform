@@ -4,17 +4,15 @@ namespace App\Email;
 
 interface EmailInterface
 {
-    public function getBody(): array;
-
     public function getEmailType(): string;
-
-    public function getBaseUrl(): string;
-
-    public function setBaseUrl(string $baseUrl): self;
 
     public function getEmail(): string;
 
     public function setEmail(string $email): self;
+
+    public function getBaseUrl(): string;
+
+    public function setBaseUrl(string $baseUrl): self;
 
     public function getWebsiteId(): int;
 

@@ -18,14 +18,8 @@ readonly class EmailSerializer implements EmailSerializerInterface
             'header' => 'email',
             'type' => $email->getEmailType()
         ];
-
-        $body = [
-            'email' => $email->getEmail(),
-            'website_id' => $email->getWebsiteId(),
-        ];
-
-        $body = array_merge($body, $email->getBody());
-        $data=  ['properties' => $properties, 'body' => $body];
+        $body = $this->serializer->normalize($email, null, ['groups' => 'body']);
+        $data = ['properties' => $properties, 'body' => $body];
 
         return $this->serializer->serialize($data, JsonEncoder::FORMAT);
     }

@@ -38,6 +38,7 @@ class SendEmailCommand extends Command
         $subscribeConfirm = new SubscribeConfirm();
         $subscribeConfirm
             ->setEmail($email)
+            ->setConfirmCode('1')
             ->setWebsiteId(1)
             ->setStoreId(1);
 
