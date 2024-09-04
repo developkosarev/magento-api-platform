@@ -2,7 +2,6 @@
 
 namespace App\Tests\Messenger;
 
-use App\Email\Newsletter\SubscribeConfirm;
 use App\Message\ExternalEmail;
 use App\Messenger\ExternalJsonMessengerSerializer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -31,6 +30,19 @@ class ExternalJsonMessengerSerializerTest extends KernelTestCase
                         {"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},
                         "body":
                         {"email":"xx.yy@gmail.com","website_id":1,"store_id":1,"confirm_code":"xxx","base_url":"URL","store_name":"German","customer_name":"name"}}'
+        ];
+
+        //array(2) {
+        //["body"]=>
+        //  string(184) "{"properties":"{\"header\":\"email\",\"type\":\"NEWSLETTER_SUBSCRIBE_CONFIRM\"}","body":"{\"confirmCode\":\"1\",\"email\":\"develop.kosarev@gmail.com\",\"websiteId\":1,\"storeId\":1}"}"
+        //  ["headers"]=>
+        //  array(0) {
+        //  }
+        //}
+
+        $encodedEnvelope = [
+           'body' => '',
+           'header' => []
         ];
 
         $result = self::$serializer->decode($encodedEnvelope);

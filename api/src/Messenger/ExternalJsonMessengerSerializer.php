@@ -11,20 +11,23 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
 {
     public function decode(array $encodedEnvelope): Envelope
     {
-        //$body = $encodedEnvelope['body'];
-        //$headers = $encodedEnvelope['headers'];
-        //
-        //$data = json_decode($body, true);
-        //die(var_dump($data));
-        //$message = new ExternalEmail($data['properties'], $data['body']);
-        //return new Envelope($message);
-
-        $properties = $encodedEnvelope['properties'];
         $body = $encodedEnvelope['body'];
+        $headers = $encodedEnvelope['headers'];
+
         $data = json_decode($body, true);
-        $message = new ExternalEmail($properties, $data);
+        $properties = json_decode($data['properties'], true);
+        $body = json_decode($data['body'], true);
+
+        $message = new ExternalEmail($properties, $body);
 
         return new Envelope($message);
+
+        //$properties = $encodedEnvelope['properties'];
+        //$body = $encodedEnvelope['body'];
+        //$data = json_decode($body, true);
+        //$message = new ExternalEmail($properties, $data);
+        //
+        //return new Envelope($message);
     }
 
     public function encode(Envelope $envelope): array
