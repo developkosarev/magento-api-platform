@@ -27,7 +27,7 @@ framework:
             #External        
             external_magento:
                 dsn: '%env(EXTERNAL_MESSENGER_TRANSPORT_DSN)%'
-                serializer: App\Messenger\ExternalMagentoJsonMessengerSerializer
+                serializer: App\Messenger\ExternalJsonMessengerSerializer
                 options:
                     auto_setup: false
                     exchange:
@@ -43,7 +43,7 @@ framework:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
             'App\Message\StatusUpdate': async_magento
-            'App\Message\Email': external_magento
+            'App\Message\ExternalEmail': external_magento
 
 # when@test:
 #    framework:

@@ -41,6 +41,6 @@ class Config
 
     public function getEmailTemplateIdByType(string $emailType, int $websiteId): string
     {
-        return '66c4711aab26787e28c120fb';
+        return '66c474da7c6cf4efdeac3240';
     }
 }

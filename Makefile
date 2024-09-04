@@ -52,20 +52,20 @@ down: ## Down dev
 .PHONY: down
 
 bash: ## Bash dev
-	docker exec -it sn-php-1 bash
+	docker exec -it magento-api-platform-php-1 bash
 .PHONY: bash
 
 
 app-consume: ## app-consume
-	docker exec -it sn-php-1 php bin/console messenger:consume -vv external_magento
+	docker exec -it magento-api-platform-php-1 php bin/console messenger:consume -vv external_magento
 .PHONY: app-consume
 
 app-stop-workers: ## app-stop-workers
-	docker exec -it sn-php-1 php bin/console messenger:stop-workers
+	docker exec -it magento-api-platform-php-1 php bin/console messenger:stop-workers
 .PHONY: app-stop-workers
 
 app-tests: ## app-tests
-	docker exec -it sn-php-1 php bin/phpunit --colors --verbose --testdox
+	docker exec -it magento-api-platform-php-1 php bin/phpunit --colors --verbose --testdox
 .PHONY: app-tests
 
 
