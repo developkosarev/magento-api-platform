@@ -4,9 +4,11 @@ namespace App\Email\Newsletter;
 
 use App\Email\AbstractEmail;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 class SubscribeConfirm extends AbstractEmail implements SubscribeConfirmInterface
 {
+    private const ROUTE_CONFIRM_URL = 'newsletter/subscriber/confirm';
     private string $confirmCode;
     private string $storeName;
     private string $customerName;
@@ -16,7 +18,8 @@ class SubscribeConfirm extends AbstractEmail implements SubscribeConfirmInterfac
         return self::EMAIL_TYPE;
     }
 
-    #[Groups(['body'])]
+    #[Groups(['body','params'])]
+    #[SerializedName('confirm_code')]
     public function getConfirmCode(): string
     {
         return $this->confirmCode;
@@ -28,7 +31,15 @@ class SubscribeConfirm extends AbstractEmail implements SubscribeConfirmInterfac
         return $this;
     }
 
-    #[Groups(['body'])]
+    #[Groups(['body','params'])]
+    #[SerializedName('confirm_url')]
+    public function getConfirmUrl(): string
+    {
+        return $this->getBaseUrl() . self::ROUTE_CONFIRM_URL . '/?code=' . $this->getConfirmCode();
+    }
+
+    #[Groups(['body','params'])]
+    #[SerializedName('store_name')]
     public function getStoreName(): string
     {
         return $this->storeName;
@@ -40,7 +51,8 @@ class SubscribeConfirm extends AbstractEmail implements SubscribeConfirmInterfac
         return $this;
     }
 
-    #[Groups(['body'])]
+    #[Groups(['body','params'])]
+    #[SerializedName('customer_name')]
     public function getCustomerName(): ?string
     {
         return $this->customerName;

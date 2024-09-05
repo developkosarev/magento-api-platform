@@ -30,7 +30,7 @@ class EmailSerializerTest extends KernelTestCase
 
         $result = self::$emailSerializer->serialize($subscribeConfirm);
 
-        $body = '{"properties":{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},"body":{"confirmCode":"1","email":"test@test.test","websiteId":1,"storeId":1}}';
+        $body = '{"properties":{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},"body":{"confirm_code":"1","email":"test@test.test","website_id":1,"store_id":1}}';
 
         $this->assertEquals($body, $result);
     }

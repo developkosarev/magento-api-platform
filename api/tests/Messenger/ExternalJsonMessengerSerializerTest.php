@@ -22,27 +22,11 @@ class ExternalJsonMessengerSerializerTest extends KernelTestCase
 
     public function testDecode()
     {
-        //‘“{\“properties\“:{\“header\“:\“email\“,\“type\“:\“NEWSLETTER_SUBSCRIBE_CONFIRM\“},\“body\“:{\“email\“:\“xx.yy@gmail.com\“,\“website_id\“:1,\“store_id\“:1,\“confirm_code\“:\“xxx\“,\“base_url\“:\“https:\\\/\\\/dev9.test.test\\\/\“,\“store_name\“:\“German\“,\“customer_name\“:\“\”}}“’
+        //"{\"properties\":{\"header\":\"email\",\"type\":\"NEWSLETTER_SUBSCRIBE_CONFIRM\"},\"body\":{\"email\":\"xxx.yyy+test3@test.de\",\"website_id\":1,\"language\":\"de\",\"store_id\":1,\"confirm_code\":\"d3m4ztrxz6po675f6zun0igrxdv57xet\",\"base_url\":\"https:\\\/\\\/test.de.ddev.site\\\/\",\"store_name\":\"German\",\"customer_name\":\"\",\"confirm_url\":\"https:\\\/\\\/test.de.ddev.site\\\/newsletter\\\/subscriber\\\/confirm\\\/?code=d3m4ztrxz6po675f6zun0igrxdv57xet\"}}"
 
         $encodedEnvelope = [
-            'properties' => [],
-            'body' => '{"properties":
-                        {"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},
-                        "body":
-                        {"email":"xx.yy@gmail.com","website_id":1,"store_id":1,"confirm_code":"xxx","base_url":"URL","store_name":"German","customer_name":"name"}}'
-        ];
-
-        //array(2) {
-        //["body"]=>
-        //  string(184) "{"properties":"{\"header\":\"email\",\"type\":\"NEWSLETTER_SUBSCRIBE_CONFIRM\"}","body":"{\"confirmCode\":\"1\",\"email\":\"develop.kosarev@gmail.com\",\"websiteId\":1,\"storeId\":1}"}"
-        //  ["headers"]=>
-        //  array(0) {
-        //  }
-        //}
-
-        $encodedEnvelope = [
-           'body' => '',
-           'header' => []
+            'headers' => [],
+            'body' => '"{\"properties\":{\"header\":\"email\",\"type\":\"NEWSLETTER_SUBSCRIBE_CONFIRM\"},\"body\":{\"email\":\"xxx.yyy+test3@test.de\",\"website_id\":1,\"language\":\"de\",\"store_id\":1,\"confirm_code\":\"d3m4ztrxz6po675f6zun0igrxdv57xet\",\"base_url\":\"https:\\\/\\\/test.de.ddev.site\\\/\",\"store_name\":\"German\",\"customer_name\":\"\",\"confirm_url\":\"https:\\\/\\\/test.de.ddev.site\\\/newsletter\\\/subscriber\\\/confirm\\\/?code=d3m4ztrxz6po675f6zun0igrxdv57xet\"}}"'
         ];
 
         $result = self::$serializer->decode($encodedEnvelope);

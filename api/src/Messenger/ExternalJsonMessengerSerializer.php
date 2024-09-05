@@ -11,10 +11,10 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
 {
     public function decode(array $encodedEnvelope): Envelope
     {
-        $body = $encodedEnvelope['body'];
-        $headers = $encodedEnvelope['headers'];
+        $bodyEnvelope = $encodedEnvelope['body'];
+        $headersEnvelope = $encodedEnvelope['headers'];
 
-        $data = json_decode($body, true);
+        $data = json_decode($bodyEnvelope, true);
         $properties = json_decode($data['properties'], true);
         $body = json_decode($data['body'], true);
 
