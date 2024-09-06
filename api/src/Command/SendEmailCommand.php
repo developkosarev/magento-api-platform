@@ -44,6 +44,7 @@ class SendEmailCommand extends Command
 
         $subscribeConfirm = new SubscribeConfirm();
         $subscribeConfirm
+            ->setBaseUrl('https://test.de/')
             ->setEmail($email)
             ->setConfirmCode('1')
             ->setWebsiteId(1)

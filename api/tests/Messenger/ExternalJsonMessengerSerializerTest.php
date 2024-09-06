@@ -22,11 +22,10 @@ class ExternalJsonMessengerSerializerTest extends KernelTestCase
 
     public function testDecode()
     {
-        //"{\"properties\":{\"header\":\"email\",\"type\":\"NEWSLETTER_SUBSCRIBE_CONFIRM\"},\"body\":{\"email\":\"xxx.yyy+test3@test.de\",\"website_id\":1,\"language\":\"de\",\"store_id\":1,\"confirm_code\":\"d3m4ztrxz6po675f6zun0igrxdv57xet\",\"base_url\":\"https:\\\/\\\/test.de.ddev.site\\\/\",\"store_name\":\"German\",\"customer_name\":\"\",\"confirm_url\":\"https:\\\/\\\/test.de.ddev.site\\\/newsletter\\\/subscriber\\\/confirm\\\/?code=d3m4ztrxz6po675f6zun0igrxdv57xet\"}}"
+        //{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM","body":"{\"email\":\"xxx.yyy+test3@test.de\",\"website_id\":1,\"language\":\"de\",\"store_id\":1,\"confirm_code\":\"l6hv5igvlzzv1t35qo5egpdq91uedryx\",\"base_url\":\"https:\\\/\\\/s.de.ddev.site\\\/\",\"store_name\":\"German\",\"customer_name\":\"\",\"confirm_url\":\"https:\\\/\\\/s.de.ddev.site\\\/newsletter\\\/subscriber\\\/confirm\\\/?code=l6hv5igvlzzv1t35qo5egpdq91uedryx\"}"}
 
         $encodedEnvelope = [
-            'headers' => [],
-            'body' => '"{\"properties\":{\"header\":\"email\",\"type\":\"NEWSLETTER_SUBSCRIBE_CONFIRM\"},\"body\":{\"email\":\"xxx.yyy+test3@test.de\",\"website_id\":1,\"language\":\"de\",\"store_id\":1,\"confirm_code\":\"d3m4ztrxz6po675f6zun0igrxdv57xet\",\"base_url\":\"https:\\\/\\\/test.de.ddev.site\\\/\",\"store_name\":\"German\",\"customer_name\":\"\",\"confirm_url\":\"https:\\\/\\\/test.de.ddev.site\\\/newsletter\\\/subscriber\\\/confirm\\\/?code=d3m4ztrxz6po675f6zun0igrxdv57xet\"}}"'
+            'body' => '{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM","body":"{\"email\":\"xxx.yyy+test3@test.de\",\"website_id\":1,\"language\":\"de\",\"store_id\":1,\"confirm_code\":\"l6hv5igvlzzv1t35qo5egpdq91uedryx\",\"base_url\":\"https:\\\/\\\/s.de.ddev.site\\\/\",\"store_name\":\"German\",\"customer_name\":\"\",\"confirm_url\":\"https:\\\/\\\/s.de.ddev.site\\\/newsletter\\\/subscriber\\\/confirm\\\/?code=l6hv5igvlzzv1t35qo5egpdq91uedryx\"}"}'
         ];
 
         $result = self::$serializer->decode($encodedEnvelope);
