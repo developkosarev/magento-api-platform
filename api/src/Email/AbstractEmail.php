@@ -3,6 +3,7 @@
 namespace App\Email;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 abstract class AbstractEmail implements EmailInterface
 {
@@ -12,6 +13,7 @@ abstract class AbstractEmail implements EmailInterface
     private int $storeId;
 
     #[Groups(['body'])]
+    #[SerializedName('email')]
     public function getEmail(): string
     {
         return $this->email;
@@ -24,6 +26,7 @@ abstract class AbstractEmail implements EmailInterface
     }
 
     #[Groups(['body'])]
+    #[SerializedName('base_url')]
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
@@ -36,6 +39,7 @@ abstract class AbstractEmail implements EmailInterface
     }
 
     #[Groups(['body'])]
+    #[SerializedName('website_id')]
     public function getWebsiteId(): int
     {
         return $this->websiteId;
@@ -48,6 +52,7 @@ abstract class AbstractEmail implements EmailInterface
     }
 
     #[Groups(['body'])]
+    #[SerializedName('store_id')]
     public function getStoreId(): int
     {
         return $this->storeId;

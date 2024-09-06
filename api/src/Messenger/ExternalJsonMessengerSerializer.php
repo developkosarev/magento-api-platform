@@ -11,23 +11,17 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
 {
     public function decode(array $encodedEnvelope): Envelope
     {
-        $body = $encodedEnvelope['body'];
-        $headers = $encodedEnvelope['headers'];
+        $bodyEnvelope = $encodedEnvelope['body'];
+        //$headersEnvelope = $encodedEnvelope['headers'];
 
-        $data = json_decode($body, true);
-        $properties = json_decode($data['properties'], true);
+        $data = json_decode($bodyEnvelope, true);
+
+        $properties = ['header' => $data['header'], 'type' => $data['type']];
         $body = json_decode($data['body'], true);
 
         $message = new ExternalEmail($properties, $body);
 
         return new Envelope($message);
-
-        //$properties = $encodedEnvelope['properties'];
-        //$body = $encodedEnvelope['body'];
-        //$data = json_decode($body, true);
-        //$message = new ExternalEmail($properties, $data);
-        //
-        //return new Envelope($message);
     }
 
     public function encode(Envelope $envelope): array
@@ -40,7 +34,8 @@ class ExternalJsonMessengerSerializer implements SerializerInterface
         }
 
         $data = [
-            'properties' => json_encode($message->getProperties()),
+            'header' => $message->getProperties()['header'],
+            'type' => $message->getProperties()['type'],
             'body' => json_encode($message->getBody())
         ];
 

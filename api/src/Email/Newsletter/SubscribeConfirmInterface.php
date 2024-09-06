@@ -10,6 +10,7 @@ interface SubscribeConfirmInterface extends EmailInterface
 
     public function getConfirmCode(): string;
     public function setConfirmCode(string $confirmCode): self;
+    public function getConfirmUrl(): string;
     public function getStoreName(): string;
     public function setStoreName(string $storeName): self;
     public function getCustomerName(): ?string;
