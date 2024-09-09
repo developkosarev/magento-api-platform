@@ -24,23 +24,8 @@ class Config
         return [$this->getApiKeyId($websiteId), $this->getApiSecret($websiteId)];
     }
 
-//    public function getApiTarget(int $websiteId): string
-//    {
-//        return $_ENV["GOOGLE_GEOCODING_API_KEY"];
-//    }
-
     public function getEmailIntegrationId(int $websiteId): string
     {
         return $_ENV["BLOOMREACH_API_INTEGRATION_ID"];
-    }
-
-    public function getEmailStatusByType(string $emailType, int $websiteId): bool
-    {
-        return '';
-    }
-
-    public function getEmailTemplateIdByType(string $emailType, int $websiteId): string
-    {
-        return '66c474da7c6cf4efdeac3240';
     }
 }

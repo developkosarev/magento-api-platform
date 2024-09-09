@@ -8,6 +8,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 abstract class AbstractEmail implements EmailInterface
 {
     private string $email;
+    private string $language;
     private string $baseUrl;
     private int $websiteId;
     private int $storeId;
@@ -22,6 +23,19 @@ abstract class AbstractEmail implements EmailInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+        return $this;
+    }
+
+    #[Groups(['body'])]
+    #[SerializedName('language')]
+    public function getLanguage(): string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): self
+    {
+        $this->language = $language;
         return $this;
     }
 

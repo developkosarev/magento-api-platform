@@ -10,6 +10,10 @@ interface EmailInterface
 
     public function setEmail(string $email): self;
 
+    public function getLanguage(): string;
+
+    public function setLanguage(string $language): self;
+
     public function getBaseUrl(): string;
 
     public function setBaseUrl(string $baseUrl): self;
