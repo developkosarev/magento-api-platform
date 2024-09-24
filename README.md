@@ -49,6 +49,11 @@ php bin/console messenger:consume -vv external_magento
 php bin/console messenger:consume -v scheduler_default
 ```
 
+## Import CSV
+```bash
+php bin/console import:import-from-csv --import-orders
+```
+
 ## Docs
 https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
 https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014
