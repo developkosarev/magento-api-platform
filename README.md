@@ -21,7 +21,7 @@ docker compose -f compose.yaml -f compose.prod.yaml down
 ```
 
 ## PHP
-```
+```bash
 php bin/console app:send
 docker exec -it sn-php-1 php bin/console app:send
 docker exec -it sn-php-1 php bin/console messenger:stop-workers 
@@ -29,19 +29,24 @@ docker exec -it sn-php-1 bash
 ```
 
 ## Docker
-```
+```bash
 docker exec -it sn-php-1 php bin/console app:send
 docker exec -it sn-php-1 bash
 ```
 
 ## Queue
-```
+```bash
 php bin/console messenger:consume -vv external_magento
 ```
 
 ## RabbitMQ
 ```json
 {"email_type":"NEWSLETTER_SUBSCRIBE_CONFIRM", "store_id":1}
+```
+
+## Scheduler
+```bash
+php bin/console messenger:consume -v scheduler_default
 ```
 
 ## Docs
