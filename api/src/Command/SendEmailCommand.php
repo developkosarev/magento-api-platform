@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Email\EmailSerializer;
 use App\Email\Newsletter\SubscribeConfirm;
 use App\Message\ExternalEmail;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -16,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: "app:send:email",
+    name: "email:send",
     description: "Send email via service",
     hidden: false
 )]
@@ -35,17 +34,20 @@ class SendEmailCommand extends Command
     {
         $this
             ->addArgument('email', InputArgument::REQUIRED, 'Email of customer')
+            ->addArgument('language', InputArgument::REQUIRED, 'Language')
             ->addArgument('queue', InputArgument::OPTIONAL, 'Send via queue', true);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $email = $input->getArgument('email');
+        $language = $input->getArgument('language');
 
         $subscribeConfirm = new SubscribeConfirm();
         $subscribeConfirm
-            ->setBaseUrl('https://test.de/')
             ->setEmail($email)
+            ->setLanguage($language)
+            ->setBaseUrl('https://test.de/')
             ->setConfirmCode('1')
             ->setWebsiteId(1)
             ->setStoreId(1);

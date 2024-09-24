@@ -9,9 +9,13 @@ class OptionsBuilder
 {
     public function __construct(
         private Config $config,
+        private ConfigTemplate $configTempldate,
         private SerializerInterface $serializer,
     ){}
 
+    /**
+     * @throws \Exception
+     */
     public function create(EmailInterface $email, int $websiteId): array
     {
         $options = [];
@@ -20,12 +24,13 @@ class OptionsBuilder
         $options['integration_id'] = $this->config->getEmailIntegrationId($websiteId);
         $options['campaign_name'] = '[POC] Transactional Email';
         $options['email_content'] = [
-            'template_id' => $this->config->getEmailTemplateIdByType($email->getEmailType(), $websiteId),
+            'template_id' => $this->configTempldate->getTemplate($email->getEmailType()),
             'params' => $params,
         ];
         $options['recipient'] = [
             'email' => $email->getEmail(),
-            'customer_ids' => ['email' => $email->getEmail()]
+            'customer_ids' => ['email' => $email->getEmail()],
+            'language' => $email->getLanguage(),
         ];
 
         return $options;
