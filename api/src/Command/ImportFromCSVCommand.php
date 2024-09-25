@@ -28,6 +28,7 @@ class ImportFromCSVCommand extends Command
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $em,
+        private readonly OrdersRepository $ordersRepository,
         string $name = null
     ) {
         parent::__construct($name);
@@ -101,15 +102,17 @@ class ImportFromCSVCommand extends Command
                     continue;
                 }
 
+                $id          = $row[1];
                 $createdAt   = $row[0];
                 $incrementId = $row[1];
                 //$status      = $row[2];
 
                 //$order = $this->ordersRepository->findOneBy(['incrementId' => $incrementId]);
-                //if ($order !== null) {
-                //    continue;
-                //}
-                //
+                $order = $this->ordersRepository->find($id);
+                if ($order !== null) {
+                    continue;
+                }
+
                 //if ($this->force) {
                 //    $this->messageBus->dispatch(
                 //        message: new CopyInvoiceToS3($incrementId, $createdAt)
