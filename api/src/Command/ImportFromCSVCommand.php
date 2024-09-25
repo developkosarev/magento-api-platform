@@ -3,11 +3,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\Orders;
-use App\Message\CopyInvoiceToS3;
-use App\Repository\OrdersRepository;
-use DateTimeImmutable;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -15,10 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
-    name: "app:import-from-csv",
+    name: "import:import-from-csv",
     description: 'This command imports from a csv file.'
 )]
 class ImportFromCSVCommand extends Command
@@ -32,9 +26,7 @@ class ImportFromCSVCommand extends Command
     private bool $force;
 
     public function __construct(
-        private readonly MessageBusInterface $messageBus,
         private readonly LoggerInterface $logger,
-        private readonly OrdersRepository $ordersRepository,
         private readonly EntityManagerInterface $em,
         string $name = null
     ) {
@@ -113,33 +105,33 @@ class ImportFromCSVCommand extends Command
                 $incrementId = $row[1];
                 //$status      = $row[2];
 
-                $order = $this->ordersRepository->findOneBy(['incrementId' => $incrementId]);
-                if ($order !== null) {
-                    continue;
-                }
-
-                if ($this->force) {
-                    $this->messageBus->dispatch(
-                        message: new CopyInvoiceToS3($incrementId, $createdAt)
-                    );
-
-                    $order = new Orders();
-                    $order
-                        ->setIncrementId($incrementId)
-                        ->setCopied(false)
-                        ->setDate(new DateTimeImmutable($createdAt));
-
-                    $this->em->persist($order);
-
-                    if (($i % $batchSize) === 0) {
-                        $this->em->flush();
-                        $this->em->clear();
-
-                        $msg = sprintf('Added messages "%d"', $i);
-                        $this->logger->notice($msg);
-                        $output->writeln($msg);
-                    }
-                }
+                //$order = $this->ordersRepository->findOneBy(['incrementId' => $incrementId]);
+                //if ($order !== null) {
+                //    continue;
+                //}
+                //
+                //if ($this->force) {
+                //    $this->messageBus->dispatch(
+                //        message: new CopyInvoiceToS3($incrementId, $createdAt)
+                //    );
+                //
+                //    $order = new Orders();
+                //    $order
+                //        ->setIncrementId($incrementId)
+                //        ->setCopied(false)
+                //        ->setDate(new DateTimeImmutable($createdAt));
+                //
+                //    $this->em->persist($order);
+                //
+                //    if (($i % $batchSize) === 0) {
+                //        $this->em->flush();
+                //        $this->em->clear();
+                //
+                //       $msg = sprintf('Added messages "%d"', $i);
+                //       $this->logger->notice($msg);
+                //       $output->writeln($msg);
+                //    }
+                //}
 
                 $i++;
             }

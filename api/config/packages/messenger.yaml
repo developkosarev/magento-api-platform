@@ -42,8 +42,9 @@ framework:
         routing:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
-            'App\Message\StatusUpdate': async_magento
-            'App\Message\ExternalEmail': external_magento
+            App\Message\StatusUpdate: async_magento
+            App\Message\ExternalEmail: external_magento
+            App\Scheduler\Message\LogHello: async_magento
 
 # when@test:
 #    framework:
