@@ -51,6 +51,9 @@ php bin/console messenger:consume -v scheduler_default
 
 ## Import CSV
 ```bash
+echo $DATABASE_URL
+apt-get update && apt-get install -y git curl libmcrypt-dev default-mysql-client
+docker cp ./api/src/DataFixtures/mp_gift_cart.csv  magento-api-platform-php-1:/app/var/data/orders.csv
 php bin/console import:import-from-csv --import-orders
 ```
 

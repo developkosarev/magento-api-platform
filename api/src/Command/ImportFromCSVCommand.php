@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Repository\OrdersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -89,10 +90,10 @@ class ImportFromCSVCommand extends Command
         $rowNo = 0;
 
         if (($fp = fopen(self::FILE_ORDERS, "r")) !== false) {
-            while (($row = fgetcsv($fp, 2000, ";")) !== false) {
+            while (($row = fgetcsv($fp, 2000, ",")) !== false) {
                 $rowNo++;
                 if ($rowNo === 1) {
-                    if ($row[0] === 'created_at' && $row[1] === 'increment_id' && $row[2] === 'status') {
+                    if ($row[0] === 'entity_id' && $row[1] === 'mp_gift_cards') {
                         $headerValid = true;
                     }
                     continue;
@@ -102,18 +103,18 @@ class ImportFromCSVCommand extends Command
                     continue;
                 }
 
-                $id          = $row[1];
-                $createdAt   = $row[0];
-                $incrementId = $row[1];
-                //$status      = $row[2];
+                $entity_id = $row[0];
+                $mp_gift_cards = $row[1];
 
-                //$order = $this->ordersRepository->findOneBy(['incrementId' => $incrementId]);
-                $order = $this->ordersRepository->find($id);
+                $output->writeln($entity_id);
+                $order = $this->ordersRepository->find($entity_id);
                 if ($order !== null) {
                     continue;
                 }
 
-                //if ($this->force) {
+                if ($this->force) {
+                    $output->writeln($order->getId());
+
                 //    $this->messageBus->dispatch(
                 //        message: new CopyInvoiceToS3($incrementId, $createdAt)
                 //    );
@@ -134,7 +135,7 @@ class ImportFromCSVCommand extends Command
                 //       $this->logger->notice($msg);
                 //       $output->writeln($msg);
                 //    }
-                //}
+                }
 
                 $i++;
             }
