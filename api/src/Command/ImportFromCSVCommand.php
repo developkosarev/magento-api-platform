@@ -103,38 +103,27 @@ class ImportFromCSVCommand extends Command
                     continue;
                 }
 
-                $entity_id = $row[0];
-                $mp_gift_cards = $row[1];
+                $entityId = $row[0];
+                $mpGiftCards = $row[1];
+                $mpGiftCards = str_replace('{','"{"',$mpGiftCards);
 
-                $output->writeln($entity_id);
-                $order = $this->ordersRepository->find($entity_id);
-                if ($order !== null) {
+                $order = $this->ordersRepository->find($entityId);
+                if ($order === null) {
                     continue;
                 }
 
                 if ($this->force) {
-                    $output->writeln($order->getId());
+                    $order->setMpGiftCards($mpGiftCards);
+                    $this->em->persist($order);
 
-                //    $this->messageBus->dispatch(
-                //        message: new CopyInvoiceToS3($incrementId, $createdAt)
-                //    );
-                //
-                //    $order = new Orders();
-                //    $order
-                //        ->setIncrementId($incrementId)
-                //        ->setCopied(false)
-                //        ->setDate(new DateTimeImmutable($createdAt));
-                //
-                //    $this->em->persist($order);
-                //
-                //    if (($i % $batchSize) === 0) {
-                //        $this->em->flush();
-                //        $this->em->clear();
-                //
-                //       $msg = sprintf('Added messages "%d"', $i);
-                //       $this->logger->notice($msg);
-                //       $output->writeln($msg);
-                //    }
+                    if (($i % $batchSize) === 0) {
+                        $this->em->flush();
+                        $this->em->clear();
+
+                       $msg = sprintf('Updated order "%d"', $i);
+                       $this->logger->info($msg);
+                       $output->writeln($msg);
+                    }
                 }
 
                 $i++;
@@ -145,7 +134,7 @@ class ImportFromCSVCommand extends Command
         if ($this->force) {
             $this->em->flush();
 
-            $msg = sprintf('Added or update "%d" orders', $i);
+            $msg = sprintf('Updated "%d" orders', $i);
             $this->logger->info($msg);
             $output->writeln($msg);
         } else {

@@ -11,11 +11,25 @@ class Orders
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int $entity_id = null;
+    #[ORM\Column(name: 'entity_id', type: 'integer')]
+    private ?int $id = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $mpGiftCards = null;
 
     public function getId(): ?int
     {
-        return $this->entity_id;
+        return $this->id;
+    }
+
+    public function getMpGiftCards(): ?string
+    {
+        return $this->mpGiftCards;
+    }
+
+    public function setMpGiftCards(string $value): self
+    {
+        $this->mpGiftCards = $value;
+        return $this;
     }
 }
