@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Repository\OrdersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -28,6 +29,7 @@ class ImportFromCSVCommand extends Command
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $em,
+        private readonly OrdersRepository $ordersRepository,
         string $name = null
     ) {
         parent::__construct($name);
@@ -88,10 +90,10 @@ class ImportFromCSVCommand extends Command
         $rowNo = 0;
 
         if (($fp = fopen(self::FILE_ORDERS, "r")) !== false) {
-            while (($row = fgetcsv($fp, 2000, ";")) !== false) {
+            while (($row = fgetcsv($fp, 2000, ",")) !== false) {
                 $rowNo++;
                 if ($rowNo === 1) {
-                    if ($row[0] === 'created_at' && $row[1] === 'increment_id' && $row[2] === 'status') {
+                    if ($row[0] === 'entity_id' && $row[1] === 'mp_gift_cards') {
                         $headerValid = true;
                     }
                     continue;
@@ -101,37 +103,28 @@ class ImportFromCSVCommand extends Command
                     continue;
                 }
 
-                $createdAt   = $row[0];
-                $incrementId = $row[1];
-                //$status      = $row[2];
+                $entityId = $row[0];
+                $mpGiftCards = $row[1];
+                $mpGiftCards = str_replace('{','"{"',$mpGiftCards);
 
-                //$order = $this->ordersRepository->findOneBy(['incrementId' => $incrementId]);
-                //if ($order !== null) {
-                //    continue;
-                //}
-                //
-                //if ($this->force) {
-                //    $this->messageBus->dispatch(
-                //        message: new CopyInvoiceToS3($incrementId, $createdAt)
-                //    );
-                //
-                //    $order = new Orders();
-                //    $order
-                //        ->setIncrementId($incrementId)
-                //        ->setCopied(false)
-                //        ->setDate(new DateTimeImmutable($createdAt));
-                //
-                //    $this->em->persist($order);
-                //
-                //    if (($i % $batchSize) === 0) {
-                //        $this->em->flush();
-                //        $this->em->clear();
-                //
-                //       $msg = sprintf('Added messages "%d"', $i);
-                //       $this->logger->notice($msg);
-                //       $output->writeln($msg);
-                //    }
-                //}
+                $order = $this->ordersRepository->find($entityId);
+                if ($order === null) {
+                    continue;
+                }
+
+                if ($this->force) {
+                    $order->setMpGiftCards($mpGiftCards);
+                    $this->em->persist($order);
+
+                    if (($i % $batchSize) === 0) {
+                        $this->em->flush();
+                        $this->em->clear();
+
+                       $msg = sprintf('Updated order "%d"', $i);
+                       $this->logger->info($msg);
+                       $output->writeln($msg);
+                    }
+                }
 
                 $i++;
             }
@@ -141,7 +134,7 @@ class ImportFromCSVCommand extends Command
         if ($this->force) {
             $this->em->flush();
 
-            $msg = sprintf('Added or update "%d" orders', $i);
+            $msg = sprintf('Updated "%d" orders', $i);
             $this->logger->info($msg);
             $output->writeln($msg);
         } else {
