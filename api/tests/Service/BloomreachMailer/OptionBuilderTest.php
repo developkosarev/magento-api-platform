@@ -25,7 +25,8 @@ class OptionBuilderTest extends KernelTestCase
             ->setEmail(self::EMAIL)
             ->setConfirmCode(1)
             ->setWebsiteId(1)
-            ->setStoreId(1);
+            ->setStoreId(1)
+            ->setLanguage('de');
 
         $result = self::$optionBuilder->create($subscribeConfirm, 1);
 
