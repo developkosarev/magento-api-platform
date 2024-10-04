@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\BloomreachMailer;
+namespace App\Service\Bloomreach\Common;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;

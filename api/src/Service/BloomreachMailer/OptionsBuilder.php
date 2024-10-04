@@ -3,13 +3,15 @@
 namespace App\Service\BloomreachMailer;
 
 use App\Email\EmailInterface;
+use App\Service\Bloomreach\Common\Config;
+use App\Service\Bloomreach\Common\ConfigTemplate;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class OptionsBuilder
+readonly class OptionsBuilder
 {
     public function __construct(
-        private Config $config,
-        private ConfigTemplate $configTempldate,
+        private Config              $config,
+        private ConfigTemplate      $configTemplate,
         private SerializerInterface $serializer,
     ){}
 
@@ -24,7 +26,7 @@ class OptionsBuilder
         $options['integration_id'] = $this->config->getEmailIntegrationId($websiteId);
         $options['campaign_name'] = '[POC] Transactional Email';
         $options['email_content'] = [
-            'template_id' => $this->configTempldate->getTemplate($email->getEmailType()),
+            'template_id' => $this->configTemplate->getTemplate($email->getEmailType()),
             'params' => $params,
         ];
         $options['recipient'] = [

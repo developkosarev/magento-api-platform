@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\BloomreachMailer;
+namespace App\Service\Bloomreach\Common;
 
 use GuzzleHttp\Psr7\Response;
 

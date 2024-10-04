@@ -59,11 +59,12 @@ class SendEmailCommand extends Command
             $this->messageBus->dispatch(
                 message: new ExternalEmail($properties, $body)
             );
+            $output->writeln('The email was sent via queue!');
         } else {
             $this->senderService->sendEmail($subscribeConfirm);
+            $output->writeln('The email was sent via service!');
         }
 
-        $output->writeln('The email was sent!');
         return Command::SUCCESS;
     }
 }
