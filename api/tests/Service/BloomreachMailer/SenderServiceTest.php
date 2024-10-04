@@ -3,7 +3,7 @@
 namespace App\Tests\Service\BloomreachMailer;
 
 use App\Email\Newsletter\SubscribeConfirm;
-use App\Service\BloomreachMailer\Config;
+use App\Service\Bloomreach\Common\Config;
 use App\Service\BloomreachMailer\OptionsBuilder;
 use App\Service\BloomreachMailer\RequestSenderInterface;
 use App\Service\BloomreachMailer\SenderService;

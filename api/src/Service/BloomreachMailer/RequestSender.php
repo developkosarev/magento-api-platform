@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use Psr\Log\LoggerInterface;
+use App\Service\Bloomreach\Common\Config;
 
 class RequestSender implements RequestSenderInterface
 {

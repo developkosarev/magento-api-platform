@@ -3,6 +3,7 @@
 namespace App\Service\BloomreachMailer;
 
 use App\Email\EmailInterface;
+use App\Service\Bloomreach\Common\Config;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
