@@ -4,6 +4,7 @@ namespace App\Service\BloomreachMailer;
 
 use App\Email\EmailInterface;
 use App\Service\Bloomreach\Common\Config;
+use App\Service\Bloomreach\Common\ConfigTemplate;
 use Symfony\Component\Serializer\SerializerInterface;
 
 readonly class OptionsBuilder
