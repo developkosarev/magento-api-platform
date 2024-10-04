@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service\BloomreachMailer;
+namespace App\Tests\Service\Bloomreach;
 
 use App\Email\Newsletter\SubscribeConfirm;
 use App\Service\BloomreachMailer\OptionsBuilder;
