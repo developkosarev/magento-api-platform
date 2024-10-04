@@ -4,7 +4,7 @@ namespace App\Handler;
 
 use App\Email\EmailFactoryInterface;
 use App\Message\ExternalEmail;
-use App\Service\BloomreachMailer\SenderServiceInterface;
+use App\Service\Bloomreach\Mailer\SenderServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\SerializerInterface;
