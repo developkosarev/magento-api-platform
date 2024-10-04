@@ -35,12 +35,12 @@ class ImportFromCSVCommand extends Command
         parent::__construct($name);
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->force = $input->getOption(self::OPTION_FORCE);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->addOption(
