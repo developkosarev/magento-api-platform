@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests\Service\BloomreachMailer;
+namespace App\Tests\Service\Bloomreach;
 
 use App\Email\Newsletter\SubscribeConfirm;
-use App\Service\BloomreachMailer\OptionsBuilder;
+use App\Service\Bloomreach\Mailer\OptionsBuilder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class OptionBuilderTest extends KernelTestCase

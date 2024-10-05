@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Tests\Service\BloomreachMailer;
+namespace App\Tests\Service\Bloomreach;
 
 use App\Email\Newsletter\SubscribeConfirm;
 use App\Service\Bloomreach\Common\Config;
 use App\Service\Bloomreach\Common\RequestSenderInterface;
-use App\Service\BloomreachMailer\OptionsBuilder;
-use App\Service\BloomreachMailer\SenderService;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use App\Service\Bloomreach\Mailer\OptionsBuilder;
+use App\Service\Bloomreach\Mailer\SenderService;
 use GuzzleHttp\Psr7\Response;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SenderServiceTest extends KernelTestCase
 {

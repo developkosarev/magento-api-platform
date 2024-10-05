@@ -6,7 +6,7 @@ namespace App\Command;
 use App\Email\Newsletter\SubscribeConfirm;
 use App\Message\ExternalEmail;
 use Symfony\Component\Serializer\SerializerInterface;
-use App\Service\BloomreachMailer\SenderServiceInterface;
+use App\Service\Bloomreach\Mailer\SenderServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
