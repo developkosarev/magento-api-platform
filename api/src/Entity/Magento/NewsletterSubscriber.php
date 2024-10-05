@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Magento;
 
-use App\Repository\NewsletterSubscriberRepository;
+use App\Repository\Magento\NewsletterSubscriberRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NewsletterSubscriberRepository::class)]
