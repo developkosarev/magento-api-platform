@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Magento\Orders;
+use App\Repository\Magento\OrdersRepository;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,11 +28,15 @@ class ImportFromCSVCommand extends Command
 
     private bool $force;
 
+    private EntityRepository $ordersRepository;
+
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $magentoEntityManager,
         string $name = null
     ) {
+        $this->ordersRepository = $this->magentoEntityManager->getRepository(Orders::class);
+
         parent::__construct($name);
     }
 
@@ -85,7 +91,7 @@ class ImportFromCSVCommand extends Command
             throw new \Exception('File of orders "'.self::FILE_ORDERS.'" not found!');
         }
 
-        $ordersRepository = $this->magentoEntityManager->getRepository(Orders::class);
+        //$ordersRepository = $this->magentoEntityManager->getRepository(Orders::class);
 
         $batchSize = 1000;
 
@@ -111,7 +117,8 @@ class ImportFromCSVCommand extends Command
                 $mpGiftCards = $row[1];
                 $mpGiftCards = str_replace('{','"{"',$mpGiftCards);
 
-                $order = $ordersRepository->find($entityId);
+                $order = $this->ordersRepository->find($entityId);
+                //$order = $ordersRepository->findByOrderId($entityId);
                 if ($order === null) {
                     continue;
                 }
