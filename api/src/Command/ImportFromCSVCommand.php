@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Repository\OrdersRepository;
+use App\Entity\Magento\Orders;
+use App\Repository\Magento\OrdersRepository;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,12 +28,15 @@ class ImportFromCSVCommand extends Command
 
     private bool $force;
 
+    private EntityRepository $ordersRepository;
+
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly EntityManagerInterface $em,
-        private readonly OrdersRepository $ordersRepository,
+        private readonly EntityManagerInterface $magentoEntityManager,
         string $name = null
     ) {
+        $this->ordersRepository = $this->magentoEntityManager->getRepository(Orders::class);
+
         parent::__construct($name);
     }
 
@@ -57,6 +62,9 @@ class ImportFromCSVCommand extends Command
             );
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $msg = sprintf('Start execution command "%s %s"', $this->getName(), $this->toStringOptions($input));
@@ -83,6 +91,8 @@ class ImportFromCSVCommand extends Command
             throw new \Exception('File of orders "'.self::FILE_ORDERS.'" not found!');
         }
 
+        //$ordersRepository = $this->magentoEntityManager->getRepository(Orders::class);
+
         $batchSize = 1000;
 
         $i = 0;
@@ -106,19 +116,22 @@ class ImportFromCSVCommand extends Command
                 $entityId = $row[0];
                 $mpGiftCards = $row[1];
                 $mpGiftCards = str_replace('{','"{"',$mpGiftCards);
+                $mpGiftCards = str_replace('}"','}',$mpGiftCards);
+                $mpGiftCards = str_replace('"{','{',$mpGiftCards);
 
                 $order = $this->ordersRepository->find($entityId);
+                //$order = $ordersRepository->findByOrderId($entityId);
                 if ($order === null) {
                     continue;
                 }
 
                 if ($this->force) {
                     $order->setMpGiftCards($mpGiftCards);
-                    $this->em->persist($order);
+                    $this->magentoEntityManager->persist($order);
 
                     if (($i % $batchSize) === 0) {
-                        $this->em->flush();
-                        $this->em->clear();
+                        $this->magentoEntityManager->flush();
+                        $this->magentoEntityManager->clear();
 
                        $msg = sprintf('Updated order "%d"', $i);
                        $this->logger->info($msg);
@@ -132,7 +145,7 @@ class ImportFromCSVCommand extends Command
         }
 
         if ($this->force) {
-            $this->em->flush();
+            $this->magentoEntityManager->flush();
 
             $msg = sprintf('Updated "%d" orders', $i);
             $this->logger->info($msg);

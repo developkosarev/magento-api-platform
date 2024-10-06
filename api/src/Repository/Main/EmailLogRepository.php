@@ -1,24 +1,40 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Main;
 
-use App\Entity\Orders;
+use App\Email\EmailInterface;
+use App\Entity\Main\EmailLog;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Orders>
+ * @extends ServiceEntityRepository<EmailLog>
  *
- * @method Orders|null find($id, $lockMode = null, $lockVersion = null)
- * @method Orders|null findOneBy(array $criteria, array $orderBy = null)
- * @method Orders[]    findAll()
- * @method Orders[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method EmailLog|null find($id, $lockMode = null, $lockVersion = null)
+ * @method EmailLog|null findOneBy(array $criteria, array $orderBy = null)
+ * @method EmailLog[]    findAll()
+ * @method EmailLog[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OrdersRepository extends ServiceEntityRepository
+class EmailLogRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Orders::class);
+        parent::__construct($registry, EmailLog::class);
+    }
+
+    public function add(EmailInterface $email): EmailLog
+    {
+        $emailLog = new EmailLog();
+        $emailLog->setEmailType($email->getEmailType());
+
+        $this->_em->persist($emailLog);
+
+        return $emailLog;
+    }
+
+    public function save(): void
+    {
+        $this->_em->flush();
     }
 
 //    /**

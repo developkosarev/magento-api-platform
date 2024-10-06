@@ -5,6 +5,7 @@ namespace App\Command;
 
 use App\Email\Newsletter\SubscribeConfirm;
 use App\Message\ExternalEmail;
+use App\Repository\Main\EmailLogRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Service\Bloomreach\Mailer\SenderServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,6 +23,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class SendEmailCommand extends Command
 {
     public function __construct(
+        private readonly EmailLogRepository $emailLogRepository,
         private readonly SenderServiceInterface $senderService,
         private readonly SerializerInterface $serializer,
         private readonly MessageBusInterface $messageBus,
@@ -52,6 +54,8 @@ class SendEmailCommand extends Command
             ->setWebsiteId(1)
             ->setStoreId(1);
 
+        $this->emailLogRepository->add($subscribeConfirm);
+
         if ($input->getArgument('queue')) {
             $properties = ['header' => 'email', 'type' => $subscribeConfirm->getEmailType()];
             $body = $this->serializer->normalize($subscribeConfirm, null, ['groups' => 'body']);
@@ -64,6 +68,8 @@ class SendEmailCommand extends Command
             $this->senderService->sendEmail($subscribeConfirm);
             $output->writeln('The email was sent via service!');
         }
+
+        $this->emailLogRepository->save();
 
         return Command::SUCCESS;
     }
