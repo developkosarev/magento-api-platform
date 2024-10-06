@@ -116,6 +116,8 @@ class ImportFromCSVCommand extends Command
                 $entityId = $row[0];
                 $mpGiftCards = $row[1];
                 $mpGiftCards = str_replace('{','"{"',$mpGiftCards);
+                $mpGiftCards = str_replace('}"','}',$mpGiftCards);
+                $mpGiftCards = str_replace('"{','{',$mpGiftCards);
 
                 $order = $this->ordersRepository->find($entityId);
                 //$order = $ordersRepository->findByOrderId($entityId);
