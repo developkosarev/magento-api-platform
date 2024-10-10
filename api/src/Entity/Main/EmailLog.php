@@ -3,9 +3,18 @@
 namespace App\Entity\Main;
 
 use App\Repository\Main\EmailLogRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
+#[ApiResource(
+    operations: [
+        new Get(uriTemplate: '/email_log/{id}'),
+        new GetCollection(uriTemplate: '/email_log'),
+    ]
+)]
 #[ORM\Entity(repositoryClass: EmailLogRepository::class)]
 #[ORM\Table(name: 'email_log')]
 class EmailLog
