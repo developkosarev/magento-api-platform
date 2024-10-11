@@ -62,6 +62,11 @@ php bin/console import:import-from-csv --import-orders
 php bin/console mailer:test d.k@gmail.com --from=fs@gmail.com  --subject=test --body=test
 ```
 
+## Fixtures
+```bash
+php bin/console doctrine:fixtures:load
+```
+
 ## Docs
 https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
 https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014
