@@ -21,3 +21,15 @@ services:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
     tty: true  
+  
+  pwa:
+    build:
+      context: ./pwa
+      target: dev
+    volumes:
+      - ./pwa:/srv/app
+    environment:
+      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://php
+      API_PLATFORM_CREATE_CLIENT_OUTPUT: .
+      # On Linux, you may want to comment the following line for improved performance
+      WATCHPACK_POLLING: "true"
