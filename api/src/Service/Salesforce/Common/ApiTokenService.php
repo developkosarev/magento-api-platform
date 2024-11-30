@@ -6,23 +6,16 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class ApiTokenService
+readonly class ApiTokenService
 {
-    private HttpClientInterface $httpClient;
-    private string $apiUrl;
-    private string $clientId;
-    private string $clientSecret;
-
     public function __construct(
-        HttpClientInterface $httpClient,
-        string $apiUrl,
-        string $clientId,
-        string $clientSecret
+        private HttpClientInterface $httpClient,
+        private string              $apiUrl,
+        private string              $clientId,
+        private string              $clientSecret,
+        private string              $username,
+        private string              $password
     ) {
-        $this->httpClient = $httpClient;
-        $this->apiUrl = $apiUrl;
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
     }
 
     public function getToken(): string
@@ -32,13 +25,7 @@ class ApiTokenService
         return $cache->get('api_token', function (ItemInterface $item) {
             $item->expiresAfter(3600);
 
-            $response = $this->httpClient->request('POST', $this->apiUrl, [
-                'json' => [
-                    'client_id' => $this->clientId,
-                    'client_secret' => $this->clientSecret,
-                    'grant_type' => 'client_credentials',
-                ],
-            ]);
+            $response = $this->httpClient->request('POST', $this->getUrl());
 
             $data = $response->toArray();
 
@@ -48,5 +35,14 @@ class ApiTokenService
 
             return $data['access_token'];
         });
+    }
+
+    private function getUrl(): string
+    {
+        return $this->apiUrl . '?grant_type=password' .
+            '&client_id=' . $this->clientId .
+            '&client_secret=' . $this->clientSecret .
+            '&username=' . $this->username .
+            '&password=' . $this->password;
     }
 }

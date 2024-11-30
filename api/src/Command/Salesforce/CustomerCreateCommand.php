@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Command\Salesforce;
 
+use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Customer\CustomerServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CustomerCreateCommand extends Command
 {
     public function __construct(
+        private readonly ApiTokenService $apiTokenService,
         private readonly CustomerServiceInterface $customerService,
         string $name = null
     ) {
@@ -34,8 +36,11 @@ class CustomerCreateCommand extends Command
     {
         $email = $input->getArgument('email');
 
-        $result = $this->customerService->createCustomer($email);
+        $token = $this->apiTokenService->getToken();
+        $output->writeln('Token ' . $token);
 
+
+        $result = $this->customerService->createCustomer($email);
         if (!$result) {
             $output->writeln('Something went wrong!');
         }

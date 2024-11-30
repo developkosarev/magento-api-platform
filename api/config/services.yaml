@@ -3,7 +3,7 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-parameters:
+parameters:    
 
 services:
     # default configuration for services in *this* file
@@ -22,3 +22,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    
+    App\Service\Salesforce\Common\ApiTokenService:
+        arguments:
+            $apiUrl: '%env(resolve:SALESFORCE_API_OAUTH2_URL)%'
+            $clientId: '%env(resolve:SALESFORCE_API_CLIENT_ID)%'
+            $clientSecret: '%env(resolve:SALESFORCE_API_CLIENT_SECRET)%'
+            $username: '%env(resolve:SALESFORCE_API_USERNAME)%'
+            $password: '%env(resolve:SALESFORCE_API_PASSWORD)%'
