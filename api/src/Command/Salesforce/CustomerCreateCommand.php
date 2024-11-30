@@ -37,13 +37,16 @@ class CustomerCreateCommand extends Command
         $email = $input->getArgument('email');
 
         $token = $this->apiTokenService->getToken();
-        $output->writeln('Token ' . $token);
+        $url = $this->apiTokenService->getInstanceUrl();
+        //$output->writeln('Token: ' . $token);
+        //$output->writeln('Url: ' . $url);
 
-
-        $result = $this->customerService->createCustomer($email);
+        $result = $this->customerService->createCustomer($email, $url, $token);
         if (!$result) {
             $output->writeln('Something went wrong!');
         }
+        $output->writeln('Array: ' . var_dump($result));
+
         $output->writeln('The customer created!');
         return Command::SUCCESS;
     }
