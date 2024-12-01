@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Command\Salesforce;
 
 use App\Service\Salesforce\Common\ApiTokenService;
-use App\Service\Salesforce\Customer\CustomerServiceInterface;
+use App\Service\Salesforce\Customer\LeadServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,16 +12,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: "salesforce:customer:create",
-    description: "Create customer",
+    name: "salesforce:lead:create",
+    description: "Create lead",
     hidden: false
 )]
-class CustomerCreateCommand extends Command
+class LeadCreateCommand extends Command
 {
     public function __construct(
-        private readonly ApiTokenService $apiTokenService,
-        private readonly CustomerServiceInterface $customerService,
-        string $name = null
+        private readonly ApiTokenService      $apiTokenService,
+        private readonly LeadServiceInterface $leadService,
+        string                                $name = null
     ) {
         parent::__construct($name);
     }
@@ -41,7 +41,7 @@ class CustomerCreateCommand extends Command
         //$output->writeln('Token: ' . $token);
         //$output->writeln('Url: ' . $url);
 
-        $result = $this->customerService->createCustomer($email, $url, $token);
+        $result = $this->leadService->createCustomer($email, $url, $token);
         if (!$result) {
             $output->writeln('Something went wrong!');
         }
