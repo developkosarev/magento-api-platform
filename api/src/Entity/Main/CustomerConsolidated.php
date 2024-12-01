@@ -5,6 +5,7 @@ namespace App\Entity\Main;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Repository\Main\CustomerConsolidatedRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UlidType;
 use Symfony\Component\Uid\Ulid;
@@ -17,6 +18,7 @@ use DateTime;
     ]
 )]
 
+#[ORM\Entity(repositoryClass: CustomerConsolidatedRepository::class)]
 #[ORM\Table(name: 'customer_consolidated')]
 class CustomerConsolidated
 {
