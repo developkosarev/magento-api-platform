@@ -17,7 +17,7 @@ class Customer
     #[ORM\Column(name: 'website_id', type: 'smallint', nullable: true)]
     private ?string $websiteId = null;
 
-    #[ORM\Column(name: 'string', type: 'email', nullable: true)]
+    #[ORM\Column(name: 'email', type: 'string', nullable: true)]
     private ?string $email = null;
 
 
