@@ -10,7 +10,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 1; $i < 3; $i++) {
             $lead = new SalesforceCustomerLead();
             $lead
                 ->setEmail('customer' . $i . '@example.com')
