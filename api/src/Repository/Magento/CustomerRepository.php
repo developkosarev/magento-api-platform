@@ -20,10 +20,9 @@ class CustomerRepository extends EntityRepository
         $rsm->addEntityResult(Customer::class, 'c')
             ->addFieldResult('c', 'entity_id', 'entityId')
             ->addFieldResult('c', 'website_id', 'websiteId')
-            ->addFieldResult('c', 'email', 'email')
-            ->addFieldResult('c', 'increment_id', 'incrementId');
+            ->addFieldResult('c', 'email', 'email');
 
-        $sql = "SELECT entity_id, website_id, email, entity_id AS increment_id FROM customer_entity";
+        $sql = "SELECT entity_id, website_id, email FROM customer_entity";
 
         $nativeQuery = new NativeQuery($this->_em);
         $nativeQuery->setSQL($sql);
