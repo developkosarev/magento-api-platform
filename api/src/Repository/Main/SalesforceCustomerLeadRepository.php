@@ -23,10 +23,8 @@ class SalesforceCustomerLeadRepository extends ServiceEntityRepository
 
     public function add(SalesforceCustomerLead $customerLead): SalesforceCustomerLead
     {
-        $lead = new SalesforceCustomerLead();
-        $lead->setEmail($customerLead->getEmail());
-
-        $this->_em->persist($lead);
+        $this->_em->persist($customerLead);
+        $this->_em->flush();
 
         return $customerLead;
     }

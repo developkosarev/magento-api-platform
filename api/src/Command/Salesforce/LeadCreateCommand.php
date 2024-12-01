@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Command\Salesforce;
 
 use App\Entity\Magento\Customer;
+use App\Entity\Main\SalesforceCustomerLead;
+use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Customer\LeadServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,15 +26,16 @@ class LeadCreateCommand extends Command
     private string $token;
     private string $url;
 
-    private EntityRepository $customerRepository;
+    private EntityRepository $mCustomerRepository;
 
     public function __construct(
         private readonly EntityManagerInterface $magentoEntityManager,
+        private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
         private readonly ApiTokenService      $apiTokenService,
         private readonly LeadServiceInterface $leadService,
         string                                $name = null
     ) {
-        $this->customerRepository = $this->magentoEntityManager->getRepository(Customer::class);
+        $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
 
         parent::__construct($name);
     }
@@ -45,9 +48,19 @@ class LeadCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $result = $this->customerRepository->getLeads();
-        foreach ($result as $customer) {
-            $output->writeln($customer->getEmail());
+        $result = $this->mCustomerRepository->getLeads();
+        //$output->writeln('Array: ' . var_dump($result));
+
+        foreach ($result as $mCustomer) {
+            $output->writeln($mCustomer->getEmail());
+
+            $lead = new SalesforceCustomerLead();
+            $lead
+                ->setEmail($mCustomer->getEmail())
+                ->setCustomerId((int) $mCustomer->getIncrementId());
+
+            $this->salesforceCustomerLeadRepository->add($lead);
+            $this->salesforceCustomerLeadRepository->save();
         }
 
         //$output->writeln('Array: ' . var_dump($result));
