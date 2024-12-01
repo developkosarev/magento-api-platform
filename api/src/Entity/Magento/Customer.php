@@ -20,9 +20,13 @@ class Customer
     #[ORM\Column(name: 'email', type: 'string', nullable: true)]
     private ?string $email = null;
 
-
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
     }
 }

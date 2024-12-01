@@ -46,7 +46,11 @@ class LeadCreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = $this->customerRepository->getLeads();
-        $output->writeln('Array: ' . var_dump($result));
+        foreach ($result as $customer) {
+            $output->writeln($customer->getEmail());
+        }
+
+        //$output->writeln('Array: ' . var_dump($result));
 
         return Command::SUCCESS;
     }
