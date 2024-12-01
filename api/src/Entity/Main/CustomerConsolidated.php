@@ -2,7 +2,6 @@
 
 namespace App\Entity\Main;
 
-use App\Repository\Main\CustomerRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -13,13 +12,13 @@ use DateTime;
 
 #[ApiResource(
     operations: [
-        new Get(uriTemplate: '/customer/{id}'),
-        new GetCollection(uriTemplate: '/customer'),
+        new Get(uriTemplate: '/customer-consolidated/{id}'),
+        new GetCollection(uriTemplate: '/customer-consolidated'),
     ]
 )]
-#[ORM\Entity(repositoryClass: CustomerRepository::class)]
-#[ORM\Table(name: 'customer')]
-class Customer
+
+#[ORM\Table(name: 'customer_consolidated')]
+class CustomerConsolidated
 {
     //#[ORM\Id]
     //#[ORM\GeneratedValue]
