@@ -34,6 +34,11 @@ class Customer
         return $this->entityId;
     }
 
+    public function getWebsiteId(): ?int
+    {
+        return $this->websiteId;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;

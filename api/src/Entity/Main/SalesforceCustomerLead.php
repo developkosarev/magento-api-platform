@@ -24,6 +24,13 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'id', type: 'integer')]
     private ?int $id = null;
 
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Version]
+    private int $version;
+
+    #[ORM\Column(name: 'website_id', type: 'integer')]
+    private ?int $websiteId;
+
     #[ORM\Column(name: 'customer_id', type: 'integer')]
     private ?int $customerId;
 
@@ -56,6 +63,22 @@ class SalesforceCustomerLead
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    public function getWebsiteId(): ?int
+    {
+        return $this->websiteId;
+    }
+
+    public function setWebsiteId(int $websiteId): self
+    {
+        $this->websiteId = $websiteId;
+        return $this;
     }
 
     public function getCustomerId(): ?int
@@ -104,6 +127,17 @@ class SalesforceCustomerLead
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
         return $this;
     }
 }
