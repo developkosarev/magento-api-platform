@@ -43,6 +43,27 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'email', type: 'string', length: 255)]
     private ?string $email;
 
+    #[ORM\Column(name: 'phone', type: 'string', length: 100)]
+    private ?string $phone;
+
+    #[ORM\Column(name: 'taxvat', type: 'string', length: 50)]
+    private ?string $taxvat;
+
+    #[ORM\Column(name: 'company', type: 'string', length: 255)]
+    private ?string $company;
+
+    #[ORM\Column(name: 'country_id', type: 'string', length: 255, nullable: true)]
+    private ?string $countryId;
+
+    #[ORM\Column(name: 'street', type: 'text', nullable: true)]
+    private ?string $street;
+
+    #[ORM\Column(name: 'house_number', type: 'string', length: 255, nullable: true)]
+    private ?string $houseNumber;
+
+    #[ORM\Column(name: 'postcode', type: 'string', length: 255, nullable: true)]
+    private ?string $postcode;
+
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true)]
     protected ?DateTime $createdAt;
 

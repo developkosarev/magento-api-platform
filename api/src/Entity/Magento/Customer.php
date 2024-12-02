@@ -29,6 +29,15 @@ class Customer
     #[ORM\Column(name: 'lastname', type: 'string', nullable: true)]
     private ?string $lastName;
 
+    #[ORM\Column(name: 'default_billing', type: 'integer', nullable: true)]
+    private ?int $defaultBilling = null;
+
+    #[ORM\Column(name: 'default_shipping', type: 'integer', nullable: true)]
+    private ?int $defaultShipping = null;
+
+    #[ORM\Column(name: 'taxvat', type: 'string', length: 50, nullable: true)]
+    private ?string $taxVat = null;
+
     public function getId(): ?int
     {
         return $this->entityId;
