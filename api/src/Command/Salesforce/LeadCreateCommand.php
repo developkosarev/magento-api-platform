@@ -52,15 +52,19 @@ class LeadCreateCommand extends Command
         //$output->writeln('Array: ' . var_dump($result));
 
         foreach ($result as $mCustomer) {
-            $output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail());
+            $output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail() . ', Id: ' . $mCustomer->getId());
 
-            $lead = new SalesforceCustomerLead();
+            $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
+            if ($lead === null) {
+                $lead = new SalesforceCustomerLead();
+            }
             $lead
                 ->setEmail($mCustomer->getEmail())
-                ->setCustomerId($mCustomer->getId());
+                ->setCustomerId($mCustomer->getId())
+                ->setFirstName($mCustomer->getFirstName())
+                ->setLastName($mCustomer->getLastName());
 
             $this->salesforceCustomerLeadRepository->add($lead);
-            $this->salesforceCustomerLeadRepository->save();
         }
 
         return Command::SUCCESS;

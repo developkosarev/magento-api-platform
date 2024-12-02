@@ -23,6 +23,12 @@ class Customer
     #[ORM\Column(name: 'increment_id', type: 'string', length: 50, nullable: true)]
     private ?string $incrementId = null;
 
+    #[ORM\Column(name: 'firstname', type: 'string', nullable: true)]
+    private ?string $firstName;
+
+    #[ORM\Column(name: 'lastname', type: 'string', nullable: true)]
+    private ?string $lastName;
+
     public function getId(): ?int
     {
         return $this->entityId;
@@ -36,5 +42,15 @@ class Customer
     public function getIncrementId(): ?string
     {
         return $this->incrementId;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
     }
 }
