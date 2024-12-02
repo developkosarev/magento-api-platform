@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Command\Salesforce;
 
 use App\Entity\Magento\Customer;
+use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Common\ApiTokenService;
@@ -38,6 +39,7 @@ class LeadCreateCommand extends Command
     private DateTime $endDate;
 
     private EntityRepository $mCustomerRepository;
+    private EntityRepository $mCustomerAddressRepository;
 
     public function __construct(
         private readonly EntityManagerInterface $magentoEntityManager,
@@ -47,6 +49,7 @@ class LeadCreateCommand extends Command
         string                                $name = null
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
+        $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
 
         parent::__construct($name);
     }
@@ -93,6 +96,9 @@ class LeadCreateCommand extends Command
 
         foreach ($result as $mCustomer) {
             $output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail(), OutputInterface::VERBOSITY_VERBOSE);
+            $output->writeln('DefaultBilling: ' . $mCustomer->getDefaultBilling(), OutputInterface::VERBOSITY_VERBOSE);
+
+            $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
 
             $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
             if ($lead === null) {
@@ -107,6 +113,11 @@ class LeadCreateCommand extends Command
                 ->setCustomerId($mCustomer->getId())
                 ->setFirstName($mCustomer->getFirstName())
                 ->setLastName($mCustomer->getLastName());
+
+            if ($address !== null) {
+                $lead
+                    ->setCity('111111');
+            }
 
             $this->salesforceCustomerLeadRepository->add($lead);
         }

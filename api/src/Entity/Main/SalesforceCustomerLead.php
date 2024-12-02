@@ -66,6 +66,9 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'country_id', type: 'string', length: 255, nullable: true)]
     private ?string $countryId;
 
+    #[ORM\Column(name: 'city', type: 'string', nullable: true)]
+    private ?string $city;
+
     #[ORM\Column(name: 'street', type: 'text', nullable: true)]
     private ?string $street;
 
@@ -169,6 +172,18 @@ class SalesforceCustomerLead
         $this->lastName = $lastName;
         return $this;
     }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): self
+    {
+        $this->city = $city;
+        return $this;
+    }
+
 
     public function getStatus(): ?string
     {

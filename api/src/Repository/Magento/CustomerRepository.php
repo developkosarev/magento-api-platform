@@ -18,7 +18,8 @@ class CustomerRepository extends EntityRepository
             ->addFieldResult('c', 'website_id', 'websiteId')
             ->addFieldResult('c', 'email', 'email')
             ->addFieldResult('c', 'firstname', 'firstName')
-            ->addFieldResult('c', 'lastname', 'lastName');
+            ->addFieldResult('c', 'lastname', 'lastName')
+            ->addFieldResult('c', 'default_billing', 'defaultBilling');
 
         $nativeQuery = new NativeQuery($this->_em);
         $nativeQuery->setSQL($this->getSql());

@@ -67,4 +67,9 @@ class Customer
     {
         return $this->lastName;
     }
+
+    public function getDefaultBilling(): ?int
+    {
+        return $this->defaultBilling;
+    }
 }
