@@ -3,18 +3,14 @@
 namespace App\Repository\Magento;
 
 use App\Entity\Magento\Customer;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NativeQuery;
 use Doctrine\ORM\Query\ResultSetMapping;
 
 class CustomerRepository extends EntityRepository
 {
-    //public function findById(string $orderId)
-    //{
-    //    return $this->findOneBy(['id' => $orderId]);
-    //}
-
-    public function getLeads()
+    public function getLeads(DateTime $startDate, DateTime $endDate)
     {
         $rsm = new ResultSetMapping();
         $rsm->addEntityResult(Customer::class, 'c')
@@ -24,11 +20,11 @@ class CustomerRepository extends EntityRepository
             ->addFieldResult('c', 'firstname', 'firstName')
             ->addFieldResult('c', 'lastname', 'lastName');
 
-        $sql = "SELECT entity_id, website_id, email, firstname, lastname FROM customer_entity";
-
         $nativeQuery = new NativeQuery($this->_em);
         $nativeQuery->setSQL($this->getSql());
         $nativeQuery->setResultSetMapping($rsm);
+        $nativeQuery->setParameter('startDate', $startDate->format('Y-m-d'));
+        $nativeQuery->setParameter('endDate', $endDate->format('Y-m-d'));
 
         return $nativeQuery->getResult();
 
@@ -37,6 +33,7 @@ class CustomerRepository extends EntityRepository
     private function getSql(): string
     {
         //WHERE group_id = 61";
+        //WHERE customer_entity.created_at BETWEEN :startDate AND :endDate";
 
         return "SELECT customer_entity.entity_id,
                        customer_entity.website_id,

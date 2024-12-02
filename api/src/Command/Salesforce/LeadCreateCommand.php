@@ -14,7 +14,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use DateTime;
 
 #[AsCommand(
     name: "salesforce:lead:create",
@@ -23,8 +25,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class LeadCreateCommand extends Command
 {
+    private const OPTION_START_DATE = 'start-date';
+    private const OPTION_END_DATE = 'end-date';
+    private const DEFAULT_START_DATE = '2024-01-01';
+    private const DEFAULT_END_DATE = '2024-02-01';
+
     private string $token;
     private string $url;
+
+    private DateTime $startDate;
+
+    private DateTime $endDate;
 
     private EntityRepository $mCustomerRepository;
 
@@ -40,24 +51,55 @@ class LeadCreateCommand extends Command
         parent::__construct($name);
     }
 
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->startDate = DateTime::createFromFormat("Y-m-d", $input->getOption(self::OPTION_START_DATE));
+        $this->endDate = DateTime::createFromFormat("Y-m-d", $input->getOption(self::OPTION_END_DATE));
+    }
+
     protected function configure(): void
     {
         $this
-            ->addArgument('email', InputArgument::REQUIRED, 'Email of customer');
+            ->addArgument('email', InputArgument::REQUIRED, 'Email of customer')
+            ->addOption(
+                self::OPTION_START_DATE,
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Start. Format: Y-m-d. Example: 2024-01-01',
+                self::DEFAULT_START_DATE
+            )
+            ->addOption(
+                self::OPTION_END_DATE,
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'End. Format: Y-m-d. Example: 2024-02-01',
+                self::DEFAULT_END_DATE
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $result = $this->mCustomerRepository->getLeads();
+        $msg = sprintf('Start execution:');
+        $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
+        $msg = sprintf(
+            'From "%s" to "%s"',
+            $this->startDate->format('Y-m-d'),
+            $this->endDate->format('Y-m-d')
+        );
+        $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
+
+        $result = $this->mCustomerRepository->getLeads($this->startDate, $this->endDate);
         //$output->writeln('Array: ' . var_dump($result));
 
         foreach ($result as $mCustomer) {
-            //$output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail() . ', Id: ' . $mCustomer->getId());
+            $output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail(), OutputInterface::VERBOSITY_VERBOSE);
 
             $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
             if ($lead === null) {
                 $lead = new SalesforceCustomerLead();
-                $lead->setStatus('NEW');
+                $lead
+                    ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
+                    ->setStatus(SalesforceCustomerLead::STATUS_NEW);
             }
             $lead
                 ->setEmail($mCustomer->getEmail())

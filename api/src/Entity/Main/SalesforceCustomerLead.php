@@ -17,16 +17,27 @@ use DateTime;
 )]
 #[ORM\Entity(repositoryClass: SalesforceCustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
+#[ORM\Index(columns: ['customer_id'], name: 'idx_customer_id')]
+#[ORM\Index(columns: ['customer_id', 'created_at'], name: 'idx_customer_created_at')]
 class SalesforceCustomerLead
 {
+    public const LEAD_STATUS_NEW = 'NEW';
+    public const LEAD_STATUS_UPDATE = 'UPDATE';
+
+    public const STATUS_NEW = 'NEW';
+    public const STATUS_PROCESSED = 'PROCESSED';
+    public const STATUS_ERROR = 'ERROR';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id', type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'integer')]
-    #[ORM\Version]
-    private int $version;
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
+    protected ?DateTime $createdAt;
+
+    #[ORM\Column(name: 'lead_status', type: 'string', length: 6)]
+    private ?string $leadStatus;
 
     #[ORM\Column(name: 'website_id', type: 'integer')]
     private ?int $websiteId;
@@ -43,13 +54,13 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'email', type: 'string', length: 255)]
     private ?string $email;
 
-    #[ORM\Column(name: 'phone', type: 'string', length: 100)]
+    #[ORM\Column(name: 'phone', type: 'string', length: 100, nullable: true)]
     private ?string $phone;
 
-    #[ORM\Column(name: 'taxvat', type: 'string', length: 50)]
+    #[ORM\Column(name: 'taxvat', type: 'string', length: 50, nullable: true)]
     private ?string $taxvat;
 
-    #[ORM\Column(name: 'company', type: 'string', length: 255)]
+    #[ORM\Column(name: 'company', type: 'string', length: 255, nullable: true)]
     private ?string $company;
 
     #[ORM\Column(name: 'country_id', type: 'string', length: 255, nullable: true)]
@@ -64,9 +75,6 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'postcode', type: 'string', length: 255, nullable: true)]
     private ?string $postcode;
 
-    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true)]
-    protected ?DateTime $createdAt;
-
     #[ORM\Column(name: 'lead_id', type: 'string', length: 20, nullable: true)]
     private ?string $leadId;
 
@@ -76,9 +84,14 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'status', type: 'string', length: 10, nullable: true)]
     private ?string $status;
 
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Version]
+    private int $version;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->leadStatus = self::LEAD_STATUS_NEW;
     }
 
     public function getId(): ?int
@@ -86,9 +99,20 @@ class SalesforceCustomerLead
         return $this->id;
     }
 
-    public function getVersion(): int
+    public function getCreatedAt(): ?DateTime
     {
-        return $this->version;
+        return $this->createdAt;
+    }
+
+    public function getLeadStatus(): string
+    {
+        return $this->leadStatus;
+    }
+
+    public function setLeadStatus(string $leadStatus): self
+    {
+        $this->leadStatus = $leadStatus;
+        return $this;
     }
 
     public function getWebsiteId(): ?int
@@ -124,11 +148,6 @@ class SalesforceCustomerLead
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
-    {
-        return $this->createdAt;
-    }
-
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -160,5 +179,10 @@ class SalesforceCustomerLead
     {
         $this->status = $status;
         return $this;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 }
