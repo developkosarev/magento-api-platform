@@ -20,8 +20,50 @@ class CustomerAddress
     #[ORM\Column(name: 'city', type: 'string', nullable: true)]
     private ?string $city = null;
 
+    #[ORM\Column(name: 'company', type: 'string', nullable: true)]
+    private ?string $company = null;
+
+    #[ORM\Column(name: 'country_id', type: 'string', nullable: true)]
+    private ?string $countryId = null;
+
+    #[ORM\Column(name: 'street', type: 'string', nullable: true)]
+    private ?string $street = null;
+
+    #[ORM\Column(name: 'postcode', type: 'string', nullable: true)]
+    private ?string $postcode = null;
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+
+    public function getCountryId(): ?string
+    {
+        return $this->countryId;
+    }
+
+    public function getStreet(): ?string
+    {
+        return $this->street;
+    }
+
+    public function getHouseNumber(): ?string
+    {
+        return null;
+    }
+
+    public function getPostcode(): ?string
+    {
+        return $this->postcode;
     }
 }

@@ -82,8 +82,7 @@ class LeadCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $msg = sprintf('Start execution:');
-        $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
+        $output->writeln('Start execution:', OutputInterface::VERBOSITY_VERBOSE);
         $msg = sprintf(
             'From "%s" to "%s"',
             $this->startDate->format('Y-m-d'),
@@ -91,38 +90,49 @@ class LeadCreateCommand extends Command
         );
         $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
 
+        $this->populateCustomers($input, $output);
+
+        return Command::SUCCESS;
+    }
+
+    private function populateCustomers(InputInterface $input, OutputInterface $output): void
+    {
         $result = $this->mCustomerRepository->getLeads($this->startDate, $this->endDate);
         //$output->writeln('Array: ' . var_dump($result));
 
         foreach ($result as $mCustomer) {
-            $output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail(), OutputInterface::VERBOSITY_VERBOSE);
-            $output->writeln('DefaultBilling: ' . $mCustomer->getDefaultBilling(), OutputInterface::VERBOSITY_VERBOSE);
-
-            $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
+            //$output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail(), OutputInterface::VERBOSITY_VERBOSE);
+            //$output->writeln('DefaultBilling: ' . $mCustomer->getDefaultBilling(), OutputInterface::VERBOSITY_VERBOSE);
 
             $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
             if ($lead === null) {
+                $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
+
                 $lead = new SalesforceCustomerLead();
                 $lead
                     ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
                     ->setStatus(SalesforceCustomerLead::STATUS_NEW);
-            }
-            $lead
-                ->setEmail($mCustomer->getEmail())
-                ->setWebsiteId($mCustomer->getWebsiteId())
-                ->setCustomerId($mCustomer->getId())
-                ->setFirstName($mCustomer->getFirstName())
-                ->setLastName($mCustomer->getLastName());
 
-            if ($address !== null) {
                 $lead
-                    ->setCity('111111');
+                    ->setEmail($mCustomer->getEmail())
+                    ->setWebsiteId($mCustomer->getWebsiteId())
+                    ->setCustomerId($mCustomer->getId())
+                    ->setFirstName($mCustomer->getFirstName())
+                    ->setLastName($mCustomer->getLastName());
+
+                if ($address !== null) {
+                    $lead
+                        ->setCity($address->getCity())
+                        ->setCompany($address->getCompany())
+                        ->setCountryId($address->getCountryId())
+                        ->setStreet($address->getStreet())
+                        ->setHouseNumber($address->getHouseNumber())
+                        ->setPostcode($address->getPostcode());
+                }
+
+                $this->salesforceCustomerLeadRepository->add($lead);
             }
-
-            $this->salesforceCustomerLeadRepository->add($lead);
         }
-
-        return Command::SUCCESS;
     }
 
     private function createCustomer(InputInterface $input, OutputInterface $output): void

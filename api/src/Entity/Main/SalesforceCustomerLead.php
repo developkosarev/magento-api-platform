@@ -173,6 +173,28 @@ class SalesforceCustomerLead
         return $this;
     }
 
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?string $company): self
+    {
+        $this->company = $company;
+        return $this;
+    }
+
+    public function getCountryId(): ?string
+    {
+        return $this->countryId;
+    }
+
+    public function setCountryId(?string $countryId): self
+    {
+        $this->countryId = $countryId;
+        return $this;
+    }
+
     public function getCity(): ?string
     {
         return $this->city;
@@ -184,6 +206,38 @@ class SalesforceCustomerLead
         return $this;
     }
 
+    public function getStreet(): ?string
+    {
+        return $this->street;
+    }
+
+    public function setStreet(?string $street): self
+    {
+        $this->street = $street;
+        return $this;
+    }
+
+    public function getHouseNumber(): ?string
+    {
+        return $this->houseNumber;
+    }
+
+    public function setHouseNumber(?string $houseNumber): self
+    {
+        $this->houseNumber = $houseNumber;
+        return $this;
+    }
+
+    public function getPostcode(): ?string
+    {
+        return $this->postcode;
+    }
+
+    public function setPostcode(?string $postcode): self
+    {
+        $this->postcode = $postcode;
+        return $this;
+    }
 
     public function getStatus(): ?string
     {
