@@ -5,7 +5,7 @@ namespace App\Service\Salesforce\Customer;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class LeadService implements LeadServiceInterface
+class LeadSenderService implements LeadSenderServiceInterface
 {
     private const ROUTE_LEAD = '/services/apexrest/magento/v1/leads';
 

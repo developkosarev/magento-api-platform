@@ -8,7 +8,7 @@ use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Common\ApiTokenService;
-use App\Service\Salesforce\Customer\LeadServiceInterface;
+use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -42,11 +42,11 @@ class LeadCreateCommand extends Command
     private EntityRepository $mCustomerAddressRepository;
 
     public function __construct(
-        private readonly EntityManagerInterface $magentoEntityManager,
+        private readonly EntityManagerInterface           $magentoEntityManager,
         private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly ApiTokenService      $apiTokenService,
-        private readonly LeadServiceInterface $leadService,
-        string                                $name = null
+        private readonly ApiTokenService                  $apiTokenService,
+        private readonly LeadSenderServiceInterface       $leadService,
+        string                                            $name = null
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
