@@ -70,13 +70,12 @@ class LeadCreateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Start execution:', OutputInterface::VERBOSITY_VERBOSE);
         $msg = sprintf(
-            'From "%s" to "%s"',
+            'from "%s" to "%s"',
             $this->startDate->format('Y-m-d'),
             $this->endDate->format('Y-m-d')
         );
-        $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
+        $output->writeln('Start execution: ' . $msg, OutputInterface::VERBOSITY_VERBOSE);
 
         $this->leadCustomerService->populateCustomers($this->startDate, $this->endDate);
 

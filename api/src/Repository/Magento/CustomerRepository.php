@@ -34,7 +34,6 @@ class CustomerRepository extends EntityRepository
     private function getSql(): string
     {
         //WHERE group_id = 61";
-        //WHERE customer_entity.created_at BETWEEN :startDate AND :endDate";
 
         return "SELECT customer_entity.entity_id,
                        customer_entity.website_id,
@@ -50,6 +49,7 @@ class CustomerRepository extends EntityRepository
                 FROM customer_entity
                 INNER JOIN customer_entity_int ON customer_entity.entity_id = customer_entity_int.entity_id
                                               AND customer_entity_int.attribute_id = 583
-                                              AND customer_entity_int.value > 0";
+                                              AND customer_entity_int.value > 0
+                WHERE customer_entity.created_at BETWEEN :startDate AND :endDate";
     }
 }
