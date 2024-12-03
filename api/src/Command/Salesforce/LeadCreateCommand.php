@@ -3,14 +3,9 @@ declare(strict_types=1);
 
 namespace App\Command\Salesforce;
 
-use App\Entity\Magento\Customer;
-use App\Entity\Magento\CustomerAddress;
-use App\Entity\Main\SalesforceCustomerLead;
-use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Common\ApiTokenService;
+use App\Service\Salesforce\Customer\LeadCustomerServiceInterface;
 use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -38,19 +33,12 @@ class LeadCreateCommand extends Command
 
     private DateTime $endDate;
 
-    private EntityRepository $mCustomerRepository;
-    private EntityRepository $mCustomerAddressRepository;
-
     public function __construct(
-        private readonly EntityManagerInterface           $magentoEntityManager,
-        private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
         private readonly ApiTokenService                  $apiTokenService,
+        private readonly LeadCustomerServiceInterface     $leadCustomerService,
         private readonly LeadSenderServiceInterface       $leadService,
         string                                            $name = null
     ) {
-        $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
-        $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
-
         parent::__construct($name);
     }
 
@@ -90,49 +78,10 @@ class LeadCreateCommand extends Command
         );
         $output->writeln($msg, OutputInterface::VERBOSITY_VERBOSE);
 
-        $this->populateCustomers($input, $output);
+        $this->leadCustomerService->populateCustomers($this->startDate, $this->endDate);
 
+        $output->writeln('Done', OutputInterface::VERBOSITY_VERBOSE);
         return Command::SUCCESS;
-    }
-
-    private function populateCustomers(InputInterface $input, OutputInterface $output): void
-    {
-        $result = $this->mCustomerRepository->getLeads($this->startDate, $this->endDate);
-        //$output->writeln('Array: ' . var_dump($result));
-
-        foreach ($result as $mCustomer) {
-            //$output->writeln('Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail(), OutputInterface::VERBOSITY_VERBOSE);
-            //$output->writeln('DefaultBilling: ' . $mCustomer->getDefaultBilling(), OutputInterface::VERBOSITY_VERBOSE);
-
-            $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
-            if ($lead === null) {
-                $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
-
-                $lead = new SalesforceCustomerLead();
-                $lead
-                    ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-                    ->setStatus(SalesforceCustomerLead::STATUS_NEW);
-
-                $lead
-                    ->setEmail($mCustomer->getEmail())
-                    ->setWebsiteId($mCustomer->getWebsiteId())
-                    ->setCustomerId($mCustomer->getId())
-                    ->setFirstName($mCustomer->getFirstName())
-                    ->setLastName($mCustomer->getLastName());
-
-                if ($address !== null) {
-                    $lead
-                        ->setCity($address->getCity())
-                        ->setCompany($address->getCompany())
-                        ->setCountryId($address->getCountryId())
-                        ->setStreet($address->getStreet())
-                        ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode());
-                }
-
-                $this->salesforceCustomerLeadRepository->add($lead);
-            }
-        }
     }
 
     private function createCustomer(InputInterface $input, OutputInterface $output): void
