@@ -35,6 +35,7 @@ git push --tags
 
 ## Commands
 ```
+php bin/console salesforce:lead:create demo@demo.com --start-date=2024-01-01 --end-date=2025-02-01
 php bin/console app:send:email xx.yy@gmail.com
 ```
 
