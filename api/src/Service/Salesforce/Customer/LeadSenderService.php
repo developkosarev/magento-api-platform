@@ -2,6 +2,7 @@
 
 namespace App\Service\Salesforce\Customer;
 
+use App\Entity\Main\SalesforceCustomerLead;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -12,6 +13,33 @@ class LeadSenderService implements LeadSenderServiceInterface
     public function __construct(
         private readonly HttpClientInterface $httpClient
     ) {
+    }
+
+    public function sendCustomer(SalesforceCustomerLead $lead, string $apiUrl, string $token): array
+    {
+        $url = $apiUrl . self::ROUTE_LEAD;
+
+        $response = $this->httpClient->request('POST', $url, [
+            'auth_bearer' => $token,
+            'json' => [[
+                'CustomerID' => $lead->getId(),
+                'FirstName' => $lead->getFirstName(),
+                'LastName' => $lead->getLastName(),
+                'Email' => $lead->getEmail(),
+                'Specialties__c' => [
+                    'Allergologe'
+                ],
+                'Street' => $lead->getStreet()
+            ]]
+        ]);
+
+        $statusCode = $response->getStatusCode(false);
+        var_dump($statusCode);
+
+        $content = $response->getContent(false);
+        var_dump($content);
+
+        return $response->toArray();
     }
 
     public function createCustomer(string $email, string $apiUrl, string $token): array
