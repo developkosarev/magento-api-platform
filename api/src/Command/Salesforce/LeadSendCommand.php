@@ -40,21 +40,23 @@ class LeadSendCommand extends Command
         $leads = $this->customerLeadRepository->findByStatusNew();
         foreach ($leads as $lead) {
             $result = $this->leadService->sendCustomer($lead, $this->url, $this->token);
-            //var_dump($result);
-            //$data = json_decode($result, true);
 
-            //'[{"leadId":"00Q9V00000KTZ6wUAH","type":"Lead creation","status":"success"}]'
-            //root@dfee02c6a92a:/app# php bin/console salesforce:lead:send
-            //int(200)
-            //string(75) "[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]"
+            if (array_key_exists('leadId', $result[0])) {
+                $lead
+                    ->setLeadId($result[0]['leadId'])
+                    ->setDescription($result[0]['type'])
+                    ->setStatus($result[0]['status'])
+                    ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
 
-            $lead
-                ->setLeadId($result[0]['leadId'])
-                ->setDescription($result[0]['type'])
-                ->setStatus($result[0]['status'])
-                ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
+                $this->customerLeadRepository->add($lead);
+            } elseif (array_key_exists('message', $result[0])) {
+                $lead
+                    ->setDescription(mb_substr($result[0]['message'], 0, 100))
+                    ->setStatus($result[0]['status'])
+                    ->setStatus(SalesforceCustomerLead::STATUS_ERROR);
 
-            $this->customerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
+            }
         }
 
         $output->writeln('Done', OutputInterface::VERBOSITY_VERBOSE);

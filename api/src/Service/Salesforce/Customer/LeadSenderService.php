@@ -45,6 +45,8 @@ class LeadSenderService implements LeadSenderServiceInterface
         //var_dump($statusCode);
 
         $content = $response->getContent(false);
+        //var_dump($content);
+
         return json_decode($content, true);
     }
 
