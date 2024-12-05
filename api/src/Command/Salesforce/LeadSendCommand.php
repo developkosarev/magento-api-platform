@@ -40,7 +40,8 @@ class LeadSendCommand extends Command
         $leads = $this->customerLeadRepository->findByStatusNew();
         foreach ($leads as $lead) {
             $result = $this->leadService->sendCustomer($lead, $this->url, $this->token);
-            $data = json_decode($result, true);
+            //var_dump($result);
+            //$data = json_decode($result, true);
 
             //'[{"leadId":"00Q9V00000KTZ6wUAH","type":"Lead creation","status":"success"}]'
             //root@dfee02c6a92a:/app# php bin/console salesforce:lead:send
@@ -48,9 +49,9 @@ class LeadSendCommand extends Command
             //string(75) "[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]"
 
             $lead
-                ->setLeadId($data[0]['leadId'])
-                ->setDescription($data[0]['type'])
-                ->setStatus($data[0]['status'])
+                ->setLeadId($result[0]['leadId'])
+                ->setDescription($result[0]['type'])
+                ->setStatus($result[0]['status'])
                 ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
 
             $this->customerLeadRepository->add($lead);

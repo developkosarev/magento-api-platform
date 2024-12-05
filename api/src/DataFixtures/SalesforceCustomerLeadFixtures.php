@@ -28,6 +28,13 @@ class SalesforceCustomerLeadFixtures extends Fixture
                 ->setLeadId('00Q9V00000KTZdBUAX');
 
             $manager->persist($lead);
+            $manager->flush();
+
+            $lead
+                ->setEmail('customer' . $lead->getId() . '@example.com')
+                ->setCustomerId($lead->getId())
+                ->setFirstName('FirstName' . $lead->getId())
+                ->setLastName('LastName' . $lead->getId());
         }
 
         $manager->flush();

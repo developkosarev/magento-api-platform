@@ -22,4 +22,9 @@ class Config
     {
         return $_ENV["SALESFORCE_API_PASSWORD"];
     }
+
+    public function getPrefix(): string
+    {
+        return $_ENV["SALESFORCE_API_PREFIX"];
+    }
 }
