@@ -2,6 +2,8 @@
 
 namespace App\Service\Salesforce\Customer;
 
+use App\Entity\Main\SalesforceCustomerLead;
+use App\Service\Salesforce\Common\Config;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -10,8 +12,42 @@ class LeadSenderService implements LeadSenderServiceInterface
     private const ROUTE_LEAD = '/services/apexrest/magento/v1/leads';
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient
+        private readonly HttpClientInterface $httpClient,
+        private readonly Config $config
     ) {
+    }
+
+    public function sendCustomer(SalesforceCustomerLead $lead, string $apiUrl, string $token): array
+    {
+        $url = $apiUrl . self::ROUTE_LEAD;
+
+        $id = (string) $lead->getId();
+        if (empty($this->config->getPrefix())) {
+            $id = $this->config->getPrefix() . '-' . $id;
+        }
+
+        /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
+        $response = $this->httpClient->request('POST', $url, [
+            'auth_bearer' => $token,
+            'json' => [[
+                'CustomerID' => $id,
+                'FirstName' => $lead->getFirstName(),
+                'LastName' => $lead->getLastName(),
+                'Email' => $lead->getEmail(),
+                'Specialties__c' => [
+                    'Allergologe'
+                ],
+                'Street' => $lead->getStreet()
+            ]]
+        ]);
+
+        //$statusCode = $response->getStatusCode(false);
+        //var_dump($statusCode);
+
+        $content = $response->getContent(false);
+        //var_dump($content);
+
+        return json_decode($content, true);
     }
 
     public function createCustomer(string $email, string $apiUrl, string $token): array

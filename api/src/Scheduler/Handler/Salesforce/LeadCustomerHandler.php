@@ -18,7 +18,7 @@ final class LeadCustomerHandler
     }
     public function __invoke(LeadCustomer $message)
     {
-        //Current month
+        //Current
         $startDate = \DateTime::createFromFormat('Y-m-d', date('Y-m-01'))
             ->setTime(0, 0);
         $endDate = \DateTime::createFromFormat('Y-m-d', date("Y-m-01", strtotime('+1 month')))

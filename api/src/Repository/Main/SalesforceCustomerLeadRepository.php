@@ -29,9 +29,15 @@ class SalesforceCustomerLeadRepository extends ServiceEntityRepository
         return $customerLead;
     }
 
-    public function save(): void
+    public function findByStatusNew(): array
     {
-        $this->_em->flush();
+        return $this->createQueryBuilder('lead')
+            ->andWhere('lead.status = :status')
+            ->setParameter('status', SalesforceCustomerLead::STATUS_NEW)
+            ->orderBy('lead.id', 'ASC')
+            ->setMaxResults(100)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

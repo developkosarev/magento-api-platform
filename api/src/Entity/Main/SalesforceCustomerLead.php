@@ -239,6 +239,28 @@ class SalesforceCustomerLead
         return $this;
     }
 
+    public function getLeadId(): ?string
+    {
+        return $this->leadId;
+    }
+
+    public function setLeadId(?string $leadId): self
+    {
+        $this->leadId = $leadId;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+        return $this;
+    }
+
     public function getStatus(): ?string
     {
         return $this->status;

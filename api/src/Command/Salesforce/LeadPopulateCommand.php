@@ -3,40 +3,32 @@ declare(strict_types=1);
 
 namespace App\Command\Salesforce;
 
-use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Customer\LeadCustomerServiceInterface;
-use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use DateTime;
 
 #[AsCommand(
-    name: "salesforce:lead:create",
-    description: "Create lead",
+    name: "salesforce:lead:populate",
+    description: "Populate lead",
     hidden: false
 )]
-class LeadCreateCommand extends Command
+class LeadPopulateCommand extends Command
 {
     private const OPTION_START_DATE = 'start-date';
     private const OPTION_END_DATE = 'end-date';
     private const DEFAULT_START_DATE = '2024-01-01';
     private const DEFAULT_END_DATE = '2024-02-01';
 
-    private string $token;
-    private string $url;
-
     private DateTime $startDate;
 
     private DateTime $endDate;
 
     public function __construct(
-        private readonly ApiTokenService                  $apiTokenService,
         private readonly LeadCustomerServiceInterface     $leadCustomerService,
-        private readonly LeadSenderServiceInterface       $leadService,
         string                                            $name = null
     ) {
         parent::__construct($name);
@@ -51,7 +43,6 @@ class LeadCreateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('email', InputArgument::REQUIRED, 'Email of customer')
             ->addOption(
                 self::OPTION_START_DATE,
                 null,
@@ -81,31 +72,5 @@ class LeadCreateCommand extends Command
 
         $output->writeln('Done', OutputInterface::VERBOSITY_VERBOSE);
         return Command::SUCCESS;
-    }
-
-    private function createCustomer(InputInterface $input, OutputInterface $output): void
-    {
-        $email = $input->getArgument('email');
-
-        $this->getToken();
-
-        //$token = $this->apiTokenService->getToken();
-        //$url = $this->apiTokenService->getInstanceUrl();
-        //$output->writeln('Token: ' . $token);
-        //$output->writeln('Url: ' . $url);
-
-        $result = $this->leadService->createCustomer($email, $this->url, $this->token);
-        if (!$result) {
-            $output->writeln('Something went wrong!');
-        }
-        $output->writeln('Array: ' . var_dump($result));
-
-        $output->writeln('The customer created!');
-    }
-
-    private function getToken(): void
-    {
-        $this->token = $this->apiTokenService->getToken();
-        $this->url = $this->apiTokenService->getInstanceUrl();
     }
 }
