@@ -19,6 +19,7 @@ class LeadSenderService implements LeadSenderServiceInterface
     {
         $url = $apiUrl . self::ROUTE_LEAD;
 
+        /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
         $response = $this->httpClient->request('POST', $url, [
             'auth_bearer' => $token,
             'json' => [[
@@ -34,10 +35,10 @@ class LeadSenderService implements LeadSenderServiceInterface
         ]);
 
         $statusCode = $response->getStatusCode(false);
-        var_dump($statusCode);
+        //var_dump($statusCode);
 
         $content = $response->getContent(false);
-        var_dump($content);
+        //var_dump($content);
 
         return $response->toArray();
     }

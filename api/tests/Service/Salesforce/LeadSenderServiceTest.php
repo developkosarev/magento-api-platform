@@ -19,7 +19,8 @@ class LeadSenderServiceTest extends KernelTestCase
 
     public function testSendEmail()
     {
-        //$response = new Response();
+        //Symfony\Component\HttpClient\Response\TraceableResponse
+        //$response = new Symfony\Component\HttpClient\Response\TraceableResponse();
 
         $response = $this->createMock(ResponseInterface::class);
 
@@ -46,6 +47,11 @@ class LeadSenderServiceTest extends KernelTestCase
 
         $leadSenderService = new LeadSenderService($httpClient);
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
+
+        //"[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]";
+        $content = '[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]';
+        $data = json_decode($content, true);
+        var_dump($data);
 
         //$this->assertIsArray($result);
         $this->assertTrue(true);
