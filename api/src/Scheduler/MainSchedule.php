@@ -16,7 +16,7 @@ class MainSchedule implements ScheduleProviderInterface
     {
         return (new Schedule())->add(
             RecurringMessage::every('60 seconds', new LogHello(4)),
-            RecurringMessage::every('43200 seconds', new LeadCustomer()) //12 hours
+            RecurringMessage::every('3600 seconds', new LeadCustomer()) //1 hours
         );
     }
 }
