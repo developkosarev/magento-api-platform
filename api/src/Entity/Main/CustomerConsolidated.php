@@ -54,6 +54,12 @@ class CustomerConsolidated
         return $this->id;
     }
 
+    public function setId(Ulid $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
     public function getEmail(): ?string
     {
         return $this->email;
