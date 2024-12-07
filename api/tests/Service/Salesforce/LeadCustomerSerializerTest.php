@@ -4,6 +4,7 @@ namespace App\Tests\Service\Salesforce;
 
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Service\Salesforce\Customer\LeadCustomerSerializer;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class LeadCustomerSerializerTest extends KernelTestCase
@@ -23,30 +24,37 @@ class LeadCustomerSerializerTest extends KernelTestCase
     {
         $result = self::$leadCustomerSerializer->normalize($this->createLead());
 
-        //$body = '{"properties":{"header":"email","type":"NEWSLETTER_SUBSCRIBE_CONFIRM"},"body":{"confirm_code":"1","email":"test@test.test","website_id":1,"store_id":1}}';
+        $body = [
+            'CustomerID' => 1,
+            'Email' => self::EMAIL,
+            'FirstName' => 'FirstName',
+            'LastName' => 'LastName',
+            'Street' => 'Kurfürstendamm',
+            'PostalCode' => '10000',
+            'City' => 'Berlin',
+            'Country' => 'DE',
+            'Phone' => '1111111111',
+            'Company' => 'Company',
+            'VAT_Number' => '222222'
+        ];
 
-        //$this->assertEquals($body, $result);
-        $this->assertEquals(true, true);
+        $this->assertEquals($body, $result);
     }
 
     private function createLead()
     {
-        $lead = new SalesforceCustomerLead();
-        $lead
-            ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-            ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED)
-            ->setEmail(self::EMAIL)
-            ->setWebsiteId(1)
-            ->setCustomerId(1)
-            ->setFirstName('FirstName')
-            ->setLastName('LastName')
-            ->setCity('Berlin')
-            ->setCountryId('DE')
-            ->setStreet('Kurfürstendamm')
-            ->setHouseNumber(1)
-            ->setPostcode('10000')
-            ->setLeadId('00Q9V00000KTZdBUAX');
-
-        return $lead;
+        return new CustomerLeadDto(
+            1,
+            self::EMAIL,
+            'FirstName',
+            'LastName',
+            'Kurfürstendamm',
+            '10000',
+            'Berlin',
+            'DE',
+            '1111111111',
+            'Company',
+            '222222'
+        );
     }
 }

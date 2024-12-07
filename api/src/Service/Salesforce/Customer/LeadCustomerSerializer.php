@@ -2,7 +2,7 @@
 
 namespace App\Service\Salesforce\Customer;
 
-use App\Entity\Main\SalesforceCustomerLead;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class LeadCustomerSerializer
@@ -11,8 +11,8 @@ class LeadCustomerSerializer
         private SerializerInterface $serializer
     ) {}
 
-    public function normalize(SalesforceCustomerLead $lead)
+    public function normalize(CustomerLeadDto $customerLead)
     {
-        return $this->serializer->normalize($lead);
+        return $this->serializer->normalize($customerLead);
     }
 }

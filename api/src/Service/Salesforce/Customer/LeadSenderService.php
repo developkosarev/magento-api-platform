@@ -4,7 +4,6 @@ namespace App\Service\Salesforce\Customer;
 
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Service\Salesforce\Common\Config;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class LeadSenderService implements LeadSenderServiceInterface
