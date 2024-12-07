@@ -13,7 +13,7 @@ class LeadSenderService implements LeadSenderServiceInterface
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly Config $config
+        private readonly Config              $config
     ) {
     }
 
@@ -34,10 +34,20 @@ class LeadSenderService implements LeadSenderServiceInterface
                 'FirstName' => $lead->getFirstName(),
                 'LastName' => $lead->getLastName(),
                 'Email' => $lead->getEmail(),
-                'Specialties__c' => [
-                    'Allergologe'
+                'Specialties' => [
+                    'Allergologe',
+                    'Chiropraktiker'
                 ],
-                'Street' => $lead->getStreet()
+                'Street' => $lead->getStreet(),
+                'PostalCode' => "12345",
+                'City' => 'Berlin',
+                'Country' => 'DE',
+                'Phone' => '1234567890',
+                'Company' => 'HealthCare Inc',
+                'VAT_Number' => 'DE123456789',
+                'Documentation_Link' => 'https://example.com/document.pdf',
+                'Status' => 'New',
+                'Homepage' => 'https://www.therapist-homepage.com'
             ]]
         ]);
 

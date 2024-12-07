@@ -6,3 +6,6 @@ services:
 
     App\Email\EmailSerializer:
         public: true
+    
+    App\Service\Salesforce\Customer\LeadCustomerSerializer:
+        public: true

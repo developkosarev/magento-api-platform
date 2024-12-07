@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
     operations: [
@@ -17,7 +19,6 @@ use DateTime;
 )]
 #[ORM\Entity(repositoryClass: SalesforceCustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
-#[ORM\Index(columns: ['customer_id'], name: 'idx_customer_id')]
 #[ORM\Index(columns: ['customer_id', 'created_at'], name: 'idx_customer_created_at')]
 class SalesforceCustomerLead
 {
@@ -51,6 +52,8 @@ class SalesforceCustomerLead
     #[ORM\Column(name: 'lastname', type: 'string', nullable: true)]
     private ?string $lastName;
 
+    #[Groups(['common:read'])]
+    #[SerializedName('email')]
     #[ORM\Column(name: 'email', type: 'string', length: 255)]
     private ?string $email;
 
