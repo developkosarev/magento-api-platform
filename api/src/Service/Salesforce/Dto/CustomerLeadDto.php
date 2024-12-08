@@ -4,7 +4,7 @@ namespace App\Service\Salesforce\Dto;
 
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-class CustomerLeadDto
+class CustomerLeadDto implements CustomerLeadDtoInterface
 {
     #[SerializedName('CustomerID')]
     private int $customerId;
@@ -64,6 +64,52 @@ class CustomerLeadDto
         $this->phone = $phone;
         $this->company = $company;
         $this->taxvat = $taxvat;
+    }
+
+    public static function create(
+        int $customerId,
+        string $email,
+        string $firstName,
+        string $lastName,
+        string $street,
+        string $postcode,
+        string $city,
+        string $countryId,
+        string $phone,
+        string $company,
+        string $taxvat
+    ): CustomerLeadDto
+    {
+        return new self(
+            $customerId,
+            $email,
+            $firstName,
+            $lastName,
+            $street,
+            $postcode,
+            $city,
+            $countryId,
+            $phone,
+            $company,
+            $taxvat
+        );
+    }
+
+    public static function createByInterface(CustomerLeadDtoInterface $lead): CustomerLeadDto
+    {
+        return new self(
+            $lead->getCustomerId(),
+            $lead->getEmail(),
+            $lead->getFirstName(),
+            $lead->getLastName(),
+            $lead->getStreet(),
+            $lead->getPostcode(),
+            $lead->getCity(),
+            $lead->getCountryId(),
+            $lead->getPhone(),
+            $lead->getCompany(),
+            $lead->getTaxvat()
+        );
     }
 
     public function getCustomerId(): int

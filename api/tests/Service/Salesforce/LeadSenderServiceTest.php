@@ -5,6 +5,7 @@ namespace App\Tests\Service\Salesforce;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Customer\LeadSenderService;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -98,24 +99,20 @@ class LeadSenderServiceTest extends KernelTestCase
         return $response;
     }
 
-    private function createLead()
+    private function createLead() :CustomerLeadDto
     {
-        $lead = new SalesforceCustomerLead();
-        $lead
-            ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-            ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED)
-            ->setEmail(self::EMAIL)
-            ->setWebsiteId(1)
-            ->setCustomerId(1)
-            ->setFirstName('FirstName')
-            ->setLastName('LastName')
-            ->setCity('Berlin')
-            ->setCountryId('DE')
-            ->setStreet('Kurfürstendamm')
-            ->setHouseNumber(1)
-            ->setPostcode('10000')
-            ->setLeadId('00Q9V00000KTZdBUAX');
-
-        return $lead;
+        return new CustomerLeadDto(
+            1,
+            self::EMAIL,
+            'FirstName',
+            'LastName',
+            'Kurfürstendamm',
+            '10000',
+            'Berlin',
+            'DE',
+            '1111111111',
+            'Company',
+            '222222'
+        );
     }
 }

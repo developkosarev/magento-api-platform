@@ -7,6 +7,7 @@ use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Common\ApiTokenService;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -76,7 +77,8 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         $leads = $this->salesforceCustomerLeadRepository->findByStatusNew();
 
         foreach ($leads as $lead) {
-            $result = $this->leadSenderService->sendCustomer($lead, $this->url, $this->token);
+            $leadDto = CustomerLeadDto::createByInterface($lead);
+            $result = $this->leadSenderService->sendCustomer($leadDto, $this->url, $this->token);
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead

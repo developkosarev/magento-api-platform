@@ -2,9 +2,9 @@
 
 namespace App\Service\Salesforce\Customer;
 
-use App\Entity\Main\SalesforceCustomerLead;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 
 interface LeadSenderServiceInterface
 {
-    public function sendCustomer(SalesforceCustomerLead $lead, string $apiUrl, string $token): array;
+    public function sendCustomer(CustomerLeadDto $leadDto, string $apiUrl, string $token): array;
 }
