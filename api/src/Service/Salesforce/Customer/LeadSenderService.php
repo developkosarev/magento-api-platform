@@ -70,12 +70,12 @@ class LeadSenderService implements LeadSenderServiceInterface
                 'Chiropraktiker'
             ],
             'Street' => $this->leadDto->getStreet(),
-            'PostalCode' => "12345",
-            'City' => 'Berlin',
-            'Country' => 'DE',
-            'Phone' => '1234567890',
-            'Company' => 'HealthCare Inc',
-            'VAT_Number' => 'DE123456789',
+            'PostalCode' => $this->leadDto->getPostcode(),
+            'City' => $this->leadDto->getCity(),
+            'Country' => $this->leadDto->getCountryId(),
+            'Phone' => $this->leadDto->getPhone(),
+            'Company' => $this->leadDto->getCompany(),
+            'VAT_Number' => $this->leadDto->getPhone(),
             'Documentation_Link' => 'https://example.com/document.pdf',
             'Status' => 'New',
             'Homepage' => 'https://www.therapist-homepage.com'
