@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Salesforce;
 
-use App\Entity\Main\SalesforceCustomerLead;
 use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Customer\LeadSenderService;
@@ -21,14 +20,14 @@ class LeadSenderServiceTest extends KernelTestCase
         $container = static::getContainer();
     }
 
-    public function testSendLeadSuccess(): void
+    public function testSendLeadCompanySuccess(): void
     {
         $httpClient = $this->createMock(HttpClientInterface::class);
         $httpClient->expects($this->any())
             ->method('request')
             ->willReturn($this->mockResponce());
 
-        $lead = $this->createLead();
+        $lead = $this->createLeadCompany();
         $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
@@ -47,6 +46,25 @@ class LeadSenderServiceTest extends KernelTestCase
         $this->assertEquals('success', $result[0]['status']);
     }
 
+    public function testSendLeadCustomerSuccess(): void
+    {
+        $httpClient = $this->createMock(HttpClientInterface::class);
+        $httpClient->expects($this->any())
+            ->method('request')
+            ->willReturn($this->mockResponce());
+
+        $lead = $this->createLeadCustomer();
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
+        $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('leadId', $result[0]);
+        $this->assertArrayHasKey('type', $result[0]);
+        $this->assertArrayHasKey('status', $result[0]);
+        $this->assertEquals('00Q9V00000KTaSnUAL', $result[0]['leadId']);
+        $this->assertEquals('success', $result[0]['status']);
+    }
+
     public function testSendLeadError(): void
     {
         $httpClient = $this->createMock(HttpClientInterface::class);
@@ -54,7 +72,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->method('request')
             ->willReturn($this->mockResponce(false));
 
-        $lead = $this->createLead();
+        $lead = $this->createLeadCompany();
         $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
@@ -110,7 +128,7 @@ class LeadSenderServiceTest extends KernelTestCase
         return $response;
     }
 
-    private function createLead() :CustomerLeadDto
+    private function createLeadCompany(): CustomerLeadDto
     {
         return new CustomerLeadDto(
             1,
@@ -124,6 +142,23 @@ class LeadSenderServiceTest extends KernelTestCase
             '1111111111',
             'Company',
             '222222'
+        );
+    }
+
+    private function createLeadCustomer(): CustomerLeadDto
+    {
+        return new CustomerLeadDto(
+            1,
+            self::EMAIL,
+            'FirstName',
+            'LastName',
+            'Kurfürstendamm',
+            '10000',
+            'Berlin',
+            'DE',
+            null,
+            null,
+            null
         );
     }
 }

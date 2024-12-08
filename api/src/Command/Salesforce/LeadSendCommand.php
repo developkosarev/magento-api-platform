@@ -16,9 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class LeadSendCommand extends Command
 {
-    private string $token;
-    private string $url;
-
     public function __construct(
         private readonly LeadCustomerServiceInterface $leadCustomerService,
         string                                        $name = null

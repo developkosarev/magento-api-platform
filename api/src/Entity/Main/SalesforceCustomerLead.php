@@ -239,7 +239,7 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
@@ -250,7 +250,7 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getTaxvat(): string
+    public function getTaxvat(): ?string
     {
         return $this->taxvat;
     }

@@ -19,38 +19,38 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     private string $lastName;
 
     #[SerializedName('Street')]
-    private string $street;
+    private ?string $street;
 
     #[SerializedName('PostalCode')]
-    private string $postcode;
+    private ?string $postcode;
 
     #[SerializedName('City')]
-    private string $city;
+    private ?string $city;
 
     #[SerializedName('Country')]
-    private string $countryId;
+    private ?string $countryId;
 
     #[SerializedName('Phone')]
-    private string $phone;
+    private ?string $phone;
 
     #[SerializedName('Company')]
-    private string $company;
+    private ?string $company;
 
     #[SerializedName('VAT_Number')]
-    private string $taxvat;
+    private ?string $taxvat;
 
     public function __construct(
         int $customerId,
         string $email,
         string $firstName,
         string $lastName,
-        string $street,
-        string $postcode,
-        string $city,
-        string $countryId,
-        string $phone,
-        string $company,
-        string $taxvat
+        ?string $street,
+        ?string $postcode,
+        ?string $city,
+        ?string $countryId,
+        ?string $phone,
+        ?string $company,
+        ?string $taxvat
     )
     {
         $this->customerId = $customerId;
@@ -71,13 +71,13 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
-        string $street,
-        string $postcode,
-        string $city,
-        string $countryId,
-        string $phone,
-        string $company,
-        string $taxvat
+        ?string $street,
+        ?string $postcode,
+        ?string $city,
+        ?string $countryId,
+        ?string $phone,
+        ?string $company,
+        ?string $taxvat
     ): CustomerLeadDto
     {
         return new self(
@@ -132,37 +132,37 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->lastName;
     }
 
-    public function getStreet(): string
+    public function getStreet(): ?string
     {
         return $this->street;
     }
 
-    public function getPostcode(): string
+    public function getPostcode(): ?string
     {
         return $this->postcode;
     }
 
-    public function getCity(): string
+    public function getCity(): ?string
     {
         return $this->city;
     }
 
-    public function getCountryId(): string
+    public function getCountryId(): ?string
     {
         return $this->countryId;
     }
 
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
 
-    public function getCompany(): string
+    public function getCompany(): ?string
     {
         return $this->company;
     }
 
-    public function getTaxvat(): string
+    public function getTaxvat(): ?string
     {
         return $this->taxvat;
     }
