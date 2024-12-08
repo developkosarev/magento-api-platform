@@ -2,43 +2,40 @@
 
 namespace App\Service\Salesforce\Customer;
 
-use App\Entity\Main\SalesforceCustomerLead;
+use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Common\Config;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class LeadSenderService implements LeadSenderServiceInterface
 {
     private const ROUTE_LEAD = '/services/apexrest/magento/v1/leads';
 
+    private string $token;
+    private string $instanceUrl;
+    private CustomerLeadDto $leadDto;
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly Config $config
+        private readonly ApiTokenService     $apiTokenService,
+        private readonly Config              $config
     ) {
     }
 
-    public function sendCustomer(SalesforceCustomerLead $lead, string $apiUrl, string $token): array
+    public function sendCustomer(CustomerLeadDto $leadDto): array
     {
-        $url = $apiUrl . self::ROUTE_LEAD;
+        $this->leadDto = $leadDto;
+        $this->getToken();
 
-        $id = (string) $lead->getId();
+        $customerId = (string) $leadDto->getCustomerId();
         if (empty($this->config->getPrefix())) {
-            $id = $this->config->getPrefix() . '-' . $id;
+            $customerId = $this->config->getPrefix() . '-' . $customerId;
         }
 
         /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
-        $response = $this->httpClient->request('POST', $url, [
-            'auth_bearer' => $token,
-            'json' => [[
-                'CustomerID' => $id,
-                'FirstName' => $lead->getFirstName(),
-                'LastName' => $lead->getLastName(),
-                'Email' => $lead->getEmail(),
-                'Specialties__c' => [
-                    'Allergologe'
-                ],
-                'Street' => $lead->getStreet()
-            ]]
+        $response = $this->httpClient->request('POST', $this->getUrl(), [
+            'auth_bearer' => $this->token,
+            'json' => [$this->getPayload()]
         ]);
 
         //$statusCode = $response->getStatusCode(false);
@@ -50,37 +47,38 @@ class LeadSenderService implements LeadSenderServiceInterface
         return json_decode($content, true);
     }
 
-    public function createCustomer(string $email, string $apiUrl, string $token): array
+    private function getToken(): void
     {
-        $url = $apiUrl . self::ROUTE_LEAD;
+        $this->token = $this->apiTokenService->getToken();
+        $this->instanceUrl = $this->apiTokenService->getInstanceUrl();
+    }
 
-        $response = $this->httpClient->request('POST', $url, [
-            'auth_bearer' => $token,
-            'json' => [
-                'CustomerID' => "123456",
-                'FirstName' => 'John',
-                'LastName' => 'Doe',
-                'Email' => 'demo@doctor.com',
-                'Specialties__c' => [
-                    'Allergologe'
-                ],
-                'Street' => '123 Main St'
-            ]
-        ]);
+    private function getUrl(): string
+    {
+        return $this->instanceUrl . self::ROUTE_LEAD;
+    }
 
-        $statusCode = $response->getStatusCode(false);
-        //var_dump($statusCode);
-
-        $content = $response->getContent(false);
-        //var_dump($content);
-
-        $data = $response->toArray(false);
-        //var_dump($data);
-
-        //if (!isset($data['access_token'])) {
-        //    throw new \RuntimeException('Failed to retrieve access token');
-        //}
-
-        return $data;
+    private function getPayload(): array
+    {
+        return [
+            'CustomerID' => $this->leadDto->getCustomerId(),
+            'FirstName' => $this->leadDto->getFirstName(),
+            'LastName' => $this->leadDto->getLastName(),
+            'Email' => $this->leadDto->getEmail(),
+            'Specialties' => [
+                'Allergologe',
+                'Chiropraktiker'
+            ],
+            'Street' => $this->leadDto->getStreet(),
+            'PostalCode' => $this->leadDto->getPostcode(),
+            'City' => $this->leadDto->getCity(),
+            'Country' => $this->leadDto->getCountryId(),
+            'Phone' => $this->leadDto->getPhone(),
+            'Company' => $this->leadDto->getCompany(),
+            'VAT_Number' => $this->leadDto->getPhone(),
+            'Documentation_Link' => 'https://example.com/document.pdf',
+            'Status' => 'New',
+            'Homepage' => 'https://www.therapist-homepage.com'
+        ];
     }
 }

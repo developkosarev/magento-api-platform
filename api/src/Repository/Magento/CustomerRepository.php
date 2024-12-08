@@ -26,6 +26,7 @@ class CustomerRepository extends EntityRepository
         $nativeQuery->setResultSetMapping($rsm);
         $nativeQuery->setParameter('startDate', $startDate->format('Y-m-d'));
         $nativeQuery->setParameter('endDate', $endDate->format('Y-m-d'));
+        $nativeQuery->setParameter('attribute_id', Customer::ATTRIBUTE_ID_SPECIALISATION);
 
         return $nativeQuery->getResult();
 
@@ -38,6 +39,7 @@ class CustomerRepository extends EntityRepository
         return "SELECT customer_entity.entity_id,
                        customer_entity.website_id,
                        customer_entity.email,
+                       customer_entity.group_id,
                        customer_entity.store_id,
                        customer_entity.created_at,
                        customer_entity.updated_at,
@@ -48,8 +50,8 @@ class CustomerRepository extends EntityRepository
                        customer_entity.taxvat
                 FROM customer_entity
                 INNER JOIN customer_entity_int ON customer_entity.entity_id = customer_entity_int.entity_id
-                                              AND customer_entity_int.attribute_id = 583
+                                              AND customer_entity_int.attribute_id = :attribute_id
                                               AND customer_entity_int.value > 0
-                WHERE customer_entity.created_at BETWEEN :startDate AND :endDate";
+                WHERE customer_entity.created_at BETWEEN :startDate AND :endDate AND customer_entity_int.value > 0";
     }
 }

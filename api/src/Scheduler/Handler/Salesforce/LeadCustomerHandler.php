@@ -25,8 +25,10 @@ final class LeadCustomerHandler
             ->setTime(0, 0);
 
         //https://unicode-explorer.com/emoji/brown-heart
-        $this->logger->warning(str_repeat('🤎', 5) . ' New customer lead');
-
+        $this->logger->warning(str_repeat('🤎', 5) . ' New customer lead (populate)');
         $this->leadCustomerService->populateCustomers($startDate, $endDate);
+
+        $this->logger->warning(str_repeat('🤎', 5) . ' New customer lead (send customers)');
+        $this->leadCustomerService->sendCustomers();
     }
 }

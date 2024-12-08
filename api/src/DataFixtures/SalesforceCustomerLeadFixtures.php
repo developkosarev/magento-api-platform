@@ -14,7 +14,6 @@ class SalesforceCustomerLeadFixtures extends Fixture
             $lead = new SalesforceCustomerLead();
             $lead
                 ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-                ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED)
                 ->setEmail('customer' . $i . '@example.com')
                 ->setWebsiteId(1)
                 ->setCustomerId($i)
@@ -25,7 +24,8 @@ class SalesforceCustomerLeadFixtures extends Fixture
                 ->setStreet('Kurfürstendamm')
                 ->setHouseNumber($i)
                 ->setPostcode('10000')
-                ->setLeadId('00Q9V00000KTZdBUAX');
+                ->setLeadId('00Q9V00000KTZdBUAX')
+                ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
 
             $manager->persist($lead);
             $manager->flush();

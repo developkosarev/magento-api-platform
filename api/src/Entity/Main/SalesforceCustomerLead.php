@@ -6,20 +6,20 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Service\Salesforce\Dto\CustomerLeadDtoInterface;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
-#[ApiResource(
-    operations: [
-        new Get(uriTemplate: '/customer_lead/{id}'),
-        new GetCollection(uriTemplate: '/customer_lead'),
-    ]
-)]
+//#[ApiResource(
+//    operations: [
+//        new Get(uriTemplate: '/customer_lead/{id}'),
+//        new GetCollection(uriTemplate: '/customer_lead'),
+//    ]
+//)]
 #[ORM\Entity(repositoryClass: SalesforceCustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
-#[ORM\Index(columns: ['customer_id'], name: 'idx_customer_id')]
 #[ORM\Index(columns: ['customer_id', 'created_at'], name: 'idx_customer_created_at')]
-class SalesforceCustomerLead
+class SalesforceCustomerLead implements CustomerLeadDtoInterface
 {
     public const LEAD_STATUS_NEW = 'NEW';
     public const LEAD_STATUS_UPDATE = 'UPDATE';
@@ -236,6 +236,28 @@ class SalesforceCustomerLead
     public function setPostcode(?string $postcode): self
     {
         $this->postcode = $postcode;
+        return $this;
+    }
+
+    public function getPhone(): string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    public function getTaxvat(): string
+    {
+        return $this->taxvat;
+    }
+
+    public function setTaxvat(?string $taxvat): self
+    {
+        $this->taxvat = $taxvat;
         return $this;
     }
 

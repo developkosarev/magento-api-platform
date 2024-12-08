@@ -3,8 +3,10 @@
 namespace App\Tests\Service\Salesforce;
 
 use App\Entity\Main\SalesforceCustomerLead;
+use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Customer\LeadSenderService;
+use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -27,7 +29,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce());
 
         $lead = $this->createLead();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         //"[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]";
@@ -53,7 +55,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce(false));
 
         $lead = $this->createLead();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         //"[{"message":"You're creating a duplicate record. We recommend you use an existing record instead.. CustomerId: 227","type":"DML error","status":"error"}]"
@@ -64,6 +66,16 @@ class LeadSenderServiceTest extends KernelTestCase
         $this->assertArrayHasKey('type', $result[0]);
         $this->assertArrayHasKey('status', $result[0]);
         $this->assertEquals('error', $result[0]['status']);
+    }
+
+    private function mockApiTockenService()
+    {
+        $service = $this->createMock(ApiTokenService::class);
+        $service->expects($this->any())
+            ->method('getToken')
+            ->willReturn('test');
+
+        return $service;
     }
 
     private function mockConfig()
@@ -98,24 +110,20 @@ class LeadSenderServiceTest extends KernelTestCase
         return $response;
     }
 
-    private function createLead()
+    private function createLead() :CustomerLeadDto
     {
-        $lead = new SalesforceCustomerLead();
-        $lead
-            ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-            ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED)
-            ->setEmail(self::EMAIL)
-            ->setWebsiteId(1)
-            ->setCustomerId(1)
-            ->setFirstName('FirstName')
-            ->setLastName('LastName')
-            ->setCity('Berlin')
-            ->setCountryId('DE')
-            ->setStreet('Kurfürstendamm')
-            ->setHouseNumber(1)
-            ->setPostcode('10000')
-            ->setLeadId('00Q9V00000KTZdBUAX');
-
-        return $lead;
+        return new CustomerLeadDto(
+            1,
+            self::EMAIL,
+            'FirstName',
+            'LastName',
+            'Kurfürstendamm',
+            '10000',
+            'Berlin',
+            'DE',
+            '1111111111',
+            'Company',
+            '222222'
+        );
     }
 }

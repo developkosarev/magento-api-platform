@@ -4,6 +4,11 @@ namespace App\Service\Salesforce\Common;
 
 class Config
 {
+    public function getApiOauth2Url(): string
+    {
+        return $_ENV["SALESFORCE_API_OAUTH2_URL"];
+    }
+
     public function getApiWebServiceUrl(): string
     {
         return $_ENV["SALESFORCE_API_WEB_SERVICE_URL"];

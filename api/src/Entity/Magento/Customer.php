@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'customer_entity')]
 class Customer
 {
+    public const ATTRIBUTE_ID_SPECIALISATION = 583;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'entity_id', type: 'integer')]
