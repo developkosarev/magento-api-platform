@@ -2,6 +2,7 @@
 
 namespace App\Service\Salesforce\Customer;
 
+use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -10,19 +11,21 @@ class LeadSenderService implements LeadSenderServiceInterface
 {
     private const ROUTE_LEAD = '/services/apexrest/magento/v1/leads';
 
+    private string $token;
+    private string $instanceUrl;
     private CustomerLeadDto $leadDto;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+        private readonly ApiTokenService     $apiTokenService,
         private readonly Config              $config
     ) {
     }
 
-    public function sendCustomer(CustomerLeadDto $leadDto, string $apiUrl, string $token): array
+    public function sendCustomer(CustomerLeadDto $leadDto): array
     {
         $this->leadDto = $leadDto;
-
-        $url = $apiUrl . self::ROUTE_LEAD;
+        $this->getToken();
 
         $customerId = (string) $leadDto->getCustomerId();
         if (empty($this->config->getPrefix())) {
@@ -30,8 +33,8 @@ class LeadSenderService implements LeadSenderServiceInterface
         }
 
         /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
-        $response = $this->httpClient->request('POST', $url, [
-            'auth_bearer' => $token,
+        $response = $this->httpClient->request('POST', $this->getUrl(), [
+            'auth_bearer' => $this->token,
             'json' => [$this->getPayload()]
         ]);
 
@@ -42,6 +45,17 @@ class LeadSenderService implements LeadSenderServiceInterface
         //var_dump($content);
 
         return json_decode($content, true);
+    }
+
+    private function getToken(): void
+    {
+        $this->token = $this->apiTokenService->getToken();
+        $this->instanceUrl = $this->apiTokenService->getInstanceUrl();
+    }
+
+    private function getUrl(): string
+    {
+        return $this->instanceUrl . self::ROUTE_LEAD;
     }
 
     private function getPayload(): array

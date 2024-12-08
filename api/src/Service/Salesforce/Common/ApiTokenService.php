@@ -7,7 +7,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-readonly class ApiTokenService
+class ApiTokenService
 {
     public const ACCESS_TOKEN = 'access_token';
     public const INSTANCE_URL = 'instance_url';

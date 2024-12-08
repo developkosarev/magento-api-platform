@@ -3,6 +3,7 @@
 namespace App\Tests\Service\Salesforce;
 
 use App\Entity\Main\SalesforceCustomerLead;
+use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Customer\LeadSenderService;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
@@ -28,7 +29,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce());
 
         $lead = $this->createLead();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         //"[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]";
@@ -54,7 +55,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce(false));
 
         $lead = $this->createLead();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         //"[{"message":"You're creating a duplicate record. We recommend you use an existing record instead.. CustomerId: 227","type":"DML error","status":"error"}]"
@@ -65,6 +66,16 @@ class LeadSenderServiceTest extends KernelTestCase
         $this->assertArrayHasKey('type', $result[0]);
         $this->assertArrayHasKey('status', $result[0]);
         $this->assertEquals('error', $result[0]['status']);
+    }
+
+    private function mockApiTockenService()
+    {
+        $service = $this->createMock(ApiTokenService::class);
+        $service->expects($this->any())
+            ->method('getToken')
+            ->willReturn('test');
+
+        return $service;
     }
 
     private function mockConfig()

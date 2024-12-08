@@ -6,7 +6,6 @@ use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
-use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,17 +13,13 @@ use Doctrine\ORM\EntityRepository;
 
 class LeadCustomerService implements LeadCustomerServiceInterface
 {
-    private string $token;
-    private string $url;
-
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerAddressRepository;
 
     public function __construct(
         private readonly EntityManagerInterface           $magentoEntityManager,
         private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly LeadSenderServiceInterface       $leadSenderService,
-        private readonly ApiTokenService                  $apiTokenService
+        private readonly LeadSenderServiceInterface       $leadSenderService
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -72,13 +67,11 @@ class LeadCustomerService implements LeadCustomerServiceInterface
 
     public function sendCustomers():void
     {
-        $this->getToken();
-
         $leads = $this->salesforceCustomerLeadRepository->findByStatusNew();
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
-            $result = $this->leadSenderService->sendCustomer($leadDto, $this->url, $this->token);
+            $result = $this->leadSenderService->sendCustomer($leadDto);
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead
@@ -97,11 +90,5 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                 $this->salesforceCustomerLeadRepository->add($lead);
             }
         }
-    }
-
-    private function getToken(): void
-    {
-        $this->token = $this->apiTokenService->getToken();
-        $this->url = $this->apiTokenService->getInstanceUrl();
     }
 }
