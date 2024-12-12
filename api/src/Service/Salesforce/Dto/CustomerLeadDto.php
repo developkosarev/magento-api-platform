@@ -2,7 +2,10 @@
 
 namespace App\Service\Salesforce\Dto;
 
+use DateTime;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class CustomerLeadDto implements CustomerLeadDtoInterface
 {
@@ -20,6 +23,13 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
 
     #[SerializedName('Street')]
     private ?string $street;
+
+    #[SerializedName('Birthday')]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    public ?DateTime $birthday;
+
+    #[SerializedName('Specialties')]
+    public ?int $specialties;
 
     #[SerializedName('PostalCode')]
     private ?string $postcode;
@@ -44,6 +54,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
+        ?DateTime $birthday,
+        ?int $specialties,
         ?string $street,
         ?string $postcode,
         ?string $city,
@@ -57,6 +69,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         $this->email = $email;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
+        $this->birthday = $birthday;
+        $this->specialties = $specialties;
         $this->street = $street;
         $this->postcode = $postcode;
         $this->city = $city;
@@ -71,6 +85,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
+        ?DateTime $birthday,
+        ?int $specialties,
         ?string $street,
         ?string $postcode,
         ?string $city,
@@ -85,6 +101,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
             $email,
             $firstName,
             $lastName,
+            $birthday,
+            $specialties,
             $street,
             $postcode,
             $city,
@@ -102,6 +120,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
             $lead->getEmail(),
             $lead->getFirstName(),
             $lead->getLastName(),
+            $lead->getBirthday(),
+            $lead->getSpecialties(),
             $lead->getStreet(),
             $lead->getPostcode(),
             $lead->getCity(),
@@ -130,6 +150,16 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     public function getLastName(): string
     {
         return $this->lastName;
+    }
+
+    public function getBirthday(): ?DateTime
+    {
+        return $this->birthday;
+    }
+
+    public function getSpecialties(): ?int
+    {
+        return $this->specialties;
     }
 
     public function getStreet(): ?string

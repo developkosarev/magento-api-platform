@@ -51,6 +51,12 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     #[ORM\Column(name: 'lastname', type: 'string', nullable: true)]
     private ?string $lastName;
 
+    #[ORM\Column(name: 'birthday', type: 'date', nullable: true)]
+    public ?DateTime $birthday;
+
+    #[ORM\Column(name: 'specialties', type: 'integer', nullable: true)]
+    public ?string $specialties;
+
     #[ORM\Column(name: 'email', type: 'string', length: 255)]
     private ?string $email;
 
@@ -171,6 +177,16 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     {
         $this->lastName = $lastName;
         return $this;
+    }
+
+    public function getBirthday(): ?DateTime
+    {
+        return $this->birthday;
+    }
+
+    public function getSpecialties(): ?int
+    {
+        return $this->specialties;
     }
 
     public function getCompany(): ?string

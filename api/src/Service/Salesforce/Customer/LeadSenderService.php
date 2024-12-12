@@ -27,11 +27,6 @@ class LeadSenderService implements LeadSenderServiceInterface
         $this->leadDto = $leadDto;
         $this->getToken();
 
-        $customerId = (string) $leadDto->getCustomerId();
-        if (empty($this->config->getPrefix())) {
-            $customerId = $this->config->getPrefix() . '-' . $customerId;
-        }
-
         /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
         $response = $this->httpClient->request('POST', $this->getUrl(), [
             'auth_bearer' => $this->token,
@@ -60,6 +55,11 @@ class LeadSenderService implements LeadSenderServiceInterface
 
     private function getPayload(): array
     {
+        //$customerId = (string) $leadDto->getCustomerId();
+        //if (empty($this->config->getPrefix())) {
+        //    $customerId = $this->config->getPrefix() . '-' . $customerId;
+        //}
+
         return [
             'CustomerID' => $this->leadDto->getCustomerId(),
             'FirstName' => $this->leadDto->getFirstName(),
