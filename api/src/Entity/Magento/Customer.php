@@ -43,6 +43,9 @@ class Customer
     #[ORM\Column(name: 'taxvat', type: 'string', length: 50, nullable: true)]
     private ?string $taxVat = null;
 
+    #[ORM\Column(name: 'specialties', type: 'integer', nullable: true)]
+    private ?int $specialties = null;
+
     public function getId(): ?int
     {
         return $this->entityId;
@@ -81,5 +84,15 @@ class Customer
     public function getDefaultBilling(): ?int
     {
         return $this->defaultBilling;
+    }
+
+    public function getTaxVat(): ?string
+    {
+        return $this->taxVat;
+    }
+
+    public function getSpecialties(): ?int
+    {
+        return $this->specialties;
     }
 }

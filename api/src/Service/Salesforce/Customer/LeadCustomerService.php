@@ -48,8 +48,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setWebsiteId($mCustomer->getWebsiteId())
                     ->setCustomerId($mCustomer->getId())
                     ->setFirstName($mCustomer->getFirstName())
-                    ->setLastName($mCustomer->getLastName());
-                    //->setBirthday();
+                    ->setLastName($mCustomer->getLastName())
+                    ->setBirthday(\DateTime::createFromFormat('Y-m-d',$mCustomer->getDob()))
+                    ->setSpecialties($mCustomer->getSpecialties())
+                    ->setTaxvat($mCustomer->getTaxvat());
 
                 if ($address !== null) {
                     $lead
@@ -58,7 +60,8 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                         ->setCountryId($address->getCountryId())
                         ->setStreet($address->getStreet())
                         ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode());
+                        ->setPostcode($address->getPostcode())
+                        ->setPhone($address->getTelephone());
                 }
 
                 $this->salesforceCustomerLeadRepository->add($lead);
