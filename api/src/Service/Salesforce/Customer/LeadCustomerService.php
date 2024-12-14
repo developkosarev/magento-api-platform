@@ -49,6 +49,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setCustomerId($mCustomer->getId())
                     ->setFirstName($mCustomer->getFirstName())
                     ->setLastName($mCustomer->getLastName());
+                    //->setBirthday();
 
                 if ($address !== null) {
                     $lead
@@ -72,6 +73,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
             $result = $this->leadSenderService->sendCustomer($leadDto);
+            var_dump($result);
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead

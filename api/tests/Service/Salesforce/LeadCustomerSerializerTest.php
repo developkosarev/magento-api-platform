@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Salesforce;
 
-use App\Entity\Main\SalesforceCustomerLead;
 use App\Service\Salesforce\Customer\LeadCustomerSerializer;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -10,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class LeadCustomerSerializerTest extends KernelTestCase
 {
     private const EMAIL = 'test@test.test';
+    private const FIRSTNAME = 'FirstName';
+    private const LASTNAME = 'LastName';
+    private const BIRTHDAY = '2000-01-01';
 
     private static LeadCustomerSerializer $leadCustomerSerializer;
 
@@ -20,16 +22,36 @@ class LeadCustomerSerializerTest extends KernelTestCase
         self::$leadCustomerSerializer = $container->get(LeadCustomerSerializer::class);
     }
 
-    public function testSubscribeConfirmSerialize()
+    public function testLeadCustomerSerialize()
     {
-        $result = self::$leadCustomerSerializer->normalize($this->createLead());
+        $result = self::$leadCustomerSerializer->normalize($this->createLeadCustomer());
 
         $body = [
             'CustomerID' => 1,
             'Email' => self::EMAIL,
-            'FirstName' => 'FirstName',
-            'LastName' => 'LastName',
-            'Birthday' => '2000-01-01',
+            'FirstName' => self::FIRSTNAME,
+            'LastName' => self::LASTNAME,
+            'Birthday' => self::BIRTHDAY,
+            'Specialties' => 1871,
+            'Street' => 'Kurfürstendamm',
+            'PostalCode' => '10000',
+            'City' => 'Berlin',
+            'Country' => 'DE',
+        ];
+
+        $this->assertEquals($body, $result);
+    }
+
+    public function testLeadCompanySerialize()
+    {
+        $result = self::$leadCustomerSerializer->normalize($this->createLeadCompany());
+
+        $body = [
+            'CustomerID' => 1,
+            'Email' => self::EMAIL,
+            'FirstName' => self::FIRSTNAME,
+            'LastName' => self::LASTNAME,
+            'Birthday' => self::BIRTHDAY,
             'Specialties' => 1871,
             'Street' => 'Kurfürstendamm',
             'PostalCode' => '10000',
@@ -43,14 +65,33 @@ class LeadCustomerSerializerTest extends KernelTestCase
         $this->assertEquals($body, $result);
     }
 
-    private function createLead()
+    private function createLeadCustomer(): CustomerLeadDto
+    {
+        return new CustomerLeadDto(
+            1,
+            self::EMAIL,
+            self::FIRSTNAME,
+            self::LASTNAME,
+            \DateTime::createFromFormat('Y-m-d', self::BIRTHDAY),
+            1871,
+            'Kurfürstendamm',
+            '10000',
+            'Berlin',
+            'DE',
+            null,
+            null,
+            null,
+        );
+    }
+
+    private function createLeadCompany(): CustomerLeadDto
     {
         return new CustomerLeadDto(
             1,
             self::EMAIL,
             'FirstName',
             'LastName',
-            \DateTime::createFromFormat('Y-m-d', '2000-01-01'),
+            \DateTime::createFromFormat('Y-m-d', self::BIRTHDAY),
             1871,
             'Kurfürstendamm',
             '10000',

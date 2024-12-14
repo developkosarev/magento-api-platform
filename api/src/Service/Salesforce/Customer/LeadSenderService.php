@@ -18,7 +18,7 @@ class LeadSenderService implements LeadSenderServiceInterface
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly ApiTokenService     $apiTokenService,
-        private readonly Config              $config
+        private readonly LeadCustomerSerializer $leadCustomerSerializer
     ) {
     }
 
@@ -27,10 +27,13 @@ class LeadSenderService implements LeadSenderServiceInterface
         $this->leadDto = $leadDto;
         $this->getToken();
 
+        $payload = $this->getPayload();
+        //var_dump($payload);
+
         /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
         $response = $this->httpClient->request('POST', $this->getUrl(), [
             'auth_bearer' => $this->token,
-            'json' => [$this->getPayload()]
+            'json' => [$payload]
         ]);
 
         //$statusCode = $response->getStatusCode(false);
@@ -55,30 +58,30 @@ class LeadSenderService implements LeadSenderServiceInterface
 
     private function getPayload(): array
     {
+        return $this->leadCustomerSerializer->normalize($this->leadDto);
+
         //$customerId = (string) $leadDto->getCustomerId();
         //if (empty($this->config->getPrefix())) {
         //    $customerId = $this->config->getPrefix() . '-' . $customerId;
         //}
-
-        return [
-            'CustomerID' => $this->leadDto->getCustomerId(),
-            'FirstName' => $this->leadDto->getFirstName(),
-            'LastName' => $this->leadDto->getLastName(),
-            'Email' => $this->leadDto->getEmail(),
-            'Specialties' => [
-                'Allergologe',
-                'Chiropraktiker'
-            ],
-            'Street' => $this->leadDto->getStreet(),
-            'PostalCode' => $this->leadDto->getPostcode(),
-            'City' => $this->leadDto->getCity(),
-            'Country' => $this->leadDto->getCountryId(),
-            'Phone' => $this->leadDto->getPhone(),
-            'Company' => $this->leadDto->getCompany(),
-            'VAT_Number' => $this->leadDto->getPhone(),
-            'Documentation_Link' => 'https://example.com/document.pdf',
-            'Status' => 'New',
-            'Homepage' => 'https://www.therapist-homepage.com'
-        ];
+        //
+        //return [
+        //    'CustomerID' => $this->leadDto->getCustomerId(),
+        //    'FirstName' => $this->leadDto->getFirstName(),
+        //    'LastName' => $this->leadDto->getLastName(),
+        //    'Email' => $this->leadDto->getEmail(),
+        //    //'Birthday' => $this->leadDto->getBirthday(),
+        //    'Specialties' => $this->leadDto->getSpecialties(),
+        //    'Street' => $this->leadDto->getStreet(),
+        //    'PostalCode' => $this->leadDto->getPostcode(),
+        //    'City' => $this->leadDto->getCity(),
+        //    'Country' => $this->leadDto->getCountryId(),
+        //    'Phone' => $this->leadDto->getPhone(),
+        //    'Company' => $this->leadDto->getCompany(),
+        //    'VAT_Number' => $this->leadDto->getTaxvat(),
+        //    //'Documentation_Link' => 'https://example.com/document.pdf',
+        //    'Status' => 'New',
+        //    //'Homepage' => 'https://www.therapist-homepage.com'
+        //];
     }
 }

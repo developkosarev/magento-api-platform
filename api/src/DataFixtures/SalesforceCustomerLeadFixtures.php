@@ -19,6 +19,8 @@ class SalesforceCustomerLeadFixtures extends Fixture
                 ->setCustomerId($i)
                 ->setFirstName('FirstName' . $i)
                 ->setLastName('LastName' . $i)
+                ->setBirthday(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+                ->setSpecialties(1871)
                 ->setCity('Berlin')
                 ->setCountryId('DE')
                 ->setStreet('Kurfürstendamm')

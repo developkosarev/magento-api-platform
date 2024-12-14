@@ -184,9 +184,21 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this->birthday;
     }
 
+    public function setBirthday(?DateTime $birthday): self
+    {
+        $this->birthday = $birthday;
+        return $this;
+    }
+
     public function getSpecialties(): ?int
     {
         return $this->specialties;
+    }
+
+    public function setSpecialties(?int $specialties): self
+    {
+        $this->specialties = $specialties;
+        return $this;
     }
 
     public function getCompany(): ?string
