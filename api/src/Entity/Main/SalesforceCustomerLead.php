@@ -28,6 +28,8 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     public const STATUS_PROCESSED = 'PROCESSED';
     public const STATUS_ERROR = 'ERROR';
 
+    #region Fields
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id', type: 'integer')]
@@ -100,11 +102,19 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     #[ORM\Version]
     private int $version;
 
+    #endregion
+
+    #region Construct
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->leadStatus = self::LEAD_STATUS_NEW;
     }
+
+    #endregion
+
+    #region Property
 
     public function getId(): ?int
     {
@@ -341,4 +351,6 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     {
         return $this->version;
     }
+
+    #endregion
 }

@@ -25,6 +25,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
                 ->setCountryId('DE')
                 ->setStreet('Kurfürstendamm')
                 ->setHouseNumber($i)
+                ->setFileName('meteor-shower.jpg')
                 ->setPostcode('10000')
                 ->setLeadId('00Q9V00000KTZdBUAX')
                 ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
