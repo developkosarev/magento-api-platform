@@ -84,6 +84,9 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     #[ORM\Column(name: 'postcode', type: 'string', length: 255, nullable: true)]
     private ?string $postcode;
 
+    #[ORM\Column(name: 'file_name', type: 'string', length: 255, nullable: true)]
+    private ?string $fileName;
+
     #[ORM\Column(name: 'lead_id', type: 'string', length: 20, nullable: true)]
     private ?string $leadId;
 
@@ -288,6 +291,18 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         $this->taxvat = $taxvat;
         return $this;
     }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
 
     public function getLeadId(): ?string
     {

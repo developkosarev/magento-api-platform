@@ -16,7 +16,13 @@ interface CustomerLeadDtoInterface
     public function getPostcode(): ?string;
     public function getCity(): ?string;
     public function getCountryId(): ?string;
+    public function setCountryId(?string $countryId): self;
     public function getPhone(): ?string;
+    public function setPhone(?string $phone): self;
     public function getCompany(): ?string;
+    public function setCompany(?string $company): self;
     public function getTaxvat(): ?string;
+    public function setTaxVat(?string $taxVat): self;
+    public function getFileName(): ?string;
+    public function setFileName(?string $fileName): self;
 }

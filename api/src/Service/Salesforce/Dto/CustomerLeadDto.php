@@ -9,6 +9,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class CustomerLeadDto implements CustomerLeadDtoInterface
 {
+    #region Fields
+
     #[SerializedName('CustomerID')]
     private int $customerId;
 
@@ -48,6 +50,13 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
 
     #[SerializedName('VAT_Number')]
     private ?string $taxvat;
+
+    #[SerializedName('FileName')]
+    private ?string $fileName;
+
+    #endregion
+
+    #region Construct
 
     public function __construct(
         int $customerId,
@@ -132,6 +141,10 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         );
     }
 
+    #endregion
+
+    #region Property
+
     public function getCustomerId(): int
     {
         return $this->customerId;
@@ -182,9 +195,21 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->countryId;
     }
 
+    public function setCountryId(?string $countryId): self
+    {
+        $this->countryId = $countryId;
+        return $this;
+    }
+
     public function getPhone(): ?string
     {
         return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+        return $this;
     }
 
     public function getCompany(): ?string
@@ -192,8 +217,33 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->company;
     }
 
+    public function setCompany(?string $company): self
+    {
+        $this->company = $company;
+        return $this;
+    }
+
     public function getTaxvat(): ?string
     {
         return $this->taxvat;
     }
+
+    public function setTaxVat(?string $taxVat): self
+    {
+        $this->taxvat = $taxVat;
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+    #endregion
 }
