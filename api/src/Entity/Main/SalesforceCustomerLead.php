@@ -148,9 +148,9 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getCustomerId(): ?int
+    public function getCustomerId(): ?string
     {
-        return $this->customerId;
+        return (string) $this->customerId;
     }
 
     public function setCustomerId(int $customerId): self
@@ -203,9 +203,9 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getSpecialties(): ?int
+    public function getSpecialties(): ?string
     {
-        return $this->specialties;
+        return (string) $this->specialties;
     }
 
     public function setSpecialties(?int $specialties): self
@@ -336,7 +336,7 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }

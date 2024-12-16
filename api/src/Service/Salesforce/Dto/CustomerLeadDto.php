@@ -31,7 +31,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     public ?DateTime $birthday;
 
     #[SerializedName('Specialties')]
-    public ?int $specialties;
+    public ?string $specialties;
 
     #[SerializedName('PostalCode')]
     private ?string $postcode;
@@ -51,6 +51,9 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     #[SerializedName('VAT_Number')]
     private ?string $taxvat;
 
+    #[SerializedName('Status')]
+    private ?string $status;
+
     #[SerializedName('FileName')]
     private ?string $fileName;
 
@@ -64,7 +67,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $firstName,
         string $lastName,
         ?DateTime $birthday,
-        ?int $specialties,
+        ?string $specialties,
         ?string $street,
         ?string $postcode,
         ?string $city,
@@ -87,6 +90,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         $this->phone = $phone;
         $this->company = $company;
         $this->taxvat = $taxvat;
+        $this->status = CustomerLeadDtoInterface::STATUS_NEW;
     }
 
     public static function create(
@@ -95,7 +99,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $firstName,
         string $lastName,
         ?DateTime $birthday,
-        ?int $specialties,
+        ?string $specialties,
         ?string $street,
         ?string $postcode,
         ?string $city,
@@ -145,7 +149,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
 
     #region Property
 
-    public function getCustomerId(): int
+    public function getCustomerId(): string
     {
         return $this->customerId;
     }
@@ -170,7 +174,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->birthday;
     }
 
-    public function getSpecialties(): ?int
+    public function getSpecialties(): ?string
     {
         return $this->specialties;
     }
@@ -232,6 +236,11 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     {
         $this->taxvat = $taxVat;
         return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 
     public function getFileName(): ?string

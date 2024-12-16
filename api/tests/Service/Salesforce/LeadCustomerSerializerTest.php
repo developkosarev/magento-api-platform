@@ -27,16 +27,17 @@ class LeadCustomerSerializerTest extends KernelTestCase
         $result = self::$leadCustomerSerializer->normalize($this->createLeadCustomer());
 
         $body = [
-            'CustomerID' => 1,
+            'CustomerID' => '1',
             'Email' => self::EMAIL,
             'FirstName' => self::FIRSTNAME,
             'LastName' => self::LASTNAME,
             'Birthday' => self::BIRTHDAY,
-            'Specialties' => 1871,
+            'Specialties' => '1871',
             'Street' => 'Kurfürstendamm',
             'PostalCode' => '10000',
             'City' => 'Berlin',
             'Country' => 'DE',
+            'Status' => 'NEW'
         ];
 
         $this->assertEquals($body, $result);
@@ -47,19 +48,20 @@ class LeadCustomerSerializerTest extends KernelTestCase
         $result = self::$leadCustomerSerializer->normalize($this->createLeadCompany());
 
         $body = [
-            'CustomerID' => 1,
+            'CustomerID' => '1',
             'Email' => self::EMAIL,
             'FirstName' => self::FIRSTNAME,
             'LastName' => self::LASTNAME,
             'Birthday' => self::BIRTHDAY,
-            'Specialties' => 1871,
+            'Specialties' => '1871',
             'Street' => 'Kurfürstendamm',
             'PostalCode' => '10000',
             'City' => 'Berlin',
             'Country' => 'DE',
             'Phone' => '1111111111',
             'Company' => 'Company',
-            'VAT_Number' => '222222'
+            'VAT_Number' => '222222',
+            'Status' => 'NEW'
         ];
 
         $this->assertEquals($body, $result);
