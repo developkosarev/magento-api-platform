@@ -31,6 +31,9 @@ class Customer
     #[ORM\Column(name: 'lastname', type: 'string', nullable: true)]
     private ?string $lastName;
 
+    #[ORM\Column(name: 'dob', type: 'string', nullable: true)]
+    private ?string $dob;
+
     #[ORM\Column(name: 'default_billing', type: 'integer', nullable: true)]
     private ?int $defaultBilling = null;
 
@@ -39,6 +42,9 @@ class Customer
 
     #[ORM\Column(name: 'taxvat', type: 'string', length: 50, nullable: true)]
     private ?string $taxVat = null;
+
+    #[ORM\Column(name: 'specialties', type: 'integer', nullable: true)]
+    private ?int $specialties = null;
 
     public function getId(): ?int
     {
@@ -70,8 +76,23 @@ class Customer
         return $this->lastName;
     }
 
+    public function getDob(): ?string
+    {
+        return $this->dob;
+    }
+
     public function getDefaultBilling(): ?int
     {
         return $this->defaultBilling;
+    }
+
+    public function getTaxVat(): ?string
+    {
+        return $this->taxVat;
+    }
+
+    public function getSpecialties(): ?int
+    {
+        return $this->specialties;
     }
 }

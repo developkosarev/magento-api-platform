@@ -48,7 +48,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setWebsiteId($mCustomer->getWebsiteId())
                     ->setCustomerId($mCustomer->getId())
                     ->setFirstName($mCustomer->getFirstName())
-                    ->setLastName($mCustomer->getLastName());
+                    ->setLastName($mCustomer->getLastName())
+                    ->setBirthday(\DateTime::createFromFormat('Y-m-d',$mCustomer->getDob()))
+                    ->setSpecialties($mCustomer->getSpecialties())
+                    ->setTaxvat($mCustomer->getTaxvat());
 
                 if ($address !== null) {
                     $lead
@@ -57,7 +60,8 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                         ->setCountryId($address->getCountryId())
                         ->setStreet($address->getStreet())
                         ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode());
+                        ->setPostcode($address->getPostcode())
+                        ->setPhone($address->getTelephone());
                 }
 
                 $this->salesforceCustomerLeadRepository->add($lead);
@@ -72,6 +76,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
             $result = $this->leadSenderService->sendCustomer($leadDto);
+            var_dump($result);
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead

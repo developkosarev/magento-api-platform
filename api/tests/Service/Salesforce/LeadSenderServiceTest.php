@@ -4,6 +4,7 @@ namespace App\Tests\Service\Salesforce;
 
 use App\Service\Salesforce\Common\ApiTokenService;
 use App\Service\Salesforce\Common\Config;
+use App\Service\Salesforce\Customer\LeadCustomerSerializer;
 use App\Service\Salesforce\Customer\LeadSenderService;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -14,10 +15,13 @@ class LeadSenderServiceTest extends KernelTestCase
 {
     private const EMAIL = 'test@test.test';
 
+    private static LeadCustomerSerializer $leadCustomerSerializer;
+
     public static function setUpBeforeClass(): void
     {
         self::bootKernel();
         $container = static::getContainer();
+        self::$leadCustomerSerializer = $container->get(LeadCustomerSerializer::class);
     }
 
     public function testSendLeadCompanySuccess(): void
@@ -28,7 +32,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce());
 
         $lead = $this->createLeadCompany();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), self::$leadCustomerSerializer);
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         //"[{"leadId":"00Q9V00000KTaSnUAL","type":"Lead creation","status":"success"}]";
@@ -54,7 +58,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce());
 
         $lead = $this->createLeadCustomer();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), self::$leadCustomerSerializer);
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         $this->assertIsArray($result);
@@ -73,7 +77,7 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn($this->mockResponce(false));
 
         $lead = $this->createLeadCompany();
-        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), $this->mockConfig());
+        $leadSenderService = new LeadSenderService($httpClient, $this->mockApiTockenService(), self::$leadCustomerSerializer);
         $result = $leadSenderService->sendCustomer($lead, 'apiUrl', 'token');
 
         //"[{"message":"You're creating a duplicate record. We recommend you use an existing record instead.. CustomerId: 227","type":"DML error","status":"error"}]"
@@ -94,16 +98,6 @@ class LeadSenderServiceTest extends KernelTestCase
             ->willReturn('test');
 
         return $service;
-    }
-
-    private function mockConfig()
-    {
-        $config = $this->createMock(Config::class);
-        $config->expects($this->any())
-            ->method('getPrefix')
-            ->willReturn('test');
-
-        return $config;
     }
 
     private function mockResponce(bool $success = true): ResponseInterface
@@ -135,6 +129,8 @@ class LeadSenderServiceTest extends KernelTestCase
             self::EMAIL,
             'FirstName',
             'LastName',
+            \DateTime::createFromFormat('Y-m-d', '2000-01-01'),
+            1871,
             'Kurfürstendamm',
             '10000',
             'Berlin',
@@ -152,6 +148,8 @@ class LeadSenderServiceTest extends KernelTestCase
             self::EMAIL,
             'FirstName',
             'LastName',
+            \DateTime::createFromFormat('Y-m-d', '2000-01-01'),
+            1871,
             'Kurfürstendamm',
             '10000',
             'Berlin',

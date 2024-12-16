@@ -32,6 +32,9 @@ class CustomerAddress
     #[ORM\Column(name: 'postcode', type: 'string', nullable: true)]
     private ?string $postcode = null;
 
+    #[ORM\Column(name: 'telephone', type: 'string', nullable: true)]
+    private ?string $telephone = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -65,5 +68,10 @@ class CustomerAddress
     public function getPostcode(): ?string
     {
         return $this->postcode;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
     }
 }

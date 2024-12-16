@@ -19,7 +19,10 @@ class CustomerRepository extends EntityRepository
             ->addFieldResult('c', 'email', 'email')
             ->addFieldResult('c', 'firstname', 'firstName')
             ->addFieldResult('c', 'lastname', 'lastName')
-            ->addFieldResult('c', 'default_billing', 'defaultBilling');
+            ->addFieldResult('c', 'dob', 'dob')
+            ->addFieldResult('c', 'taxvat', 'taxVat')
+            ->addFieldResult('c', 'default_billing', 'defaultBilling')
+            ->addFieldResult('c', 'specialties', 'specialties');
 
         $nativeQuery = new NativeQuery($this->_em);
         $nativeQuery->setSQL($this->getSql());
@@ -45,9 +48,11 @@ class CustomerRepository extends EntityRepository
                        customer_entity.updated_at,
                        customer_entity.firstname,
                        customer_entity.lastname,
+                       customer_entity.dob,
                        customer_entity.default_billing,
                        customer_entity.default_shipping,
-                       customer_entity.taxvat
+                       customer_entity.taxvat,
+                       customer_entity_int.value AS specialties
                 FROM customer_entity
                 INNER JOIN customer_entity_int ON customer_entity.entity_id = customer_entity_int.entity_id
                                               AND customer_entity_int.attribute_id = :attribute_id

@@ -1,7 +1,7 @@
 services:
   php:
     image: ${IMAGES_PREFIX:-}app-php
-    restart: unless-stopped    
+    #restart: unless-stopped    
     environment:
       PWA_UPSTREAM: pwa:3000
       SERVER_NAME: ${SERVER_NAME:-localhost}, php:80

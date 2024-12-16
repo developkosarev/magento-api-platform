@@ -2,10 +2,15 @@
 
 namespace App\Service\Salesforce\Dto;
 
+use DateTime;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Attribute\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 class CustomerLeadDto implements CustomerLeadDtoInterface
 {
+    #region Fields
+
     #[SerializedName('CustomerID')]
     private int $customerId;
 
@@ -20,6 +25,13 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
 
     #[SerializedName('Street')]
     private ?string $street;
+
+    #[SerializedName('Birthday')]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
+    public ?DateTime $birthday;
+
+    #[SerializedName('Specialties')]
+    public ?string $specialties;
 
     #[SerializedName('PostalCode')]
     private ?string $postcode;
@@ -39,11 +51,23 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     #[SerializedName('VAT_Number')]
     private ?string $taxvat;
 
+    #[SerializedName('Status')]
+    private ?string $status;
+
+    #[SerializedName('FileName')]
+    private ?string $fileName;
+
+    #endregion
+
+    #region Construct
+
     public function __construct(
         int $customerId,
         string $email,
         string $firstName,
         string $lastName,
+        ?DateTime $birthday,
+        ?string $specialties,
         ?string $street,
         ?string $postcode,
         ?string $city,
@@ -57,6 +81,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         $this->email = $email;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
+        $this->birthday = $birthday;
+        $this->specialties = $specialties;
         $this->street = $street;
         $this->postcode = $postcode;
         $this->city = $city;
@@ -64,6 +90,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         $this->phone = $phone;
         $this->company = $company;
         $this->taxvat = $taxvat;
+        $this->status = CustomerLeadDtoInterface::STATUS_NEW;
     }
 
     public static function create(
@@ -71,6 +98,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
+        ?DateTime $birthday,
+        ?string $specialties,
         ?string $street,
         ?string $postcode,
         ?string $city,
@@ -85,6 +114,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
             $email,
             $firstName,
             $lastName,
+            $birthday,
+            $specialties,
             $street,
             $postcode,
             $city,
@@ -102,6 +133,8 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
             $lead->getEmail(),
             $lead->getFirstName(),
             $lead->getLastName(),
+            $lead->getBirthday(),
+            $lead->getSpecialties(),
             $lead->getStreet(),
             $lead->getPostcode(),
             $lead->getCity(),
@@ -112,7 +145,11 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         );
     }
 
-    public function getCustomerId(): int
+    #endregion
+
+    #region Property
+
+    public function getCustomerId(): string
     {
         return $this->customerId;
     }
@@ -130,6 +167,16 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     public function getLastName(): string
     {
         return $this->lastName;
+    }
+
+    public function getBirthday(): ?DateTime
+    {
+        return $this->birthday;
+    }
+
+    public function getSpecialties(): ?string
+    {
+        return $this->specialties;
     }
 
     public function getStreet(): ?string
@@ -152,9 +199,21 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->countryId;
     }
 
+    public function setCountryId(?string $countryId): self
+    {
+        $this->countryId = $countryId;
+        return $this;
+    }
+
     public function getPhone(): ?string
     {
         return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+        return $this;
     }
 
     public function getCompany(): ?string
@@ -162,8 +221,38 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->company;
     }
 
+    public function setCompany(?string $company): self
+    {
+        $this->company = $company;
+        return $this;
+    }
+
     public function getTaxvat(): ?string
     {
         return $this->taxvat;
     }
+
+    public function setTaxVat(?string $taxVat): self
+    {
+        $this->taxvat = $taxVat;
+        return $this;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+    #endregion
 }

@@ -19,10 +19,13 @@ class SalesforceCustomerLeadFixtures extends Fixture
                 ->setCustomerId($i)
                 ->setFirstName('FirstName' . $i)
                 ->setLastName('LastName' . $i)
+                ->setBirthday(\DateTime::createFromFormat('Y-m-d', '2000-01-01'))
+                ->setSpecialties(1871)
                 ->setCity('Berlin')
                 ->setCountryId('DE')
                 ->setStreet('Kurfürstendamm')
                 ->setHouseNumber($i)
+                //->setFileName('meteor-shower.jpg')
                 ->setPostcode('10000')
                 ->setLeadId('00Q9V00000KTZdBUAX')
                 ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);

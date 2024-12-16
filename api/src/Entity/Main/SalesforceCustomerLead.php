@@ -28,6 +28,8 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     public const STATUS_PROCESSED = 'PROCESSED';
     public const STATUS_ERROR = 'ERROR';
 
+    #region Fields
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id', type: 'integer')]
@@ -50,6 +52,12 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
 
     #[ORM\Column(name: 'lastname', type: 'string', nullable: true)]
     private ?string $lastName;
+
+    #[ORM\Column(name: 'birthday', type: 'date', nullable: true)]
+    public ?DateTime $birthday;
+
+    #[ORM\Column(name: 'specialties', type: 'integer', nullable: true)]
+    public ?string $specialties;
 
     #[ORM\Column(name: 'email', type: 'string', length: 255)]
     private ?string $email;
@@ -78,6 +86,9 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     #[ORM\Column(name: 'postcode', type: 'string', length: 255, nullable: true)]
     private ?string $postcode;
 
+    #[ORM\Column(name: 'file_name', type: 'string', length: 255, nullable: true)]
+    private ?string $fileName;
+
     #[ORM\Column(name: 'lead_id', type: 'string', length: 20, nullable: true)]
     private ?string $leadId;
 
@@ -91,11 +102,19 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     #[ORM\Version]
     private int $version;
 
+    #endregion
+
+    #region Construct
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->leadStatus = self::LEAD_STATUS_NEW;
     }
+
+    #endregion
+
+    #region Property
 
     public function getId(): ?int
     {
@@ -129,9 +148,9 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getCustomerId(): ?int
+    public function getCustomerId(): ?string
     {
-        return $this->customerId;
+        return (string) $this->customerId;
     }
 
     public function setCustomerId(int $customerId): self
@@ -170,6 +189,28 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
+        return $this;
+    }
+
+    public function getBirthday(): ?DateTime
+    {
+        return $this->birthday;
+    }
+
+    public function setBirthday(?DateTime $birthday): self
+    {
+        $this->birthday = $birthday;
+        return $this;
+    }
+
+    public function getSpecialties(): ?string
+    {
+        return (string) $this->specialties;
+    }
+
+    public function setSpecialties(?int $specialties): self
+    {
+        $this->specialties = $specialties;
         return $this;
     }
 
@@ -261,6 +302,18 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+
     public function getLeadId(): ?string
     {
         return $this->leadId;
@@ -283,7 +336,7 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -298,4 +351,6 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     {
         return $this->version;
     }
+
+    #endregion
 }
