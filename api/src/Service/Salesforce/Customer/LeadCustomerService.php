@@ -60,8 +60,11 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                         ->setCountryId($address->getCountryId())
                         ->setStreet($address->getStreet())
                         ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode())
-                        ->setPhone($address->getTelephone());
+                        ->setPostcode($address->getPostcode());
+                    if (!empty($address->getTelephone())) {
+                        $lead
+                            ->setPhone($address->getTelephone());
+                    }
                 }
 
                 $this->salesforceCustomerLeadRepository->add($lead);

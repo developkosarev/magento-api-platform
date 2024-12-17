@@ -28,7 +28,7 @@ class LeadSenderService implements LeadSenderServiceInterface
         $this->getToken();
 
         $payload = $this->getPayload();
-        var_dump($payload);
+        //var_dump($payload);
 
         /** @var $response Symfony\Component\HttpClient\Response\TraceableResponse */
         $response = $this->httpClient->request('POST', $this->getUrl(), [
