@@ -45,4 +45,12 @@ class UploaderHelper
 
         return $filename;
     }
+
+    public function readCertificateFromS3(string $customerId): string
+    {
+        $filename = "/therapists/{$customerId}/meteor-shower.jpg";
+        $this->customerStorage->read($filename);
+
+        return $filename;
+    }
 }

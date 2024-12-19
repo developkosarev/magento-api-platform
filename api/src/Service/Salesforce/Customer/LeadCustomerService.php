@@ -10,6 +10,7 @@ use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use League\Flysystem\FilesystemOperator;
 
 class LeadCustomerService implements LeadCustomerServiceInterface
 {
@@ -19,7 +20,8 @@ class LeadCustomerService implements LeadCustomerServiceInterface
     public function __construct(
         private readonly EntityManagerInterface           $magentoEntityManager,
         private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly LeadSenderServiceInterface       $leadSenderService
+        private readonly LeadSenderServiceInterface       $leadSenderService,
+        private readonly FilesystemOperator $customerStorage,
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -78,6 +80,11 @@ class LeadCustomerService implements LeadCustomerServiceInterface
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
+            $leadDto
+                ->setFileName('meteor-shower.jpg')
+                ->setFileBase64($this->getCertificate('1'))
+                ->setContentType('image/jpeg');
+
             $result = $this->leadSenderService->sendCustomer($leadDto);
             var_dump($result);
 
@@ -89,7 +96,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
 
                 if (array_key_exists('attachmentId', $result[0])) {
-                    $lead->setLeadId($result[0]['attachmentId']);
+                    $lead->setAttachmentId($result[0]['attachmentId']);
                 }
 
                 $this->salesforceCustomerLeadRepository->add($lead);
@@ -102,5 +109,13 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                 $this->salesforceCustomerLeadRepository->add($lead);
             }
         }
+    }
+
+    private function getCertificate(string $customerId): ?string
+    {
+        $filename = "/therapists/{$customerId}/meteor-shower.jpg";
+        $str =$this->customerStorage->read($filename);
+
+        return base64_encode($str);
     }
 }
