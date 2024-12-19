@@ -18,12 +18,12 @@ class ApiTokenService
     private CacheInterface $cache;
 
     public function __construct(
-        private HttpClientInterface $httpClient,
-        private string              $apiUrl,
-        private string              $clientId,
-        private string              $clientSecret,
-        private string              $username,
-        private string              $password
+        private readonly HttpClientInterface $httpClient,
+        private readonly string              $apiUrl,
+        private readonly string              $clientId,
+        private readonly string              $clientSecret,
+        private readonly string              $username,
+        private readonly string              $password
     ) {
         $this->cache = new FilesystemAdapter();
     }

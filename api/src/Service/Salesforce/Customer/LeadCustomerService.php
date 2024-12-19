@@ -88,6 +88,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setStatus($result[0]['status'])
                     ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
 
+                if (array_key_exists('attachmentId', $result[0])) {
+                    $lead->setLeadId($result[0]['attachmentId']);
+                }
+
                 $this->salesforceCustomerLeadRepository->add($lead);
             } elseif (array_key_exists('message', $result[0])) {
                 $lead

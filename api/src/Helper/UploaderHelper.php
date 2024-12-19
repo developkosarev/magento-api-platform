@@ -3,15 +3,30 @@
 namespace App\Helper;
 
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploaderHelper
 {
-    private FilesystemOperator $storage;
-
-    // The variable name $defaultStorage matters: it needs to be the camelized version
-    // of the name of your storage.
-    public function __construct(FilesystemOperator $defaultStorage)
+    public function __construct(
+        private readonly FilesystemOperator $defaultStorage,
+        private readonly string $uploadPath
+    )
     {
-        $this->storage = $defaultStorage;
+    }
+
+    public function uploadCertificate(File $file): string
+    {
+        if ($file instanceof UploadedFile) {
+            $originalFilename = $file->getClientOriginalName();
+        } else {
+            $originalFilename = $file->getFilename();
+        }
+
+        $this->defaultStorage->write($originalFilename, file_get_contents($file->getPathname()));
+
+        //$file->move($this->uploadPath, $originalFilename);
+
+        return $originalFilename;
     }
 }
