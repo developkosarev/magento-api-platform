@@ -10,6 +10,7 @@ class UploaderHelper
 {
     public function __construct(
         private readonly FilesystemOperator $defaultStorage,
+        private readonly FilesystemOperator $customerStorage,
         private readonly string $uploadPath
     )
     {
@@ -28,5 +29,20 @@ class UploaderHelper
         //$file->move($this->uploadPath, $originalFilename);
 
         return $originalFilename;
+    }
+
+    public function uploadCertificateToS3(File $file, string $customerId): string
+    {
+        if ($file instanceof UploadedFile) {
+            $originalFilename = $file->getClientOriginalName();
+        } else {
+            $originalFilename = $file->getFilename();
+        }
+        $filename = "/therapists/{$customerId}/{$originalFilename}";
+        //dd($originalFilename);
+
+        $this->customerStorage->write($filename, file_get_contents($file->getPathname()));
+
+        return $filename;
     }
 }

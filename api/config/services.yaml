@@ -26,6 +26,15 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     
+    Aws\S3\S3Client:
+        arguments:
+            -
+                version: '2006-03-01'
+                region: 'eu-central-1'
+                credentials:
+                    key: '%env(S3_AWS_KEY)%'
+                    secret: '%env(S3_AWS_SECRET)%'
+    
     App\Service\Salesforce\Common\ApiTokenService:
         arguments:
             $apiUrl: '%env(resolve:SALESFORCE_API_OAUTH2_URL)%'

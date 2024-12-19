@@ -42,9 +42,11 @@ class SalesforceCustomerLeadFixtures extends Fixture
             $fs = new Filesystem();
             $targetPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'meteor-shower.jpg';
             $fs->copy(__DIR__ . '/images/meteor-shower.jpg', $targetPath, true);
-            var_dump($targetPath);
+            //var_dump($targetPath);
 
-            $this->uploader->uploadCertificate(new File($targetPath));
+            //$this->uploader->uploadCertificate(new File($targetPath));
+
+            $this->uploader->uploadCertificateToS3(new File($targetPath), $i);
 
             $lead
                 ->setEmail('customer' . $lead->getId() . '@example.com')
