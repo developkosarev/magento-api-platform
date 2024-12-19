@@ -10,6 +10,9 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        
+        bind:
+            $uploadPath: '%kernel.project_dir%/public/uploads/'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -22,6 +25,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    
+    Aws\S3\S3Client:
+        arguments:
+            -
+                version: '2006-03-01'
+                region: 'eu-central-1'
+                credentials:
+                    key: '%env(S3_AWS_KEY)%'
+                    secret: '%env(S3_AWS_SECRET)%'
     
     App\Service\Salesforce\Common\ApiTokenService:
         arguments:

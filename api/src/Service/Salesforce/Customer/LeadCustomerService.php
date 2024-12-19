@@ -10,6 +10,7 @@ use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use League\Flysystem\FilesystemOperator;
 
 class LeadCustomerService implements LeadCustomerServiceInterface
 {
@@ -19,7 +20,8 @@ class LeadCustomerService implements LeadCustomerServiceInterface
     public function __construct(
         private readonly EntityManagerInterface           $magentoEntityManager,
         private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly LeadSenderServiceInterface       $leadSenderService
+        private readonly LeadSenderServiceInterface       $leadSenderService,
+        private readonly FilesystemOperator $customerStorage,
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -60,8 +62,11 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                         ->setCountryId($address->getCountryId())
                         ->setStreet($address->getStreet())
                         ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode())
-                        ->setPhone($address->getTelephone());
+                        ->setPostcode($address->getPostcode());
+                    if (!empty($address->getTelephone())) {
+                        $lead
+                            ->setPhone($address->getTelephone());
+                    }
                 }
 
                 $this->salesforceCustomerLeadRepository->add($lead);
@@ -75,6 +80,11 @@ class LeadCustomerService implements LeadCustomerServiceInterface
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
+            $leadDto
+                ->setFileName('meteor-shower.jpg')
+                ->setFileBase64($this->getCertificate('1'))
+                ->setContentType('image/jpeg');
+
             $result = $this->leadSenderService->sendCustomer($leadDto);
             var_dump($result);
 
@@ -84,6 +94,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setDescription($result[0]['type'])
                     ->setStatus($result[0]['status'])
                     ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
+
+                if (array_key_exists('attachmentId', $result[0])) {
+                    $lead->setAttachmentId($result[0]['attachmentId']);
+                }
 
                 $this->salesforceCustomerLeadRepository->add($lead);
             } elseif (array_key_exists('message', $result[0])) {
@@ -95,5 +109,13 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                 $this->salesforceCustomerLeadRepository->add($lead);
             }
         }
+    }
+
+    private function getCertificate(string $customerId): ?string
+    {
+        $filename = "/therapists/{$customerId}/meteor-shower.jpg";
+        $str =$this->customerStorage->read($filename);
+
+        return base64_encode($str);
     }
 }

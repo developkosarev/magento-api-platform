@@ -31,6 +31,7 @@ help:
 	@echo "$(call format,app-consume,'App consume workers')"
 	@echo "$(call format,app-stop-workers,'App stop workers')"
 	@echo "$(call red,===============================)"
+	@echo "$(call format,app-fixture,'App fixture load')"
 	@echo "$(call format,app-tests,'App tests')"
 	@echo "$(call format,app-tests-salesforce,'App tests salesforce')"
 	@echo "$(call red,===============================)"
@@ -66,7 +67,12 @@ app-stop-workers: ## app-stop-workers
 	docker exec -it magento-api-platform-php-1 php bin/console messenger:stop-workers
 .PHONY: app-stop-workers
 
+
 ## Tests
+app-fixture: ## app-fixture
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load
+.PHONY:
+
 app-tests: ## app-tests
 	docker exec -it magento-api-platform-php-1 php bin/phpunit --colors --verbose --testdox
 .PHONY: app-tests

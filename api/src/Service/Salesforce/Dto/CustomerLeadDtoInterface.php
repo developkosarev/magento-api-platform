@@ -33,4 +33,8 @@ interface CustomerLeadDtoInterface
     public function getStatus(): string;
     public function getFileName(): ?string;
     public function setFileName(?string $fileName): self;
+    //public function getFileBase64(): ?string;
+    //public function setFileBase64(?string $fileBase64): self;
+    //public function getContentType(): ?string;
+    //public function setContentType(?string $contentType): self;
 }

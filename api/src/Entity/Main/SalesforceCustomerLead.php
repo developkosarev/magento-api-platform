@@ -92,6 +92,9 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     #[ORM\Column(name: 'lead_id', type: 'string', length: 20, nullable: true)]
     private ?string $leadId;
 
+    #[ORM\Column(name: 'attachment_id', type: 'string', length: 20, nullable: true)]
+    private ?string $attachmentId;
+
     #[ORM\Column(name: 'description', type: 'string', length: 100, nullable: true)]
     private ?string $description;
 
@@ -313,6 +316,14 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
+    public function getCertificateImagePath(): ?string
+    {
+        $customerId = $this->getCustomerId();
+        $fileName = $this->getFileName();
+
+        return "/therapists/{$customerId}/{$fileName}";
+    }
+
 
     public function getLeadId(): ?string
     {
@@ -322,6 +333,17 @@ class SalesforceCustomerLead implements CustomerLeadDtoInterface
     public function setLeadId(?string $leadId): self
     {
         $this->leadId = $leadId;
+        return $this;
+    }
+
+    public function getAttachmentId(): ?string
+    {
+        return $this->attachmentId;
+    }
+
+    public function setAttachmentId(?string $attachmentId): self
+    {
+        $this->attachmentId = $attachmentId;
         return $this;
     }
 
