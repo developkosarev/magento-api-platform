@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Entity\Main;
+namespace App\Entity\Main\Salesforce;
 
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDtoInterface;
-use Doctrine\ORM\Mapping as ORM;
 use DateTime;
+use Doctrine\ORM\Mapping as ORM;
 
 //#[ApiResource(
 //    operations: [

@@ -4,10 +4,8 @@ namespace App\Service\Salesforce\Customer;
 
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
-use App\Entity\Main\SalesforceCustomerLead;
+use App\Entity\Main\Salesforce\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
-use App\Service\Salesforce\Dto\CustomerCertificate;
-use App\Service\Salesforce\Dto\CustomerCertificateInterface;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,15 +14,8 @@ use League\Flysystem\FilesystemOperator;
 
 class LeadCustomerService implements LeadCustomerServiceInterface
 {
-    public const CERTIFICATE_FILENAME = 'certificate';
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerAddressRepository;
-
-    private static array $certificateImages = [
-        ['certificate.jpg', 'image/jpg'],
-        ['certificate.png', 'image/png'],
-        ['certificate.pdf', 'application/pdf']
-    ];
 
     public function __construct(
         private readonly EntityManagerInterface           $magentoEntityManager,
@@ -126,7 +117,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         $resultFilename = null;
         $resultFullFilename = null;
         $resultContentType = null;
-        foreach (self::$certificateImages as [$filename, $contentType]) {
+        foreach ($this->getCertificateImages() as [$filename, $contentType]) {
             $fullFilename = "/therapists/{$customerId}/{$filename}";
 
             $fileExists = $this->customerStorage->fileExists($fullFilename);
@@ -146,5 +137,14 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                 ->setContentType($resultContentType)
                 ->setFileBase64(base64_encode($content));
         }
+    }
+
+    private function getCertificateImages(): array
+    {
+        return [
+            ['certificate.jpg', 'image/jpg'],
+            ['certificate.png', 'image/png'],
+            ['certificate.pdf', 'application/pdf']
+        ];
     }
 }
