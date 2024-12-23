@@ -4,7 +4,7 @@ namespace App\Service\Salesforce\Customer;
 
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
-use App\Entity\Main\Salesforce\SalesforceCustomerLead;
+use App\Entity\Main\Salesforce\CustomerLead;
 use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
@@ -40,10 +40,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
             if ($lead === null) {
                 $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
 
-                $lead = new SalesforceCustomerLead();
+                $lead = new CustomerLead();
                 $lead
-                    ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-                    ->setStatus(SalesforceCustomerLead::STATUS_NEW);
+                    ->setLeadStatus(CustomerLead::LEAD_STATUS_NEW)
+                    ->setStatus(CustomerLead::STATUS_NEW);
 
                 $lead
                     ->setEmail($mCustomer->getEmail())
@@ -91,7 +91,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setLeadId($result[0]['leadId'])
                     ->setDescription($result[0]['type'])
                     ->setStatus($result[0]['status'])
-                    ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
+                    ->setStatus(CustomerLead::STATUS_PROCESSED);
 
                 if (array_key_exists('attachmentId', $result[0])) {
                     $lead->setAttachmentId($result[0]['attachmentId']);
@@ -103,7 +103,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setFileName($leadDto->getFileName())
                     ->setDescription(mb_substr($result[0]['message'], 0, 100))
                     ->setStatus($result[0]['status'])
-                    ->setStatus(SalesforceCustomerLead::STATUS_ERROR);
+                    ->setStatus(CustomerLead::STATUS_ERROR);
 
                 $this->customerLeadRepository->add($lead);
             }

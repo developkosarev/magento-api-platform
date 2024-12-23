@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
 #[ORM\Index(columns: ['customer_id', 'created_at'], name: 'idx_customer_created_at')]
-class SalesforceCustomerLead implements CustomerLeadDtoInterface
+class CustomerLead implements CustomerLeadDtoInterface
 {
     public const LEAD_STATUS_NEW = 'NEW';
     public const LEAD_STATUS_UPDATE = 'UPDATE';
