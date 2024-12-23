@@ -2,7 +2,7 @@
 
 namespace App\Repository\Main;
 
-use App\Entity\Main\SalesforceCustomerLead;
+use App\Entity\Main\Salesforce\SalesforceCustomerLead;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

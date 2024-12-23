@@ -2,12 +2,10 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Main\SalesforceCustomerLead;
+use App\Entity\Main\Salesforce\SalesforceCustomerLead;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use League\Flysystem\FilesystemOperator;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\File;
 
 class SalesforceCustomerLeadFixtures extends Fixture
 {
