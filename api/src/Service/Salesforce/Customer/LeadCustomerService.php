@@ -5,7 +5,7 @@ namespace App\Service\Salesforce\Customer;
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\Salesforce\SalesforceCustomerLead;
-use App\Repository\Main\Salesforce\SalesforceCustomerLeadRepository;
+use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,10 +18,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
     private EntityRepository $mCustomerAddressRepository;
 
     public function __construct(
-        private readonly EntityManagerInterface           $magentoEntityManager,
-        private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly LeadSenderServiceInterface       $leadSenderService,
-        private readonly FilesystemOperator               $customerStorage,
+        private readonly EntityManagerInterface     $magentoEntityManager,
+        private readonly CustomerLeadRepository     $customerLeadRepository,
+        private readonly LeadSenderServiceInterface $leadSenderService,
+        private readonly FilesystemOperator         $customerStorage,
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -36,7 +36,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
             //echo 'Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail();
             //echo 'DefaultBilling: ' . $mCustomer->getDefaultBilling();
 
-            $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
+            $lead = $this->customerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
             if ($lead === null) {
                 $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
 
@@ -69,14 +69,14 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     }
                 }
 
-                $this->salesforceCustomerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
             }
         }
     }
 
     public function sendCustomers():void
     {
-        $leads = $this->salesforceCustomerLeadRepository->findByStatusNew();
+        $leads = $this->customerLeadRepository->findByStatusNew();
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
@@ -97,7 +97,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     $lead->setAttachmentId($result[0]['attachmentId']);
                 }
 
-                $this->salesforceCustomerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
             } elseif (array_key_exists('message', $result[0])) {
                 $lead
                     ->setFileName($leadDto->getFileName())
@@ -105,7 +105,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setStatus($result[0]['status'])
                     ->setStatus(SalesforceCustomerLead::STATUS_ERROR);
 
-                $this->salesforceCustomerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
             }
         }
     }

@@ -14,7 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method SalesforceCustomerLead[]    findAll()
  * @method SalesforceCustomerLead[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class SalesforceCustomerLeadRepository extends ServiceEntityRepository
+class CustomerLeadRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

@@ -2,7 +2,7 @@
 
 namespace App\Entity\Main\Salesforce;
 
-use App\Repository\Main\Salesforce\SalesforceCustomerLeadRepository;
+use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDtoInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 //        new GetCollection(uriTemplate: '/customer_lead'),
 //    ]
 //)]
-#[ORM\Entity(repositoryClass: SalesforceCustomerLeadRepository::class)]
+#[ORM\Entity(repositoryClass: CustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
 #[ORM\Index(columns: ['customer_id', 'created_at'], name: 'idx_customer_created_at')]
 class SalesforceCustomerLead implements CustomerLeadDtoInterface
