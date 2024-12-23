@@ -2,17 +2,20 @@
 
 namespace App\Entity\Main\Salesforce;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDtoInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
-//#[ApiResource(
-//    operations: [
-//        new Get(uriTemplate: '/customer_lead/{id}'),
-//        new GetCollection(uriTemplate: '/customer_lead'),
-//    ]
-//)]
+#[ApiResource(
+    operations: [
+        new Get(uriTemplate: '/salesforce/customer_lead/{id}'),
+        new GetCollection(uriTemplate: '/salesforce/customer_lead'),
+    ]
+)]
 #[ORM\Entity(repositoryClass: CustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
 #[ORM\Index(columns: ['customer_id', 'created_at'], name: 'idx_customer_created_at')]
