@@ -14,7 +14,7 @@ php bin/console messenger:consume async_magento -vv
 
 php bin/console cache:clear --env=dev
 
-## Build
+## Build github
 ```
 docker build --tag magento-api-platform:v0.0.1 --file Dockerfile .
 docker run --rm -it --entrypoint=sh magento-api-platform:v0.0.1
@@ -25,6 +25,15 @@ docker images ghcr.io/developkosarev/*
 docker push ghcr.io/developkosarev/magento-api-platform:v0.0.1
 docker run -d -p 80:80 -p 443:443 --name magento-api-platform magento-api-platform:v0.0.1
 docker run -d -p 80:80 -p 443:443 --name magento-api-platform magento-api-platform:v0.0.2
+```
+
+## Build docker hub
+```
+docker build --tag magento-api-platform:v0.0.9 --file Dockerfile .
+docker tag magento-api-platform:v0.0.9 developkosarev/magento-api-platform:v0.0.9
+docker images developkosarev/*
+docker login -u developkosarev
+docker push developkosarev/magento-api-platform:v0.0.9 
 ```
 
 ## Tags

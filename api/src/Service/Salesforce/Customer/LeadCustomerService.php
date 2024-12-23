@@ -6,20 +6,31 @@ use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Service\Salesforce\Dto\CustomerCertificate;
+use App\Service\Salesforce\Dto\CustomerCertificateInterface;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use League\Flysystem\FilesystemOperator;
 
 class LeadCustomerService implements LeadCustomerServiceInterface
 {
+    public const CERTIFICATE_FILENAME = 'certificate';
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerAddressRepository;
+
+    private static array $certificateImages = [
+        ['certificate.jpg', 'image/jpg'],
+        ['certificate.png', 'image/png'],
+        ['certificate.pdf', 'application/pdf']
+    ];
 
     public function __construct(
         private readonly EntityManagerInterface           $magentoEntityManager,
         private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly LeadSenderServiceInterface       $leadSenderService
+        private readonly LeadSenderServiceInterface       $leadSenderService,
+        private readonly FilesystemOperator               $customerStorage,
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -60,8 +71,11 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                         ->setCountryId($address->getCountryId())
                         ->setStreet($address->getStreet())
                         ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode())
-                        ->setPhone($address->getTelephone());
+                        ->setPostcode($address->getPostcode());
+                    if (!empty($address->getTelephone())) {
+                        $lead
+                            ->setPhone($address->getTelephone());
+                    }
                 }
 
                 $this->salesforceCustomerLeadRepository->add($lead);
@@ -75,25 +89,62 @@ class LeadCustomerService implements LeadCustomerServiceInterface
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
+            $this->setCustomerCertificate($leadDto);
+
             $result = $this->leadSenderService->sendCustomer($leadDto);
-            var_dump($result);
+            //var_dump($result);
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead
+                    ->setFileName($leadDto->getFileName())
                     ->setLeadId($result[0]['leadId'])
                     ->setDescription($result[0]['type'])
                     ->setStatus($result[0]['status'])
                     ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
 
+                if (array_key_exists('attachmentId', $result[0])) {
+                    $lead->setAttachmentId($result[0]['attachmentId']);
+                }
+
                 $this->salesforceCustomerLeadRepository->add($lead);
             } elseif (array_key_exists('message', $result[0])) {
                 $lead
+                    ->setFileName($leadDto->getFileName())
                     ->setDescription(mb_substr($result[0]['message'], 0, 100))
                     ->setStatus($result[0]['status'])
                     ->setStatus(SalesforceCustomerLead::STATUS_ERROR);
 
                 $this->salesforceCustomerLeadRepository->add($lead);
             }
+        }
+    }
+
+    private function setCustomerCertificate(CustomerLeadDto $leadDto): void
+    {
+        $customerId = $leadDto->getCustomerId();
+
+        $resultFilename = null;
+        $resultFullFilename = null;
+        $resultContentType = null;
+        foreach (self::$certificateImages as [$filename, $contentType]) {
+            $fullFilename = "/therapists/{$customerId}/{$filename}";
+
+            $fileExists = $this->customerStorage->fileExists($fullFilename);
+            if ($fileExists) {
+                $resultFilename = $filename;
+                $resultFullFilename = $fullFilename;
+                $resultContentType = $contentType;
+                break;
+            }
+        }
+
+        if ($resultFullFilename) {
+            $content = $this->customerStorage->read($resultFullFilename);
+
+            $leadDto
+                ->setFileName($resultFilename)
+                ->setContentType($resultContentType)
+                ->setFileBase64(base64_encode($content));
         }
     }
 }

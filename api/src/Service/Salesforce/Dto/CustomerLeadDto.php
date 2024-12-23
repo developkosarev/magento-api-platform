@@ -57,6 +57,12 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     #[SerializedName('FileName')]
     private ?string $fileName;
 
+    #[SerializedName('FileBase64')]
+    private ?string $fileBase64;
+
+    #[SerializedName('ContentType')]
+    private ?string $contentType;
+
     #endregion
 
     #region Construct
@@ -251,6 +257,28 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
     public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
+        return $this;
+    }
+
+    public function getFileBase64(): ?string
+    {
+        return $this->fileBase64;
+    }
+
+    public function setFileBase64(?string $fileBase64): self
+    {
+        $this->fileBase64 = $fileBase64;
+        return $this;
+    }
+
+    public function getContentType(): ?string
+    {
+        return $this->contentType;
+    }
+
+    public function setContentType(?string $contentType): self
+    {
+        $this->contentType = $contentType;
         return $this;
     }
 
