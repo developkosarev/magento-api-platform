@@ -67,6 +67,11 @@ php bin/console mailer:test d.k@gmail.com --from=fs@gmail.com  --subject=test --
 php bin/console doctrine:fixtures:load
 ```
 
+## Curl
+```bash
+curl -k -X GET https://localhost/salesforce/customer_lead
+```
+
 ## Docs
 https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
 https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014
