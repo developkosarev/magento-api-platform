@@ -96,6 +96,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead
+                    ->setFileName($leadDto->getFileName())
                     ->setLeadId($result[0]['leadId'])
                     ->setDescription($result[0]['type'])
                     ->setStatus($result[0]['status'])
@@ -108,6 +109,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                 $this->salesforceCustomerLeadRepository->add($lead);
             } elseif (array_key_exists('message', $result[0])) {
                 $lead
+                    ->setFileName($leadDto->getFileName())
                     ->setDescription(mb_substr($result[0]['message'], 0, 100))
                     ->setStatus($result[0]['status'])
                     ->setStatus(SalesforceCustomerLead::STATUS_ERROR);
@@ -122,25 +124,27 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         $customerId = $leadDto->getCustomerId();
 
         $resultFilename = null;
+        $resultFullFilename = null;
         $resultContentType = null;
         foreach (self::$certificateImages as [$filename, $contentType]) {
-            $filename = "/therapists/{$customerId}/{$filename}";
+            $fullFilename = "/therapists/{$customerId}/{$filename}";
 
-            $fileExists = $this->customerStorage->fileExists($filename);
+            $fileExists = $this->customerStorage->fileExists($fullFilename);
             if ($fileExists) {
                 $resultFilename = $filename;
+                $resultFullFilename = $fullFilename;
                 $resultContentType = $contentType;
                 break;
             }
         }
 
-        if ($resultFilename) {
-            $str = $this->customerStorage->read($filename);
+        if ($resultFullFilename) {
+            $content = $this->customerStorage->read($resultFullFilename);
 
             $leadDto
                 ->setFileName($resultFilename)
                 ->setContentType($resultContentType)
-                ->setFileBase64(base64_encode($str));
+                ->setFileBase64(base64_encode($content));
         }
     }
 }

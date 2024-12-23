@@ -8,6 +8,7 @@ use App\Repository\Magento\CustomerAddressRepository;
 use App\Repository\Magento\CustomerRepository;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Customer\LeadCustomerService;
+use App\Service\Salesforce\Customer\LeadCustomerServiceInterface;
 use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
@@ -27,24 +28,39 @@ class LeadCustomerServiceTest extends KernelTestCase
         self::$salesforceCustomerLeadRepository = $container->get(SalesforceCustomerLeadRepository::class);
     }
 
-    public function testLeadCustomerSerialize()
+    public function testLeadCustomerPopulate()
     {
-        $leadCustomerService = new LeadCustomerService(
-            $this->mockEntityManager(),
-            self::$salesforceCustomerLeadRepository,
-            $this->mockLeadSenderService(),
-            $this->mockFilesystemOperator()
-        );
+        $leadCustomerService = $this->createLeadCustomerService();
 
         $startDate = \DateTime::createFromFormat("Y-m-d", '2024-01-01');
         $endDate = \DateTime::createFromFormat("Y-m-d", '2024-02-01');
         $leadCustomerService->populateCustomers($startDate, $endDate);
 
-        $result = [];
+        $lead = self::$salesforceCustomerLeadRepository->findOneBy(['email' => self::EMAIL]);
 
-        $body = [];
+        $this->assertEquals(self::EMAIL, $lead->getEmail());
+        $this->assertEquals(self::BIRTHDAY, $lead->getBirthday()->format('Y-m-d'));
+    }
 
-        $this->assertEquals($body, $result);
+    public function testLeadSendCustomers()
+    {
+        $leadCustomerService = $this->createLeadCustomerService();
+        $leadCustomerService->sendCustomers();
+
+        $lead = self::$salesforceCustomerLeadRepository->findOneBy(['email' => self::EMAIL]);
+
+        $this->assertEquals(self::EMAIL, $lead->getEmail());
+        $this->assertEquals(self::BIRTHDAY, $lead->getBirthday()->format('Y-m-d'));
+    }
+
+    private function createLeadCustomerService(): LeadCustomerServiceInterface
+    {
+        return new LeadCustomerService(
+            $this->mockEntityManager(),
+            self::$salesforceCustomerLeadRepository,
+            $this->mockLeadSenderService(),
+            $this->mockFilesystemOperator()
+        );
     }
 
     private function mockEntityManager(): EntityManagerInterface
@@ -86,6 +102,11 @@ class LeadCustomerServiceTest extends KernelTestCase
     private function mockLeadSenderService(): LeadSenderServiceInterface
     {
         $result = $this->createMock(LeadSenderServiceInterface::class);
+        $result->expects($this->any())
+            ->method('sendCustomer')
+            ->willReturn([
+                ['leadId' => 'Test', 'type' => 'test', 'status' => 'success']
+            ]);
 
         return $result;
     }
@@ -95,7 +116,10 @@ class LeadCustomerServiceTest extends KernelTestCase
         $result = $this->createMock(FilesystemOperator::class);
         $result->expects($this->any())
             ->method('fileExists')
-            ->willReturn(false);
+            ->willReturn(true);
+        $result->expects($this->any())
+            ->method('read')
+            ->willReturn('file');
 
         return $result;
     }
