@@ -6,7 +6,7 @@ use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Repository\Magento\CustomerAddressRepository;
 use App\Repository\Magento\CustomerRepository;
-use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Customer\LeadCustomerService;
 use App\Service\Salesforce\Customer\LeadCustomerServiceInterface;
 use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
@@ -19,13 +19,13 @@ class LeadCustomerServiceTest extends KernelTestCase
     private const EMAIL = 'test@test.test';
     private const BIRTHDAY = '2000-01-01';
 
-    private static SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository;
+    private static CustomerLeadRepository $customerLeadRepository;
 
     public static function setUpBeforeClass(): void
     {
         self::bootKernel();
         $container = static::getContainer();
-        self::$salesforceCustomerLeadRepository = $container->get(SalesforceCustomerLeadRepository::class);
+        self::$customerLeadRepository = $container->get(CustomerLeadRepository::class);
     }
 
     public function testLeadCustomerPopulate()
@@ -36,7 +36,7 @@ class LeadCustomerServiceTest extends KernelTestCase
         $endDate = \DateTime::createFromFormat("Y-m-d", '2024-02-01');
         $leadCustomerService->populateCustomers($startDate, $endDate);
 
-        $lead = self::$salesforceCustomerLeadRepository->findOneBy(['email' => self::EMAIL]);
+        $lead = self::$customerLeadRepository->findOneBy(['email' => self::EMAIL]);
 
         $this->assertEquals(self::EMAIL, $lead->getEmail());
         $this->assertEquals(self::BIRTHDAY, $lead->getBirthday()->format('Y-m-d'));
@@ -47,7 +47,7 @@ class LeadCustomerServiceTest extends KernelTestCase
         $leadCustomerService = $this->createLeadCustomerService();
         $leadCustomerService->sendCustomers();
 
-        $lead = self::$salesforceCustomerLeadRepository->findOneBy(['email' => self::EMAIL]);
+        $lead = self::$customerLeadRepository->findOneBy(['email' => self::EMAIL]);
 
         $this->assertEquals(self::EMAIL, $lead->getEmail());
         $this->assertEquals(self::BIRTHDAY, $lead->getBirthday()->format('Y-m-d'));
@@ -57,7 +57,7 @@ class LeadCustomerServiceTest extends KernelTestCase
     {
         return new LeadCustomerService(
             $this->mockEntityManager(),
-            self::$salesforceCustomerLeadRepository,
+            self::$customerLeadRepository,
             $this->mockLeadSenderService(),
             $this->mockFilesystemOperator()
         );

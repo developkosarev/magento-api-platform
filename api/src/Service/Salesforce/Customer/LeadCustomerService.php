@@ -4,8 +4,8 @@ namespace App\Service\Salesforce\Customer;
 
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
-use App\Entity\Main\Salesforce\SalesforceCustomerLead;
-use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Entity\Main\Salesforce\CustomerLead;
+use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,10 +18,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
     private EntityRepository $mCustomerAddressRepository;
 
     public function __construct(
-        private readonly EntityManagerInterface           $magentoEntityManager,
-        private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
-        private readonly LeadSenderServiceInterface       $leadSenderService,
-        private readonly FilesystemOperator               $customerStorage,
+        private readonly EntityManagerInterface     $magentoEntityManager,
+        private readonly CustomerLeadRepository     $customerLeadRepository,
+        private readonly LeadSenderServiceInterface $leadSenderService,
+        private readonly FilesystemOperator         $customerStorage,
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -36,14 +36,14 @@ class LeadCustomerService implements LeadCustomerServiceInterface
             //echo 'Id: ' . $mCustomer->getId() . ', Email: ' . $mCustomer->getEmail();
             //echo 'DefaultBilling: ' . $mCustomer->getDefaultBilling();
 
-            $lead = $this->salesforceCustomerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
+            $lead = $this->customerLeadRepository->findOneBy(['customerId' => $mCustomer->getId()]);
             if ($lead === null) {
                 $address = $this->mCustomerAddressRepository->find($mCustomer->getDefaultBilling());
 
-                $lead = new SalesforceCustomerLead();
+                $lead = new CustomerLead();
                 $lead
-                    ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
-                    ->setStatus(SalesforceCustomerLead::STATUS_NEW);
+                    ->setLeadStatus(CustomerLead::LEAD_STATUS_NEW)
+                    ->setStatus(CustomerLead::STATUS_NEW);
 
                 $lead
                     ->setEmail($mCustomer->getEmail())
@@ -69,14 +69,14 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     }
                 }
 
-                $this->salesforceCustomerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
             }
         }
     }
 
     public function sendCustomers():void
     {
-        $leads = $this->salesforceCustomerLeadRepository->findByStatusNew();
+        $leads = $this->customerLeadRepository->findByStatusNew();
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
@@ -91,21 +91,21 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setLeadId($result[0]['leadId'])
                     ->setDescription($result[0]['type'])
                     ->setStatus($result[0]['status'])
-                    ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
+                    ->setStatus(CustomerLead::STATUS_PROCESSED);
 
                 if (array_key_exists('attachmentId', $result[0])) {
                     $lead->setAttachmentId($result[0]['attachmentId']);
                 }
 
-                $this->salesforceCustomerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
             } elseif (array_key_exists('message', $result[0])) {
                 $lead
                     ->setFileName($leadDto->getFileName())
                     ->setDescription(mb_substr($result[0]['message'], 0, 100))
                     ->setStatus($result[0]['status'])
-                    ->setStatus(SalesforceCustomerLead::STATUS_ERROR);
+                    ->setStatus(CustomerLead::STATUS_ERROR);
 
-                $this->salesforceCustomerLeadRepository->add($lead);
+                $this->customerLeadRepository->add($lead);
             }
         }
     }

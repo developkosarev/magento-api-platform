@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Main\Salesforce\SalesforceCustomerLead;
+use App\Entity\Main\Salesforce\CustomerLead;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use League\Flysystem\FilesystemOperator;
@@ -17,9 +17,9 @@ class SalesforceCustomerLeadFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         for ($i = 1; $i < 3; $i++) {
-            $lead = new SalesforceCustomerLead();
+            $lead = new CustomerLead();
             $lead
-                ->setLeadStatus(SalesforceCustomerLead::LEAD_STATUS_NEW)
+                ->setLeadStatus(CustomerLead::LEAD_STATUS_NEW)
                 ->setEmail('customer' . $i . '@example.com')
                 ->setWebsiteId(1)
                 ->setCustomerId($i)
@@ -34,7 +34,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
                 ->setFileName('meteor-shower.jpg')
                 ->setPostcode('10000')
                 ->setLeadId('00Q9V00000KTZdBUAX')
-                ->setStatus(SalesforceCustomerLead::STATUS_PROCESSED);
+                ->setStatus(CustomerLead::STATUS_PROCESSED);
 
             $manager->persist($lead);
             $manager->flush();
@@ -47,7 +47,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
         $manager->flush();
     }
 
-    private function uploadFile(SalesforceCustomerLead $lead): void
+    private function uploadFile(CustomerLead $lead): void
     {
         $fixtureFilename = __DIR__ . '/images/meteor-shower.jpg';
 
@@ -58,7 +58,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
         $this->customerStorage->write($filename, file_get_contents($fixtureFilename));
     }
 
-    private function createUnique(SalesforceCustomerLead $lead): void
+    private function createUnique(CustomerLead $lead): void
     {
         $firstname = sha1('FirstName' . $lead->getId());
         $lastname = sha1('FirstName' . $lead->getId());
@@ -69,7 +69,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
             ->setLastName($lastname);
     }
 
-    //private function uploadCertificate(SalesforceCustomerLead $lead): void
+    //private function uploadCertificate(CustomerLead $lead): void
     //{
     //    $fs = new Filesystem();
     //    $targetPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'meteor-shower.jpg';
