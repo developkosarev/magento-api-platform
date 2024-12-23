@@ -5,7 +5,7 @@ namespace App\Service\Salesforce\Customer;
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\Salesforce\SalesforceCustomerLead;
-use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Repository\Main\Salesforce\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;

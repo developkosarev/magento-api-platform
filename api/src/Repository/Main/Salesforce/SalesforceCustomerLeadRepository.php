@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository\Main;
+namespace App\Repository\Main\Salesforce;
 
 use App\Entity\Main\Salesforce\SalesforceCustomerLead;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

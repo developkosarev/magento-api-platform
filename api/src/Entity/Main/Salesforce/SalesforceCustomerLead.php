@@ -2,7 +2,7 @@
 
 namespace App\Entity\Main\Salesforce;
 
-use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Repository\Main\Salesforce\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Dto\CustomerLeadDtoInterface;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;

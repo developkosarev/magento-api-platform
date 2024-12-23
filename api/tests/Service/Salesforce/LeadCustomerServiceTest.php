@@ -6,7 +6,7 @@ use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Repository\Magento\CustomerAddressRepository;
 use App\Repository\Magento\CustomerRepository;
-use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Repository\Main\Salesforce\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Customer\LeadCustomerService;
 use App\Service\Salesforce\Customer\LeadCustomerServiceInterface;
 use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
