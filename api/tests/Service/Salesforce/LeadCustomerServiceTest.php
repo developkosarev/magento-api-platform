@@ -10,7 +10,7 @@ use App\Repository\Main\SalesforceCustomerLeadRepository;
 use App\Service\Salesforce\Customer\LeadCustomerService;
 use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class LeadCustomerServiceTest extends KernelTestCase
@@ -32,7 +32,8 @@ class LeadCustomerServiceTest extends KernelTestCase
         $leadCustomerService = new LeadCustomerService(
             $this->mockEntityManager(),
             self::$salesforceCustomerLeadRepository,
-            $this->mockLeadSenderService()
+            $this->mockLeadSenderService(),
+            $this->mockFilesystemOperator()
         );
 
         $startDate = \DateTime::createFromFormat("Y-m-d", '2024-01-01');
@@ -85,6 +86,16 @@ class LeadCustomerServiceTest extends KernelTestCase
     private function mockLeadSenderService(): LeadSenderServiceInterface
     {
         $result = $this->createMock(LeadSenderServiceInterface::class);
+
+        return $result;
+    }
+
+    private function mockFilesystemOperator(): FilesystemOperator
+    {
+        $result = $this->createMock(FilesystemOperator::class);
+        $result->expects($this->any())
+            ->method('fileExists')
+            ->willReturn(false);
 
         return $result;
     }

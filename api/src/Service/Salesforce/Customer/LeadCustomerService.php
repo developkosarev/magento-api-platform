@@ -6,6 +6,8 @@ use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\SalesforceCustomerLead;
 use App\Repository\Main\SalesforceCustomerLeadRepository;
+use App\Service\Salesforce\Dto\CustomerCertificate;
+use App\Service\Salesforce\Dto\CustomerCertificateInterface;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,14 +16,21 @@ use League\Flysystem\FilesystemOperator;
 
 class LeadCustomerService implements LeadCustomerServiceInterface
 {
+    public const CERTIFICATE_FILENAME = 'certificate';
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerAddressRepository;
+
+    private static array $certificateImages = [
+        ['certificate.jpg', 'image/jpg'],
+        ['certificate.png', 'image/png'],
+        ['certificate.pdf', 'application/pdf']
+    ];
 
     public function __construct(
         private readonly EntityManagerInterface           $magentoEntityManager,
         private readonly SalesforceCustomerLeadRepository $salesforceCustomerLeadRepository,
         private readonly LeadSenderServiceInterface       $leadSenderService,
-        private readonly FilesystemOperator $customerStorage,
+        private readonly FilesystemOperator               $customerStorage,
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
@@ -80,13 +89,10 @@ class LeadCustomerService implements LeadCustomerServiceInterface
 
         foreach ($leads as $lead) {
             $leadDto = CustomerLeadDto::createByInterface($lead);
-            $leadDto
-                ->setFileName('meteor-shower.jpg')
-                ->setFileBase64($this->getCertificate('1'))
-                ->setContentType('image/jpeg');
+            $this->setCustomerCertificate($leadDto);
 
             $result = $this->leadSenderService->sendCustomer($leadDto);
-            var_dump($result);
+            //var_dump($result);
 
             if (array_key_exists('leadId', $result[0])) {
                 $lead
@@ -111,11 +117,30 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         }
     }
 
-    private function getCertificate(string $customerId): ?string
+    private function setCustomerCertificate(CustomerLeadDto $leadDto): void
     {
-        $filename = "/therapists/{$customerId}/meteor-shower.jpg";
-        $str =$this->customerStorage->read($filename);
+        $customerId = $leadDto->getCustomerId();
 
-        return base64_encode($str);
+        $resultFilename = null;
+        $resultContentType = null;
+        foreach (self::$certificateImages as [$filename, $contentType]) {
+            $filename = "/therapists/{$customerId}/{$filename}";
+
+            $fileExists = $this->customerStorage->fileExists($filename);
+            if ($fileExists) {
+                $resultFilename = $filename;
+                $resultContentType = $contentType;
+                break;
+            }
+        }
+
+        if ($resultFilename) {
+            $str = $this->customerStorage->read($filename);
+
+            $leadDto
+                ->setFileName($resultFilename)
+                ->setContentType($resultContentType)
+                ->setFileBase64(base64_encode($str));
+        }
     }
 }

@@ -13,6 +13,8 @@ interface CustomerLeadDtoInterface
     public const STATUS_PROCESSED = 'PROCESSED';
     public const STATUS_ERROR = 'ERROR';
 
+    public const CERTIFICATE_FILENAME = 'meteor-shower.jpg';
+
     public function getCustomerId(): ?string;
     public function getEmail(): ?string;
     public function getFirstName(): ?string;
