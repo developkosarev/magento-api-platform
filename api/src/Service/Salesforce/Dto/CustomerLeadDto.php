@@ -28,40 +28,40 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
 
     #[SerializedName('Birthday')]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
-    public ?DateTime $birthday;
+    public ?DateTime $birthday = null;
 
     #[SerializedName('Specialties')]
-    public ?string $specialties;
+    public ?string $specialties = null;
 
     #[SerializedName('PostalCode')]
-    private ?string $postcode;
+    private ?string $postcode = null;
 
     #[SerializedName('City')]
-    private ?string $city;
+    private ?string $city = null;
 
     #[SerializedName('Country')]
-    private ?string $countryId;
+    private ?string $countryId = null;
 
     #[SerializedName('Phone')]
-    private ?string $phone;
+    private ?string $phone = null;
 
     #[SerializedName('Company')]
-    private ?string $company;
+    private ?string $company = null;
 
     #[SerializedName('VAT_Number')]
-    private ?string $taxvat;
+    private ?string $taxvat = null;
 
     #[SerializedName('Status')]
-    private ?string $status;
+    private ?string $status = null;
 
     #[SerializedName('FileName')]
-    private ?string $fileName;
+    private ?string $fileName = null;
 
     #[SerializedName('FileBase64')]
-    private ?string $fileBase64;
+    private ?string $fileBase64 = null;
 
     #[SerializedName('ContentType')]
-    private ?string $contentType;
+    private ?string $contentType = null;
 
     #endregion
 
@@ -72,7 +72,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
-        ?DateTime $birthday,
+        DateTime $birthday,
         ?string $specialties,
         ?string $street,
         ?string $postcode,
@@ -104,7 +104,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
-        ?DateTime $birthday,
+        DateTime $birthday,
         ?string $specialties,
         ?string $street,
         ?string $postcode,
@@ -175,7 +175,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->lastName;
     }
 
-    public function getBirthday(): ?DateTime
+    public function getBirthday(): DateTime
     {
         return $this->birthday;
     }

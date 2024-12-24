@@ -19,7 +19,7 @@ interface CustomerLeadDtoInterface
     public function getEmail(): ?string;
     public function getFirstName(): ?string;
     public function getLastName(): ?string;
-    public function getBirthday(): ?DateTime;
+    public function getBirthday(): DateTime;
     public function getSpecialties(): ?string;
     public function getStreet(): ?string;
     public function getPostcode(): ?string;
