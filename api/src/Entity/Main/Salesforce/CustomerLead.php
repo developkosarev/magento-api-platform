@@ -113,6 +113,7 @@ class CustomerLead implements CustomerLeadDtoInterface
     {
         $this->createdAt = new \DateTime();
         $this->leadStatus = self::LEAD_STATUS_NEW;
+        $this->birthday = \DateTime::createFromFormat('Y-m-d', '1980-01-01');
     }
 
     #endregion
@@ -195,8 +196,12 @@ class CustomerLead implements CustomerLeadDtoInterface
         return $this;
     }
 
-    public function getBirthday(): ?DateTime
+    public function getBirthday(): DateTime
     {
+        if ($this->birthday === null) {
+            return \DateTime::createFromFormat('Y-m-d', '1980-01-01');
+        }
+
         return $this->birthday;
     }
 

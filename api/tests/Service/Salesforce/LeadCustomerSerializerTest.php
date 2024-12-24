@@ -2,6 +2,7 @@
 
 namespace App\Tests\Service\Salesforce;
 
+use App\Entity\Main\Salesforce\CustomerLead;
 use App\Service\Salesforce\Customer\LeadCustomerSerializer;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -24,7 +25,8 @@ class LeadCustomerSerializerTest extends KernelTestCase
 
     public function testLeadCustomerSerialize()
     {
-        $result = self::$leadCustomerSerializer->normalize($this->createLeadCustomer());
+        $result = self::$leadCustomerSerializer->normalize($this->createCustomerLeadDto());
+        //$result = self::$leadCustomerSerializer->normalize($this->createCustomerLead());
 
         $body = [
             'CustomerID' => '1',
@@ -45,7 +47,7 @@ class LeadCustomerSerializerTest extends KernelTestCase
 
     public function testLeadCompanySerialize()
     {
-        $result = self::$leadCustomerSerializer->normalize($this->createLeadCompany());
+        $result = self::$leadCustomerSerializer->normalize($this->createCompanyLeadDto());
 
         $body = [
             'CustomerID' => '1',
@@ -67,7 +69,7 @@ class LeadCustomerSerializerTest extends KernelTestCase
         $this->assertEquals($body, $result);
     }
 
-    private function createLeadCustomer(): CustomerLeadDto
+    private function createCustomerLeadDto(): CustomerLeadDto
     {
         return new CustomerLeadDto(
             1,
@@ -86,7 +88,7 @@ class LeadCustomerSerializerTest extends KernelTestCase
         );
     }
 
-    private function createLeadCompany(): CustomerLeadDto
+    private function createCompanyLeadDto(): CustomerLeadDto
     {
         return new CustomerLeadDto(
             1,
@@ -103,5 +105,26 @@ class LeadCustomerSerializerTest extends KernelTestCase
             'Company',
             '222222'
         );
+    }
+
+    private function createCustomerLead(): CustomerLead
+    {
+        $lead = new CustomerLead();
+        $lead
+            ->setCustomerId(1)
+            ->setEmail(self::EMAIL)
+            ->setFirstName(self::FIRSTNAME)
+            ->setLastName(self::LASTNAME)
+            ->setBirthday(\DateTime::createFromFormat('Y-m-d', self::BIRTHDAY))
+            ->setSpecialties('1871')
+            ->setStreet('Kurfürstendamm')
+            ->setPostcode('10000')
+            ->setCity('Berlin')
+            ->setCountryId('DE')
+            ->setPhone(null)
+            ->setCompany(null)
+            ->setTaxvat(null);
+
+        return $lead;
     }
 }
