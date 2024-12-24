@@ -51,7 +51,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setCustomerId($mCustomer->getId())
                     ->setFirstName($mCustomer->getFirstName())
                     ->setLastName($mCustomer->getLastName())
-                    ->setBirthday(\DateTime::createFromFormat('Y-m-d',$mCustomer->getDob()))
+                    ->setBirthday($mCustomer->getDob())
                     ->setSpecialties($mCustomer->getSpecialties())
                     ->setTaxvat($mCustomer->getTaxvat());
 
