@@ -19,13 +19,18 @@ final class LeadCustomerHandler
     public function __invoke(LeadCustomer $message)
     {
         //Current
-        $startDate = \DateTime::createFromFormat('Y-m-d', date('Y-m-01'))
-            ->setTime(0, 0);
+        $startDate = \DateTime::createFromFormat('Y-m-d', date('Y-m-01'))->setTime(0, 0);
         $endDate = \DateTime::createFromFormat('Y-m-d', date("Y-m-01", strtotime('+1 month')))
             ->setTime(0, 0);
 
         //https://unicode-explorer.com/emoji/brown-heart
-        $this->logger->warning(str_repeat('🤎', 5) . ' New customer lead (populate)');
+        $msg = sprintf(
+            ' New customer lead (populate) from "%s" to "%s"',
+            $startDate->format('Y-m-d'),
+            $endDate->format('Y-m-d')
+        );
+
+        $this->logger->warning(str_repeat('🤎', 5) . $msg);
         $this->leadCustomerService->populateCustomers($startDate, $endDate);
 
         $this->logger->warning(str_repeat('🤎', 5) . ' New customer lead (send customers)');

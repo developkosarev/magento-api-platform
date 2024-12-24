@@ -200,9 +200,14 @@ class CustomerLead implements CustomerLeadDtoInterface
         return $this->birthday;
     }
 
-    public function setBirthday(?DateTime $birthday): self
+    public function setBirthday(DateTime|string|null $birthday): self
     {
-        $this->birthday = $birthday;
+        if (is_string($birthday)) {
+            $this->birthday = \DateTime::createFromFormat('Y-m-d', $birthday);
+        } else {
+            $this->birthday = $birthday;
+        }
+
         return $this;
     }
 
