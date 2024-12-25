@@ -71,40 +71,45 @@ class LeadCustomerSerializerTest extends KernelTestCase
 
     private function createCustomerLeadDto(): CustomerLeadDto
     {
-        return new CustomerLeadDto(
+        $leadDto = new CustomerLeadDto(
             1,
             self::EMAIL,
             self::FIRSTNAME,
             self::LASTNAME,
-            \DateTime::createFromFormat('Y-m-d', self::BIRTHDAY),
-            1871,
-            'Kurfürstendamm',
-            '10000',
-            'Berlin',
-            'DE',
-            null,
-            null,
-            null,
+            \DateTime::createFromFormat('Y-m-d', self::BIRTHDAY)
         );
+
+        $leadDto
+            ->setSpecialties(1871)
+            ->setStreet('Kurfürstendamm')
+            ->setPostcode('10000')
+            ->setCity('Berlin')
+            ->setCountryId('DE');
+
+        return $leadDto;
     }
 
     private function createCompanyLeadDto(): CustomerLeadDto
     {
-        return new CustomerLeadDto(
+        $leadDto = new CustomerLeadDto(
             1,
             self::EMAIL,
-            'FirstName',
-            'LastName',
-            \DateTime::createFromFormat('Y-m-d', self::BIRTHDAY),
-            1871,
-            'Kurfürstendamm',
-            '10000',
-            'Berlin',
-            'DE',
-            '1111111111',
-            'Company',
-            '222222'
+            self::FIRSTNAME,
+            self::LASTNAME,
+            \DateTime::createFromFormat('Y-m-d', self::BIRTHDAY)
         );
+
+        $leadDto
+            ->setSpecialties(1871)
+            ->setStreet('Kurfürstendamm')
+            ->setPostcode('10000')
+            ->setCity('Berlin')
+            ->setCountryId('DE')
+            ->setPhone('1111111111')
+            ->setCompany('Company')
+            ->setTaxVat('222222');
+
+        return $leadDto;
     }
 
     private function createCustomerLead(): CustomerLead

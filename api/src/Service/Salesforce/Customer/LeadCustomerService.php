@@ -17,6 +17,12 @@ class LeadCustomerService implements LeadCustomerServiceInterface
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerAddressRepository;
 
+    private array $certificateImages = [
+        ['certificate.jpg', 'image/jpg'],
+        ['certificate.png', 'image/png'],
+        ['certificate.pdf', 'application/pdf']
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface     $magentoEntityManager,
         private readonly CustomerLeadRepository     $customerLeadRepository,
@@ -117,7 +123,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         $resultFilename = null;
         $resultFullFilename = null;
         $resultContentType = null;
-        foreach ($this->getCertificateImages() as [$filename, $contentType]) {
+        foreach ($this->certificateImages as [$filename, $contentType]) {
             $fullFilename = "/therapists/{$customerId}/{$filename}";
 
             $fileExists = $this->customerStorage->fileExists($fullFilename);
@@ -137,14 +143,5 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                 ->setContentType($resultContentType)
                 ->setFileBase64(base64_encode($content));
         }
-    }
-
-    private function getCertificateImages(): array
-    {
-        return [
-            ['certificate.jpg', 'image/jpg'],
-            ['certificate.png', 'image/png'],
-            ['certificate.pdf', 'application/pdf']
-        ];
     }
 }
