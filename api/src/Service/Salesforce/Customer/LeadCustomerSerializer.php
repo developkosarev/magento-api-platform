@@ -6,10 +6,10 @@ use App\Service\Salesforce\Dto\CustomerLeadDto;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class LeadCustomerSerializer
+readonly class LeadCustomerSerializer
 {
     public function __construct(
-        private readonly SerializerInterface $serializer
+        private SerializerInterface $serializer
     ) {}
 
     public function normalize(CustomerLeadDto $customerLead)

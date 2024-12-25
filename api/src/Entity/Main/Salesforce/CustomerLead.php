@@ -63,13 +63,13 @@ class CustomerLead implements CustomerLeadDtoInterface
     private ?string $email;
 
     #[ORM\Column(name: 'phone', type: 'string', length: 100, nullable: true)]
-    private ?string $phone;
+    private ?string $phone = null;
 
     #[ORM\Column(name: 'taxvat', type: 'string', length: 50, nullable: true)]
-    private ?string $taxvat;
+    private ?string $taxvat = null;
 
     #[ORM\Column(name: 'company', type: 'string', length: 255, nullable: true)]
-    private ?string $company;
+    private ?string $company = null;
 
     #[ORM\Column(name: 'country_id', type: 'string', length: 255, nullable: true)]
     private ?string $countryId;

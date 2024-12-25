@@ -72,15 +72,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
-        DateTime $birthday,
-        ?string $specialties,
-        ?string $street,
-        ?string $postcode,
-        ?string $city,
-        ?string $countryId,
-        ?string $phone,
-        ?string $company,
-        ?string $taxvat
+        DateTime $birthday
     )
     {
         $this->customerId = $customerId;
@@ -88,14 +80,6 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->birthday = $birthday;
-        $this->specialties = $specialties;
-        $this->street = $street;
-        $this->postcode = $postcode;
-        $this->city = $city;
-        $this->countryId = $countryId;
-        $this->phone = $phone;
-        $this->company = $company;
-        $this->taxvat = $taxvat;
         $this->status = CustomerLeadDtoInterface::STATUS_NEW;
     }
 
@@ -104,15 +88,7 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         string $email,
         string $firstName,
         string $lastName,
-        DateTime $birthday,
-        ?string $specialties,
-        ?string $street,
-        ?string $postcode,
-        ?string $city,
-        ?string $countryId,
-        ?string $phone,
-        ?string $company,
-        ?string $taxvat
+        DateTime $birthday
     ): CustomerLeadDto
     {
         return new self(
@@ -120,35 +96,31 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
             $email,
             $firstName,
             $lastName,
-            $birthday,
-            $specialties,
-            $street,
-            $postcode,
-            $city,
-            $countryId,
-            $phone,
-            $company,
-            $taxvat
+            $birthday
         );
     }
 
     public static function createByInterface(CustomerLeadDtoInterface $lead): CustomerLeadDto
     {
-        return new self(
+        $leadDto = self::create(
             $lead->getCustomerId(),
             $lead->getEmail(),
             $lead->getFirstName(),
             $lead->getLastName(),
-            $lead->getBirthday(),
-            $lead->getSpecialties(),
-            $lead->getStreet(),
-            $lead->getPostcode(),
-            $lead->getCity(),
-            $lead->getCountryId(),
-            $lead->getPhone(),
-            $lead->getCompany(),
-            $lead->getTaxvat()
+            $lead->getBirthday()
         );
+
+        $leadDto
+            ->setSpecialties($lead->getSpecialties())
+            ->setStreet($lead->getStreet())
+            ->setPostcode($lead->getPostcode())
+            ->setCity($lead->getCity())
+            ->setCountryId($lead->getCountryId())
+            ->setPhone($lead->getPhone())
+            ->setCompany($lead->getCompany())
+            ->setTaxVat($lead->getTaxvat());
+
+        return $leadDto;
     }
 
     #endregion
@@ -185,9 +157,21 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->specialties;
     }
 
+    public function setSpecialties(?string $specialties): self
+    {
+        $this->specialties = $specialties;
+        return $this;
+    }
+
     public function getStreet(): ?string
     {
         return $this->street;
+    }
+
+    public function setStreet(?string $street): self
+    {
+        $this->street = $street;
+        return $this;
     }
 
     public function getPostcode(): ?string
@@ -195,9 +179,21 @@ class CustomerLeadDto implements CustomerLeadDtoInterface
         return $this->postcode;
     }
 
+    public function setPostcode(?string $postcode): self
+    {
+        $this->postcode = $postcode;
+        return $this;
+    }
+
     public function getCity(): ?string
     {
         return $this->city;
+    }
+
+    public function setCity(?string $city): self
+    {
+        $this->city = $city;
+        return $this;
     }
 
     public function getCountryId(): ?string
