@@ -37,6 +37,15 @@ docker login -u developkosarev
 docker push developkosarev/magento-api-platform:v0.0.9 
 ```
 
+## Build AWS ecr
+```
+docker build --tag magento-api-platform:aws0.0.1 --file Dockerfile .
+docker tag magento-api-platform:aws0.0.1 801404438871.dkr.ecr.eu-central-1.amazonaws.com/sunday/magento-api-platform:aws0.0.1
+docker images "801404438871.dkr.ecr.eu-central-1.amazonaws.com/sunday/*"
+aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 801404438871.dkr.ecr.eu-central-1.amazonaws.com
+docker push 801404438871.dkr.ecr.eu-central-1.amazonaws.com/sunday/magento-api-platform:aws0.0.1
+```
+
 ## Tags
 ```
 git tag v0.0.3
