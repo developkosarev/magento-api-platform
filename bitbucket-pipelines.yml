@@ -1,5 +1,10 @@
 image: python:3.8
 
+definitions:
+  services:
+    docker:
+      memory: 3072  # Increase memory for docker service to 3GB
+
 pipelines:
     custom:
         build-push:
