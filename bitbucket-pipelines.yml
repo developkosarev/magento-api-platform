@@ -1,10 +1,14 @@
-image: atlassian/default-image:4
+image: python:3.7.4-alpine3.10
 
 pipelines:
     custom:
         build-push:
             - step:
                 name: Build and Push to ECR
+                services:
+                    - docker
+                caches:
+                    - pip
                 script:
                     # 1. Define Variables
                     - IMAGE_NAME=magento-api-platform
@@ -14,7 +18,8 @@ pipelines:
                     - TAG=aws0.0.2
                     
                     # 2. Install Dependencies
-                    - apt-get update && apt-get install -y awscli
+                    #- apt-get update && apt-get install -y awscli
+                    - pip3 install awscli
                     
                     # 3. Build Docker Image
                     - ls
@@ -35,6 +40,4 @@ pipelines:
                     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URL
 
                     # 7. Push Docker Image to ECR
-                    - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
-                services:
-                    - docker
+                    - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG                
