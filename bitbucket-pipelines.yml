@@ -26,7 +26,7 @@ pipelines:
                     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URL
                     
                     # 5. Build Docker Image
-                    - docker build --tag $IMAGE_NAME:$TAG -file api/Dockerfile .
+                    - docker build --tag $IMAGE_NAME:$TAG --file api/Dockerfile .
                     
                     # 6. Tag Docker Image
                     - docker tag $IMAGE_NAME:$TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
