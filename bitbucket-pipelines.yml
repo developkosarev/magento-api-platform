@@ -14,23 +14,23 @@ pipelines:
                     - TAG=aws0.0.2
                     
                     # 2. Install Dependencies
-                    - apt-get update && apt-get install -y awscli docker
+                    - apt-get update && apt-get install -y awscli docker                                        
                     
-                    # 3. Configure AWS Credentials
+                    # 3. Build Docker Image
+                    - docker build --tag $IMAGE_NAME:$TAG --file api/Dockerfile .
+                    
+                    # 4. Tag Docker Image
+                    - docker tag $IMAGE_NAME:$TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
+                    
+                    # 5. Configure AWS Credentials
                     # Make sure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set in Bitbucket Repository Variables
                     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
                     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
                     - aws configure set region $AWS_REGION
                     
-                    # 4. Authenticate Docker with ECR
+                    # 6. Authenticate Docker with ECR
                     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URL
-                    
-                    # 5. Build Docker Image
-                    - docker build --tag $IMAGE_NAME:$TAG --file api/Dockerfile .
-                    
-                    # 6. Tag Docker Image
-                    - docker tag $IMAGE_NAME:$TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
-                    
+
                     # 7. Push Docker Image to ECR
                     - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
                 services:
