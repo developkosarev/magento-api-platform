@@ -17,7 +17,9 @@ pipelines:
                     - apt-get update && apt-get install -y awscli docker                                        
                     
                     # 3. Build Docker Image
-                    - docker build --tag $IMAGE_NAME:$TAG --file api/Dockerfile .
+                    - ls
+                    - cd api
+                    - docker build --tag $IMAGE_NAME:$TAG --file Dockerfile .
                     
                     # 4. Tag Docker Image
                     - docker tag $IMAGE_NAME:$TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
