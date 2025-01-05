@@ -6,6 +6,7 @@ use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\Salesforce\CustomerLead;
 use App\Repository\Main\Salesforce\CustomerLeadRepository;
+use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Dto\CustomerLeadDto;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +25,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
     ];
 
     public function __construct(
+        private readonly Config $config,
         private readonly EntityManagerInterface     $magentoEntityManager,
         private readonly CustomerLeadRepository     $customerLeadRepository,
         private readonly LeadSenderServiceInterface $leadSenderService,
@@ -124,7 +126,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         $resultFullFilename = null;
         $resultContentType = null;
         foreach ($this->certificateImages as [$filename, $contentType]) {
-            $fullFilename = "/therapists/{$customerId}/{$filename}";
+            $fullFilename = $this->config->getS3Prefix() . "/{$customerId}/{$filename}";
 
             $fileExists = $this->customerStorage->fileExists($fullFilename);
             if ($fileExists) {
