@@ -10,6 +10,7 @@ pipelines:
                   - AWS_REGION=eu-central-1
                   - REPOSITORY_URL=801404438871.dkr.ecr.eu-central-1.amazonaws.com
                   - REPOSITORY_URL_PREFIX=sunday
+                  - TAG=aws0.0.2
                   
                   # 2. Install Dependencies
                   - apt-get update && apt-get install -y awscli docker
@@ -24,10 +25,10 @@ pipelines:
                   - $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URL)
                   
                   # 5. Build Docker Image
-                  - docker build -t $IMAGE_NAME .
+                  - docker build --tag $IMAGE_NAME:$TAG -file api/Dockerfile .
                   
                   # 6. Tag Docker Image
-                  - docker tag $IMAGE_NAME:latest $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:latest
+                  - docker tag $IMAGE_NAME:$TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
                   
                   # 7. Push Docker Image to ECR
-                  - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:latest
+                  - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
