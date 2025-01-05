@@ -14,7 +14,7 @@ pipelines:
                     - TAG=aws0.0.2
                     
                     # 2. Install Dependencies
-                    - apt-get update && apt-get install -y awscli docker                                        
+                    - apt-get update && apt-get install -y awscli
                     
                     # 3. Build Docker Image
                     - ls
