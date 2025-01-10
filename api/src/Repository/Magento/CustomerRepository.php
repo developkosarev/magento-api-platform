@@ -57,6 +57,6 @@ class CustomerRepository extends EntityRepository
                 INNER JOIN customer_entity_int ON customer_entity.entity_id = customer_entity_int.entity_id
                                               AND customer_entity_int.attribute_id = :attribute_id
                                               AND customer_entity_int.value > 0
-                WHERE customer_entity.created_at BETWEEN :startDate AND :endDate AND customer_entity_int.value > 0";
+                WHERE customer_entity.created_at BETWEEN :startDate AND :endDate AND customer_entity_int.value > 0 AND customer_entity.default_billing IS NOT NULL";
     }
 }
