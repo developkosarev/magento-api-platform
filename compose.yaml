@@ -48,7 +48,7 @@ services:
     environment:
       MYSQL_HOST: db
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-!ChangeThisMySqlRootPassword!}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-magento}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-api_magento}
       MYSQL_USER: ${MYSQL_USER:-!ChangeThisMySqlUser!}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-!ChangeThisMySqlPassword!}
     volumes:
