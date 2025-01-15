@@ -1,6 +1,8 @@
 services:
   php:
     image: ${IMAGES_PREFIX:-}app-php
+    depends_on:
+      - database
     #restart: unless-stopped    
     environment:
       PWA_UPSTREAM: pwa:3000
@@ -33,8 +35,26 @@ services:
   pwa:
     image: ${IMAGES_PREFIX:-}app-pwa
     environment:
-      NEXT_PUBLIC_ENTRYPOINT: http://php    
-  
+      NEXT_PUBLIC_ENTRYPOINT: http://php
+      
+  database:
+    image: mariadb:10.4
+    command:
+      --max_allowed_packet=64M
+      --optimizer_use_condition_selectivity=1
+      --optimizer_switch="rowid_filter=off"
+    ports:
+      - "${MYSQL_LOCAL_PORT:-3306}:3306"
+    environment:
+      MYSQL_HOST: db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-!ChangeThisMySqlRootPassword!}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-api_magento}
+      MYSQL_USER: ${MYSQL_USER:-!ChangeThisMySqlUser!}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-!ChangeThisMySqlPassword!}
+    volumes:
+      - database_data:/var/lib/mysql
+
 volumes:
   caddy_data:
   caddy_config:
+  database_data:
