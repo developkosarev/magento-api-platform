@@ -20,6 +20,7 @@ pipelines:
                 name: Build and Push to ECR
                 services:
                     - docker
+                    - database
                 caches:
                     - pip
                 script:
@@ -60,6 +61,7 @@ pipelines:
                 name: Build and Push to ECR
                 services:
                     - docker
+                    - database
                 caches:
                     - pip
                 script:
