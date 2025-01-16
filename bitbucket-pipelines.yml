@@ -1,11 +1,51 @@
 image: python:3.8
 
 definitions:
-  services:
-    docker:
-      memory: 3072  # Increase memory for docker service to 3GB
+    services:
+        docker:
+            memory: 3072  # Increase memory for docker service to 3GB
 
 pipelines:
+    tags:
+        'v*':
+            - step:
+                name: Build and Push to ECR
+                services:
+                    - docker
+                caches:
+                    - pip
+                script:
+                    # 1. Define Variables
+                    - IMAGE_NAME=magento-api-platform
+                    - AWS_REGION=eu-central-1
+                    - REPOSITORY_URL=801404438871.dkr.ecr.eu-central-1.amazonaws.com
+                    - REPOSITORY_URL_PREFIX=sunday
+                    - TAG_LATEST=latest 
+
+                    # 2. Install Dependencies
+                    - pip3 install awscli
+                        
+                    # 3. Build Docker Image    
+                    - cd api
+                    - docker build --tag $IMAGE_NAME:$BITBUCKET_TAG --file Dockerfile .
+                        
+                    # 4. Tag Docker Image
+                    - docker tag $IMAGE_NAME:$BITBUCKET_TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$BITBUCKET_TAG
+                    - docker tag $IMAGE_NAME:$BITBUCKET_TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG_LATES
+                    
+                    # 5. Configure AWS Credentials
+                    # Make sure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set in Bitbucket Repository Variables
+                    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+                    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                    - aws configure set region $AWS_REGION
+
+                    # 6. Authenticate Docker with ECR
+                    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URL
+                    
+                    # 7. Push Docker Image to ECR
+                    - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$BITBUCKET_TAG
+                    - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG_LATES
+    
     custom:
         build-push:
             - step:
