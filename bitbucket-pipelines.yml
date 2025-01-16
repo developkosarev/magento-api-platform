@@ -5,6 +5,7 @@ definitions:
         docker:
             memory: 2048  # Increase memory for docker service to 3GB
         database:
+            memory: 2048
             image: mariadb:10.4
             variables:
                 MYSQL_HOST: database
