@@ -4,15 +4,15 @@ definitions:
     services:
         docker:
             memory: 2048  # Increase memory for docker service to 3GB
-        database:
-            memory: 2048
-            image: mariadb:10.4
-            variables:
-                MYSQL_HOST: database
-                MYSQL_ROOT_PASSWORD: magento
-                MYSQL_DATABASE: api_magento
-                MYSQL_USER: magento
-                MYSQL_PASSWORD: magento   
+        #database:
+        #    memory: 2048
+        #    image: mariadb:10.4
+        #    variables:
+        #        MYSQL_HOST: database
+        #        MYSQL_ROOT_PASSWORD: magento
+        #        MYSQL_DATABASE: api_magento
+        #        MYSQL_USER: magento
+        #        MYSQL_PASSWORD: magento   
 
 pipelines:
     tags:
@@ -21,7 +21,7 @@ pipelines:
                 name: Build and Push to ECR
                 services:
                     - docker
-                    - database
+                    #- database
                 caches:
                     - pip
                 script:
@@ -62,7 +62,7 @@ pipelines:
                 name: Build and Push to ECR
                 services:
                     - docker
-                    - database
+                    #- database
                 caches:
                     - pip
                 script:
