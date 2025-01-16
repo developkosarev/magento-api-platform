@@ -46,7 +46,7 @@ services:
     ports:
       - "${MYSQL_LOCAL_PORT:-3306}:3306"
     environment:
-      MYSQL_HOST: db
+      MYSQL_HOST: database
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-!ChangeThisMySqlRootPassword!}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-api_magento}
       MYSQL_USER: ${MYSQL_USER:-!ChangeThisMySqlUser!}

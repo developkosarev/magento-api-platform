@@ -4,6 +4,14 @@ definitions:
     services:
         docker:
             memory: 3072  # Increase memory for docker service to 3GB
+        database:
+            image: mariadb:10.4
+            variables:
+                MYSQL_HOST: database
+                MYSQL_ROOT_PASSWORD: magento
+                MYSQL_DATABASE: api_magento
+                MYSQL_USER: magento
+                MYSQL_PASSWORD: magento   
 
 pipelines:
     tags:
