@@ -42,6 +42,19 @@ jobs:
     steps:
       - name: 01. Check out the repo
         uses: actions/checkout@v3
+        
+      - name: Wait for DB to be ready
+        run: |
+          for i in {1..10}; do
+            nc -z localhost 3306 && echo "Database is ready!" && exit 0
+            echo "Waiting for database to be ready..."
+            sleep 3
+          done
+          exit 1
+          
+      - name: Create database and tables
+        run: |
+          mysql -h localhost -u user -pmagento2 -e "CREATE TABLE api_magento.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
             
       - name: 02. Log in to the Container registry
         uses: docker/login-action@v2
