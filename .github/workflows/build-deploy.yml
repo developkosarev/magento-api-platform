@@ -3,6 +3,13 @@ env:
   DEPLOY_PACKAGE_NAME : "magento-api-platform-${{ github.sha }}"
   DEPLOY_VERSION : "v0.0.1"
   DEPLOY_FOLDER : "docker"
+  #Docker ip https://stackoverflow.com/questions/65497331/github-actions-is-it-possible-to-call-the-runner-host-from-a-docker-container   
+  MYSQL_HOST: 172.17.0.1
+  MYSQL_ROOT_PASSWORD : magento2
+  MYSQL_DATABASE : api_magento
+  MYSQL_USER : magento2
+  MYSQL_PASSWORD : magento2
+  MYSQL_PORT : 3306
 
 #on:
 #  release:
@@ -24,13 +31,16 @@ jobs:
       contents: read
     services:
       mysql:
-        image: mysql:8.0
+        image: mariadb:10.4
         env:
           # The MySQL docker container requires these environment variables to be set
           # so we can create and migrate the test database.
           # See: https://hub.docker.com/_/mysql
-          MYSQL_DATABASE: testdb
-          MYSQL_ROOT_PASSWORD: testrootpass
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
         ports:
           # Opens port 3306 on service container and host
           # https://docs.github.com/en/actions/using-containerized-services/about-service-containers
@@ -40,32 +50,51 @@ jobs:
     steps:
       - name: 01. Check out the repo
         uses: actions/checkout@v3
+        
+      - name: 02. Wait for DB to be ready
+        run: |
+          for i in {1..10}; do
+            nc -z localhost ${{ env.MYSQL_PORT }} && echo "Database is ready!" && exit 0
+            echo "Waiting for database to be ready..."
+            sleep 3
+          done
+          exit 1
+          
+      - name: 03. Show database
+        run: |
+          mysql -h 127.0.0.1 -P ${{ env.MYSQL_PORT }} -u ${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES;"              
+          
+      - name: 04. Create database and tables
+        run: |
+          mysql -h 127.0.0.1 -u ${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} -e "CREATE TABLE ${{ env.MYSQL_DATABASE }}.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
             
-      - name: 02. Log in to the Container registry
+      - name: 05. Log in to the Container registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 03. Extract metadata (tags, labels) for Docker
+      - name: 06. Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
             ghcr.io/${{ github.repository }}
 
-      - name: 04. Execute few commands
+      - name: 07. Execute few commands
         run : |
           echo "Deploy package name: ${{ env.DEPLOY_PACKAGE_NAME }}"
           echo "Deploy version: ${{ env.DEPLOY_VERSION }}"
           echo "Tags: ${{ steps.meta.outputs.tags }}"
           echo "Labels: ${{ steps.meta.outputs.labels }}"
 
-      - name: 05. Build and push Docker images
+      - name: 08. Build and push Docker images
         uses: docker/build-push-action@v6
         with:
           context: ./api
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          #cache-from: type=registry,ref=${{ github.repository }}:my-app:cache
+          #cache-to: type=registry,ref=${{ github.repository }}:my-app:cache,mode=max
