@@ -29,8 +29,10 @@ jobs:
           # The MySQL docker container requires these environment variables to be set
           # so we can create and migrate the test database.
           # See: https://hub.docker.com/_/mysql
-          MYSQL_DATABASE: testdb
-          MYSQL_ROOT_PASSWORD: testrootpass
+          MYSQL_ROOT_PASSWORD: magento2
+          MYSQL_DATABASE: api_magento
+          MYSQL_USER: magento2
+          MYSQL_PASSWORD: magento2
         ports:
           # Opens port 3306 on service container and host
           # https://docs.github.com/en/actions/using-containerized-services/about-service-containers
