@@ -49,7 +49,7 @@ jobs:
       - name: 01. Check out the repo
         uses: actions/checkout@v3
         
-      - name: Wait for DB to be ready
+      - name: 02. Wait for DB to be ready
         run: |
           for i in {1..10}; do
             nc -z localhost 3306 && echo "Database is ready!" && exit 0
@@ -58,36 +58,36 @@ jobs:
           done
           exit 1
           
-      - name: Show database
+      - name: 03. Show database
         run: |
           mysql -h 127.0.0.1 -P 3306 -u magento2 -pmagento2 -e "SHOW DATABASES;"              
           
-      - name: Create database and tables
+      - name: 04. Create database and tables
         run: |
           mysql -h 127.0.0.1 -u magento2 -pmagento2 -e "CREATE TABLE api_magento.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
             
-      - name: 02. Log in to the Container registry
+      - name: 05. Log in to the Container registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 03. Extract metadata (tags, labels) for Docker
+      - name: 06. Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
             ghcr.io/${{ github.repository }}
 
-      - name: 04. Execute few commands
+      - name: 07. Execute few commands
         run : |
           echo "Deploy package name: ${{ env.DEPLOY_PACKAGE_NAME }}"
           echo "Deploy version: ${{ env.DEPLOY_VERSION }}"
           echo "Tags: ${{ steps.meta.outputs.tags }}"
           echo "Labels: ${{ steps.meta.outputs.labels }}"
 
-      - name: 05. Build and push Docker images
+      - name: 08. Build and push Docker images
         uses: docker/build-push-action@v6
         with:
           context: ./api
