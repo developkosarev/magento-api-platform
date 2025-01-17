@@ -96,5 +96,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            DATABASE_URL=mysql://magento2:magento2@172.17.0.1:3306/api_magento
+            MAGENTO_DATABASE_URL=mysql://magento2:magento2@172.17.0.1:3306/api_magento
           #cache-from: type=registry,ref=${{ github.repository }}:my-app:cache
           #cache-to: type=registry,ref=${{ github.repository }}:my-app:cache,mode=max
