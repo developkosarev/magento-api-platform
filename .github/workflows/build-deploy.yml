@@ -3,11 +3,12 @@ env:
   DEPLOY_PACKAGE_NAME : "magento-api-platform-${{ github.sha }}"
   DEPLOY_VERSION : "v0.0.1"
   DEPLOY_FOLDER : "docker"
-  MYSQL_HOST: 127.0.0.1
+  #Docker ip https://stackoverflow.com/questions/65497331/github-actions-is-it-possible-to-call-the-runner-host-from-a-docker-container   
+  MYSQL_HOST: 172.17.0.1
   MYSQL_ROOT_PASSWORD : magento2
-  MYSQL_DATABASE : "api_magento"
-  MYSQL_USER : "magento2"
-  MYSQL_PASSWORD : "magento2"
+  MYSQL_DATABASE : api_magento
+  MYSQL_USER : magento2
+  MYSQL_PASSWORD : magento2
   MYSQL_PORT : 3306
 
 #on:
@@ -36,13 +37,13 @@ jobs:
           # so we can create and migrate the test database.
           # See: https://hub.docker.com/_/mysql
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: api_magento
-          MYSQL_USER: magento2
-          MYSQL_PASSWORD: magento2
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
         ports:
           # Opens port 3306 on service container and host
           # https://docs.github.com/en/actions/using-containerized-services/about-service-containers
-          - 3306:3306
+          - ${{ env.MYSQL_PORT }}:${{ env.MYSQL_PORT }}
           # Before continuing, verify the mysql container is reachable from the ubuntu host
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
@@ -52,7 +53,7 @@ jobs:
       - name: 02. Wait for DB to be ready
         run: |
           for i in {1..10}; do
-            nc -z localhost 3306 && echo "Database is ready!" && exit 0
+            nc -z localhost ${{ env.MYSQL_PORT }} && echo "Database is ready!" && exit 0
             echo "Waiting for database to be ready..."
             sleep 3
           done
@@ -60,7 +61,7 @@ jobs:
           
       - name: 03. Show database
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u magento2 -pmagento2 -e "SHOW DATABASES;"              
+          mysql -h 127.0.0.1 -P ${{ env.MYSQL_PORT }} -u magento2 -pmagento2 -e "SHOW DATABASES;"              
           
       - name: 04. Create database and tables
         run: |
