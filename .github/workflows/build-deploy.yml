@@ -94,5 +94,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:cache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:cache,mode=max
+          cache-from: type=registry,ref=${{ github.repository }}:my-app:cache
+          cache-to: type=registry,ref=${{ github.repository }}:my-app:cache,mode=max
