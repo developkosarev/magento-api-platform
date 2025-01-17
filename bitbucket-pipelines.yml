@@ -42,7 +42,7 @@ pipelines:
                         
                     # 4. Tag Docker Image
                     - docker tag $IMAGE_NAME:$BITBUCKET_TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$BITBUCKET_TAG
-                    - docker tag $IMAGE_NAME:$BITBUCKET_TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG_LATES
+                    - docker tag $IMAGE_NAME:$BITBUCKET_TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG_LATEST
                     
                     # 5. Configure AWS Credentials
                     # Make sure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set in Bitbucket Repository Variables
