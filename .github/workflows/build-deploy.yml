@@ -62,11 +62,11 @@ jobs:
           
       - name: 03. Show database
         run: |
-          mysql -h 127.0.0.1 -P ${{ env.MYSQL_PORT }} -u magento2 -pmagento2 -e "SHOW DATABASES;"              
+          mysql -h 127.0.0.1 -P ${{ env.MYSQL_PORT }} -u ${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} -e "SHOW DATABASES;"              
           
       - name: 04. Create database and tables
         run: |
-          mysql -h 127.0.0.1 -u magento2 -pmagento2 -e "CREATE TABLE api_magento.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
+          mysql -h 127.0.0.1 -u ${{ env.MYSQL_USER }} -p${{ env.MYSQL_PASSWORD }} -e "CREATE TABLE ${{ env.MYSQL_DATABASE }}.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
             
       - name: 05. Log in to the Container registry
         uses: docker/login-action@v2
