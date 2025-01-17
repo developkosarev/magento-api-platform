@@ -3,16 +3,17 @@ image: python:3.8
 definitions:
     services:
         docker:
-            memory: 2048  # Increase memory for docker service to 3GB
-        #database:
-        #    memory: 2048
-        #    image: mariadb:10.4
-        #    variables:
-        #        MYSQL_HOST: database
-        #        MYSQL_ROOT_PASSWORD: magento
-        #        MYSQL_DATABASE: api_magento
-        #        MYSQL_USER: magento
-        #        MYSQL_PASSWORD: magento   
+            memory: 512  # Increase memory for docker service to 3GB
+        database:
+            image: mariadb:10.4
+            #memory: 2048 # default value
+            variables:
+                #MYSQL_HOST: 172.17.0.1
+                MYSQL_ROOT_PASSWORD: magento2
+                MYSQL_DATABASE: api_magento
+                MYSQL_USER: magento2
+                MYSQL_PASSWORD: magento2
+                MYSQL_PORT: 3306
 
 pipelines:
     tags:
@@ -21,7 +22,7 @@ pipelines:
                 name: Build and Push to ECR
                 services:
                     - docker
-                    #- database
+                    - database
                 caches:
                     - pip
                 script:
@@ -62,7 +63,7 @@ pipelines:
                 name: Build and Push to ECR
                 services:
                     - docker
-                    #- database
+                    - database
                 caches:
                     - pip
                 script:
@@ -71,11 +72,17 @@ pipelines:
                     - AWS_REGION=eu-central-1
                     - REPOSITORY_URL=801404438871.dkr.ecr.eu-central-1.amazonaws.com
                     - REPOSITORY_URL_PREFIX=sunday
-                    - TAG=aws0.0.2
+                    - TAG=$BITBUCKET_BRANCH
+
+                    # 2. Install MySql
+                    - apt-get update && apt-get install -y default-mysql-client
+                    - mysql --version
+                    #- pip3 install mysqlclient
+                    - mysql -h 127.0.0.1 -P 3306 -u magento2 -pmagento2 -e "SHOW DATABASES;"
                     
                     # 2. Install Dependencies
                     #- apt-get update && apt-get install -y awscli
-                    - pip3 install awscli
+                    - pip3 install awscli                    
                     
                     # 3. Build Docker Image
                     - ls
