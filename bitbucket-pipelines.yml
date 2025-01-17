@@ -55,7 +55,7 @@ pipelines:
                     
                     # 7. Push Docker Image to ECR
                     - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$BITBUCKET_TAG
-                    - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG_LATES
+                    - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG_LATEST
     
     custom:
         build-push:
