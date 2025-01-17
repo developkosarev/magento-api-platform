@@ -64,7 +64,7 @@ jobs:
           
       - name: Create database and tables
         run: |
-          mysql -h localhost -u magento2 -pmagento2 -e "CREATE TABLE api_magento.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
+          mysql -h 127.0.0.1 -u magento2 -pmagento2 -e "CREATE TABLE api_magento.example (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL);"    
             
       - name: 02. Log in to the Container registry
         uses: docker/login-action@v2
