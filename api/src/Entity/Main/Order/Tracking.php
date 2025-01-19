@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\Main\Order\TrackingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
@@ -16,7 +16,7 @@ use DateTime;
         new Get(uriTemplate: '/order/tracking/{id}'),
         new GetCollection(uriTemplate: '/order/tracking'),
         new Post(uriTemplate: '/order/tracking'),
-        new Put(uriTemplate: '/order/tracking/{id}'),
+        new Patch(uriTemplate: '/order/tracking/{id}'),
     ]
 )]
 #[ORM\Entity(repositoryClass: TrackingRepository::class)]
