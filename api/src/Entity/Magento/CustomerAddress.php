@@ -35,6 +35,9 @@ class CustomerAddress
     #[ORM\Column(name: 'telephone', type: 'string', nullable: true)]
     private ?string $telephone = null;
 
+    #[ORM\Column(name: 'vat_id', type: 'string', nullable: true)]
+    private ?string $vatId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -73,5 +76,10 @@ class CustomerAddress
     public function getTelephone(): ?string
     {
         return $this->telephone;
+    }
+
+    public function getVatId(): ?string
+    {
+        return $this->vatId;
     }
 }
