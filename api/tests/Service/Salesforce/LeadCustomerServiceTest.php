@@ -7,6 +7,7 @@ use App\Entity\Magento\CustomerAddress;
 use App\Repository\Magento\CustomerAddressRepository;
 use App\Repository\Magento\CustomerRepository;
 use App\Repository\Main\Salesforce\CustomerLeadRepository;
+use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Customer\LeadCustomerService;
 use App\Service\Salesforce\Customer\LeadCustomerServiceInterface;
 use App\Service\Salesforce\Customer\LeadSenderServiceInterface;
@@ -55,7 +56,10 @@ class LeadCustomerServiceTest extends KernelTestCase
 
     private function createLeadCustomerService(): LeadCustomerServiceInterface
     {
+        $config = new Config();
+
         return new LeadCustomerService(
+            $config,
             $this->mockEntityManager(),
             self::$customerLeadRepository,
             $this->mockLeadSenderService(),

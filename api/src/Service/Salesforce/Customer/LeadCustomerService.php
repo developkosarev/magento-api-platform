@@ -60,8 +60,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                     ->setFirstName($mCustomer->getFirstName())
                     ->setLastName($mCustomer->getLastName())
                     ->setBirthday($mCustomer->getDob())
-                    ->setSpecialties($mCustomer->getSpecialties())
-                    ->setTaxvat($mCustomer->getTaxvat());
+                    ->setSpecialties($mCustomer->getSpecialties());
 
                 if ($address !== null) {
                     $lead
@@ -70,7 +69,8 @@ class LeadCustomerService implements LeadCustomerServiceInterface
                         ->setCountryId($address->getCountryId())
                         ->setStreet($address->getStreet())
                         ->setHouseNumber($address->getHouseNumber())
-                        ->setPostcode($address->getPostcode());
+                        ->setPostcode($address->getPostcode())
+                        ->setTaxvat($address->getVatId());
                     if (!empty($address->getTelephone())) {
                         $lead
                             ->setPhone($address->getTelephone());
