@@ -2,10 +2,10 @@
 
 namespace App\Entity\Magento;
 
-use App\Repository\Magento\CustomerRepository;
+use App\Repository\Magento\CustomerSegmentRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CustomerSegmentRepository::class)]
 #[ORM\Table(name: 'sunday_customersegment_segment')]
 class CustomerSegment
 {
