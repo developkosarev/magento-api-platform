@@ -36,6 +36,8 @@ help:
 	@echo "$(call format,app-tests,'App tests')"
 	@echo "$(call format,app-tests-salesforce,'App tests salesforce')"
 	@echo "$(call red,===============================)"
+	@echo "$(call format,magento-fixture,'Magento fixture load')"
+	@echo "$(call red,===============================)"
 	@echo "$(call format,start-apps,'Start apps')"
 	@echo "$(call format,stop-apps,'Stop apps')"
 
@@ -71,7 +73,7 @@ app-stop-workers: ## app-stop-workers
 
 ## Tests
 app-fixture: ## app-fixture
-	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --group=main
 .PHONY:
 
 app-tests-fixture:
@@ -85,6 +87,12 @@ app-tests:
 app-tests-salesforce:
 	docker exec -it magento-api-platform-php-1 php bin/phpunit --colors --verbose --testdox tests/Service/Salesforce
 .PHONY: app-tests-salesforce
+
+#Magento fixture
+magento-fixture: ## magento-fixture
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --em=magento --group=magento --purge-exclusions=customer_entity --purge-exclusions=customer_address_entity --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order
+.PHONY:
+
 
 start-apps: ## Start apps
 	$(DOCKER_COMPOSE_APPS) up --build -d

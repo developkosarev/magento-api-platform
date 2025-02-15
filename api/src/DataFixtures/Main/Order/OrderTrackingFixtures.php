@@ -1,12 +1,13 @@
 <?php
 
-namespace App\DataFixtures\Order;
+namespace App\DataFixtures\Main\Order;
 
 use App\Entity\Main\Order\Tracking;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class OrderTrackingFixtures extends Fixture
+class OrderTrackingFixtures extends Fixture implements FixtureGroupInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -18,5 +19,10 @@ class OrderTrackingFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public static function getGroups(): array
+    {
+        return ['main'];
     }
 }

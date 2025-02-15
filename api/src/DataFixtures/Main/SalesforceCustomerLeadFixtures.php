@@ -1,13 +1,14 @@
 <?php
 
-namespace App\DataFixtures;
+namespace App\DataFixtures\Main;
 
 use App\Entity\Main\Salesforce\CustomerLead;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use League\Flysystem\FilesystemOperator;
 
-class SalesforceCustomerLeadFixtures extends Fixture
+class SalesforceCustomerLeadFixtures extends Fixture implements FixtureGroupInterface
 {
     public function __construct(
         private readonly FilesystemOperator $customerStorage
@@ -49,7 +50,7 @@ class SalesforceCustomerLeadFixtures extends Fixture
 
     private function uploadFile(CustomerLead $lead): void
     {
-        $fixtureFilename = __DIR__ . '/images/meteor-shower.jpg';
+        $fixtureFilename = __DIR__ . '/../images/meteor-shower.jpg';
 
         $customerId = $lead->getCustomerId();
         $originalFilename = 'meteor-shower.jpg';
@@ -80,4 +81,9 @@ class SalesforceCustomerLeadFixtures extends Fixture
     //
     //    $this->uploader->uploadCertificateToS3(new File($targetPath), $lead->getCustomerId());
     //}
+
+    public static function getGroups(): array
+    {
+        return ['main'];
+    }
 }

@@ -15,6 +15,9 @@ doctrine:
                 use_savepoints: true
             magento:
                 url: '%env(resolve:MAGENTO_DATABASE_URL)%'
+                replicas:
+                    replica1:
+                        url: '%env(resolve:MAGENTO_DATABASE_RO_URL)%'
         default_connection: default    
     orm:
         default_entity_manager: default
