@@ -2,7 +2,7 @@
 
 namespace App\Service\Salesforce\Customer;
 
-use App\Entity\Magento\Customer;
+use App\Entity\Magento\CustomerTherapist;
 use App\Entity\Magento\CustomerAddress;
 use App\Entity\Main\Salesforce\CustomerLead;
 use App\Repository\Main\Salesforce\CustomerLeadRepository;
@@ -31,7 +31,7 @@ class LeadCustomerService implements LeadCustomerServiceInterface
         private readonly LeadSenderServiceInterface $leadSenderService,
         private readonly FilesystemOperator         $customerStorage,
     ) {
-        $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
+        $this->mCustomerRepository = $this->magentoEntityManager->getRepository(CustomerTherapist::class);
         $this->mCustomerAddressRepository = $this->magentoEntityManager->getRepository(CustomerAddress::class);
     }
 
