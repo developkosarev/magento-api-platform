@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 
 class CustomerFixtures extends Fixture implements FixtureGroupInterface
 {
+    public const CUSTOMER_1_REFERENCE = 'customer-1';
     public const USER_ID = 1;
     public const USER_TEST = 'test@example.com';
     public const USER_PLAIN_PASSWORD = 'Password@2022';
@@ -53,6 +54,8 @@ class CustomerFixtures extends Fixture implements FixtureGroupInterface
 
         $this->magentoEntityManager->persist($item);
         $this->magentoEntityManager->flush();
+
+        $this->addReference(self::CUSTOMER_1_REFERENCE, $item);
     }
 
     public static function getGroups(): array

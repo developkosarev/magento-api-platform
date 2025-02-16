@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 
 class CustomerSegmentFixtures extends Fixture implements FixtureGroupInterface
 {
-    public const CUSTOMER_SEGMENT1_REFERENCE = 'customer-segment-1';
+    public const CUSTOMER_SEGMENT_1_REFERENCE = 'customer-segment-1';
     public const SEGMENT_ID = 1;
     public const SEGMENT_NAME = 'segment1';
     private EntityRepository $mCustomerSegmentRepository;
@@ -39,7 +39,7 @@ class CustomerSegmentFixtures extends Fixture implements FixtureGroupInterface
         $this->magentoEntityManager->persist($item);
         $this->magentoEntityManager->flush();
 
-        $this->addReference(self::CUSTOMER_SEGMENT1_REFERENCE, $item);
+        $this->addReference(self::CUSTOMER_SEGMENT_1_REFERENCE, $item);
     }
 
     public static function getGroups(): array
