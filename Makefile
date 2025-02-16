@@ -90,7 +90,7 @@ app-tests-salesforce:
 
 #Magento fixture
 magento-fixture: ## magento-fixture
-	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --em=magento --group=magento --purge-exclusions=customer_entity --purge-exclusions=customer_address_entity --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --em=magento --group=magento --purge-exclusions=customer_entity --purge-exclusions=customer_address_entity --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order --purge-exclusions=store --purge-exclusions=store_website --purge-exclusions=store_group
 .PHONY:
 
 
