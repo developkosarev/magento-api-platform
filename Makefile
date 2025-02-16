@@ -37,6 +37,7 @@ help:
 	@echo "$(call format,app-tests-salesforce,'App tests salesforce')"
 	@echo "$(call red,===============================)"
 	@echo "$(call format,magento-fixture,'Magento fixture load')"
+	@echo "$(call format,magento-fixture-perf,'Magento fixture performance load')"
 	@echo "$(call red,===============================)"
 	@echo "$(call format,start-apps,'Start apps')"
 	@echo "$(call format,stop-apps,'Stop apps')"
@@ -91,6 +92,10 @@ app-tests-salesforce:
 #Magento fixture
 magento-fixture: ## magento-fixture
 	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --em=magento --group=magento --purge-exclusions=customer_entity --purge-exclusions=customer_address_entity --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order --purge-exclusions=store --purge-exclusions=store_website --purge-exclusions=store_group
+.PHONY:
+
+magento-fixture-perf: ## magento-fixture-performance
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --no-debug --em=magento --group=magento --group=magento-performance --purge-exclusions=customer_entity --purge-exclusions=customer_address_entity --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order --purge-exclusions=store --purge-exclusions=store_website --purge-exclusions=store_group
 .PHONY:
 
 
