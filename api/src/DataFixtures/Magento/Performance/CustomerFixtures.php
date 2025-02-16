@@ -2,7 +2,10 @@
 
 namespace App\DataFixtures\Magento\Performance;
 
+use App\DataFixtures\Magento\CustomerSegmentFixtures;
+use App\DataFixtures\Magento\StoreWebsiteFixtures;
 use App\Entity\Magento\Customer;
+use App\Entity\Magento\CustomerSegmentCustomer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -60,6 +63,13 @@ class CustomerFixtures extends Fixture implements FixtureGroupInterface
             $item->setRpToken(self::USER_PASSWORD_RP_TOKEN);
 
             $this->magentoEntityManager->persist($item);
+
+            $itemSegment = new CustomerSegmentCustomer();
+            $itemSegment->setSegment($this->getReference(CustomerSegmentFixtures::CUSTOMER_SEGMENT_1_REFERENCE));
+            $itemSegment->setCustomer($item);
+            $itemSegment->setWebsite($this->getReference(StoreWebsiteFixtures::WEBSITE_1_REFERENCE));
+
+            $this->magentoEntityManager->persist($itemSegment);
         }
         $this->magentoEntityManager->flush();
 

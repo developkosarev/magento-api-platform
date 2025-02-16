@@ -95,7 +95,7 @@ magento-fixture: ## magento-fixture
 .PHONY:
 
 magento-fixture-perf: ## magento-fixture-performance
-	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --no-debug --em=magento --group=magento --group=magento-performance --purge-exclusions=customer_entity --purge-exclusions=customer_address_entity --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order --purge-exclusions=store --purge-exclusions=store_website --purge-exclusions=store_group
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --no-debug --em=magento --group=magento --group=magento-performance --purge-exclusions=sunday_newsletter_subscriber --purge-exclusions=sales_order --purge-exclusions=store --purge-exclusions=store_website --purge-exclusions=store_group
 .PHONY:
 
 
