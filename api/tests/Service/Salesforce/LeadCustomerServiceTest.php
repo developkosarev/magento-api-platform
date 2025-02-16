@@ -2,10 +2,10 @@
 
 namespace App\Tests\Service\Salesforce;
 
-use App\Entity\Magento\Customer;
+use App\Entity\Magento\CustomerTherapist;
 use App\Entity\Magento\CustomerAddress;
 use App\Repository\Magento\CustomerAddressRepository;
-use App\Repository\Magento\CustomerRepository;
+use App\Repository\Magento\CustomerTherapistRepository;
 use App\Repository\Main\Salesforce\CustomerLeadRepository;
 use App\Service\Salesforce\Common\Config;
 use App\Service\Salesforce\Customer\LeadCustomerService;
@@ -69,7 +69,7 @@ class LeadCustomerServiceTest extends KernelTestCase
 
     private function mockEntityManager(): EntityManagerInterface
     {
-        $mCustomerRepository = $this->createMock(CustomerRepository::class);
+        $mCustomerRepository = $this->createMock(CustomerTherapistRepository::class);
         $mCustomerRepository->expects($this->any())
             ->method('getLeads')
             ->willReturn([$this->createCustomer()]);
@@ -87,7 +87,7 @@ class LeadCustomerServiceTest extends KernelTestCase
                 $mCustomerAddressRepository
             ) {
                 switch ($class) {
-                    case 'App\Entity\Magento\Customer':
+                    case 'App\Entity\Magento\CustomerTherapist':
                         $repository = $mCustomerRepository;
                         break;
                     case 'App\Entity\Magento\CustomerAddress':
@@ -128,9 +128,9 @@ class LeadCustomerServiceTest extends KernelTestCase
         return $result;
     }
 
-    private function createCustomer($birthday = null): Customer
+    private function createCustomer($birthday = null): CustomerTherapist
     {
-        $customer = $this->createMock(Customer::class);
+        $customer = $this->createMock(CustomerTherapist::class);
         $customer->expects($this->any())
             ->method('getId')
             ->willReturn(1);
