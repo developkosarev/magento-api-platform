@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace App\Command\Bloomreach;
 
 use App\Service\Bloomreach\Customer\CustomerServiceInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
@@ -17,29 +19,46 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class CustomerSegmentImportFromCSVCommand extends Command
 {
+    private const OPTION_FORCE = 'force';
+    private bool $force;
+
     public function __construct(
-        private readonly CustomerServiceInterface $customerService,
+        private readonly LoggerInterface $logger,
         string $name = null
     ) {
         parent::__construct($name);
     }
 
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->force = $input->getOption(self::OPTION_FORCE);
+    }
+
     protected function configure(): void
     {
         $this
-            ->addArgument('email', InputArgument::REQUIRED, 'Email of customer');
+            ->addOption(
+                self::OPTION_FORCE,
+                null,
+                InputOption::VALUE_NONE,
+                'Create records in DB'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $email = $input->getArgument('email');
+        $msg = sprintf('Start execution command "%s"', $this->getName());
+        $this->logger->info($msg);
+        $output->writeln($msg);
 
-        $result = $this->customerService->createCustomer($email);
+        //if ($input->getOption(self::OPTION_IMPORT_ORDERS)) {
+        //    $this->importOrdersFromCSV($output);
+        //}
 
-        if (!$result) {
-            $output->writeln('Something went wrong!');
-        }
-        $output->writeln('The customer created!');
+        $msg = 'Execution finished';
+        $this->logger->info($msg);
+        $output->writeln($msg);
+
         return Command::SUCCESS;
     }
 }
