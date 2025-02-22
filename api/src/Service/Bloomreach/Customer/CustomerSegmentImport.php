@@ -2,7 +2,26 @@
 
 namespace App\Service\Bloomreach\Customer;
 
-interface CustomerSegmentImport
+use League\Flysystem\FilesystemOperator;
+
+class CustomerSegmentImport implements CustomerSegmentImportInterface
 {
-    public function execute(string $fileName): void;
+    private const FILE_SEGMETN = '/app/var/data/segment_%.csv';
+
+    public function __construct(
+        private readonly FilesystemOperator $bloomreachStorage,
+    ) {}
+
+    public function execute(string $fileName): void
+    {
+        //
+    }
+
+    private function uploadFile(string $filePath): void
+    {
+        $fileExists = $this->bloomreachStorage->fileExists($fullFilename);
+
+        //$this->bloomreachStorage->copy(); read($resultFullFilename);
+
+    }
 }

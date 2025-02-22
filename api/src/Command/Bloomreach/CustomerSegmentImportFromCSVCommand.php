@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Command\Bloomreach;
 
-use App\Service\Bloomreach\Customer\CustomerServiceInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
