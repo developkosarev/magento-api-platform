@@ -50,6 +50,7 @@ docker push 801404438871.dkr.ecr.eu-central-1.amazonaws.com/sunday/magento-api-p
 ```
 git tag v0.0.3
 git push --tags
+git push origin-xxx --tags
 ```
 
 ## Commands
