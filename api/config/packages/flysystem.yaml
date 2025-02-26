@@ -14,3 +14,12 @@ flysystem:
                 bucket: '%env(S3_AWS_PRIVATE_BUCKET)%'
                 #prefix: 'optional/path/prefix'
                 #streamReads: true        
+        
+        bloomreach.storage:
+            adapter: 'aws'
+            # visibility: public # Make the uploaded file publicly accessible in S3
+            options:
+                client: Aws\S3\S3Client # The service ID of the Aws\S3\S3Client instance
+                bucket: '%env(S3_BLOOMREACH_AWS_PRIVATE_BUCKET)%'
+                #prefix: 'optional/path/prefix'
+                #streamReads: true
