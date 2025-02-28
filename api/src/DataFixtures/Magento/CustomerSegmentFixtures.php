@@ -13,8 +13,11 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 class CustomerSegmentFixtures extends Fixture implements FixtureGroupInterface
 {
     public const CUSTOMER_SEGMENT_1_REFERENCE = 'customer-segment-1';
-    public const SEGMENT_ID = 1;
-    public const SEGMENT_NAME = 'segment1';
+    public const CUSTOMER_SEGMENT_99_REFERENCE = 'customer-segment-99';
+    public const SEGMENT_1_ID = 1;
+    public const SEGMENT_99_ID = 99;
+    public const SEGMENT_1_NAME = 'segment1';
+    public const SEGMENT_99_NAME = 'segment99';
     private EntityRepository $mCustomerSegmentRepository;
 
     public function __construct(
@@ -28,18 +31,28 @@ class CustomerSegmentFixtures extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        $item = $this->mCustomerSegmentRepository->find(self::SEGMENT_ID);
-        if (null === $item) {
-            $item = new CustomerSegment();
-            $item->setId(self::SEGMENT_ID);
+        foreach ($this->getSegments() as [$id, $name, $reference]) {
+            $item = $this->mCustomerSegmentRepository->find($id);
+            if (null === $item) {
+                $item = new CustomerSegment();
+                $item->setId($id);
+            }
+
+            $item->setName($name);
+            $item->setIsActive(true);
+            $this->magentoEntityManager->persist($item);
+
+            $this->addReference($reference, $item);
         }
-
-        $item->setName(self::SEGMENT_NAME);
-        $item->setIsActive(true);
-        $this->magentoEntityManager->persist($item);
         $this->magentoEntityManager->flush();
+    }
 
-        $this->addReference(self::CUSTOMER_SEGMENT_1_REFERENCE, $item);
+    private function getSegments(): array
+    {
+        return [
+            [self::SEGMENT_1_ID, self::SEGMENT_1_NAME, self::CUSTOMER_SEGMENT_1_REFERENCE],
+            [self::SEGMENT_99_ID, self::SEGMENT_99_NAME, self::CUSTOMER_SEGMENT_99_REFERENCE],
+        ];
     }
 
     public static function getGroups(): array
