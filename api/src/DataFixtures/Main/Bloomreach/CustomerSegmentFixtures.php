@@ -22,8 +22,10 @@ class CustomerSegmentFixtures extends Fixture implements FixtureGroupInterface
     private function uploadFile(): void
     {
         $fixtureFilename = __DIR__ . '/../../data/segment_99.csv';
-        $filename = "/dev/segments/segment_99.csv";
+        $filenameDev = "/dev/segments/segment_99.csv";
+        $filename = "/segments/segment_99.csv";
 
+        $this->bloomreachStorage->write($filenameDev, file_get_contents($fixtureFilename));
         $this->bloomreachStorage->write($filename, file_get_contents($fixtureFilename));
     }
 

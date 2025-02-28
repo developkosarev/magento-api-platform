@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Command\Bloomreach;
 
 use App\Service\Bloomreach\Customer\CustomerSegmentFileImport;
+use App\Service\Bloomreach\Customer\CustomerSegmentImportInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -26,6 +27,7 @@ class CustomerSegmentImportFromCSVCommand extends Command
 
     public function __construct(
         private readonly CustomerSegmentFileImport $fileImport,
+        private readonly CustomerSegmentImportInterface $customerSegmentImport,
         private readonly LoggerInterface $logger,
         string $name = null
     ) {
@@ -60,29 +62,41 @@ class CustomerSegmentImportFromCSVCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $start = microtime(true);
+
         $segmentId = (int) $input->getArgument(self::SEGMENT_ID_ARGUMENT_NAME);
         $websiteId = (int) $input->getArgument(self::WEBSITE_ID_ARGUMENT_NAME);
+
         $msg = "<info>Starting import for segment #{$segmentId} and website {$websiteId}</info>";
         $this->logger->info($msg);
         $output->writeln($msg);
 
-        $start = microtime(true);
+        //$fileName = $this->fileImport->getFileName($segmentId);
+        //$output->writeln($fileName);
 
-        //$this->fileImport->execute();
+        if ($this->fileImport->uploadFile($segmentId)) {
+            $fileNameLocal = $this->fileImport->getFileNameLocal($segmentId);
+            $output->writeln($fileNameLocal);
+
+            $this->customerSegmentImport->execute($segmentId, $websiteId, $fileNameLocal, $this->force);
+
+            if (file_exists($fileNameLocal)) {
+                unlink($fileNameLocal);
+            }
+        }
 
         //if ($input->getOption(self::OPTION_IMPORT_ORDERS)) {
         //    $this->importOrdersFromCSV($output);
         //}
 
-
-        $end = microtime(true);
         $msg = "<info>Import for segment #{$segmentId} and website {$websiteId} completed</info>";
         $output->writeln($msg);
         $this->logger->info($msg);
 
+        $end = microtime(true);
         $executionTime = round($end - $start, 2);
-        $output->writeln("<info>Memory: {$this->getMemoryUsage()}MB</info>", OutputInterface::VERBOSITY_DEBUG);
-        $output->writeln("<info>Time: {$executionTime}s</info>", OutputInterface::VERBOSITY_DEBUG);
+        $output->writeln("<info>Memory: {$this->getMemoryUsage()}MB</info>", OutputInterface::VERBOSITY_VERBOSE);
+        $output->writeln("<info>Time: {$executionTime}s</info>", OutputInterface::VERBOSITY_VERBOSE);
 
         return Command::SUCCESS;
     }
