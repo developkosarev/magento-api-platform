@@ -8,11 +8,14 @@ use App\Entity\Magento\CustomerSegmentCustomer;
 use App\Entity\Magento\CustomerSegmentWebsite;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomerSegmentImport implements CustomerSegmentImportInterface
 {
-    private const INSERT_BATCH_SIZE = 100000;
+    private const INSERT_BATCH_SIZE = 10000;
 
+    private bool $force;
+    private ?OutputInterface $output = null;
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerSegmentRepository;
     private EntityRepository $mCustomerSegmentWebsiteRepository;
@@ -31,7 +34,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     /**
      * @throws \Exception
      */
-    public function execute(int $segmentId, int $websiteId, string $fileName, bool $force): void
+    public function execute(int $segmentId, int $websiteId, string $fileName): void
     {
         if (!file_exists($fileName)) {
             throw new \Exception("File of segments \"{$fileName}\" not found!");
@@ -50,6 +53,22 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $i = 0;
         foreach ($this->csvReader->read($fileName) as $row) {
             $email = $row[0];
+
+            $i++;
+            if (($i % self::INSERT_BATCH_SIZE) === 0) {
+                if ($this->force) {
+                    $this->magentoEntityManager->flush();
+                }
+                $this->magentoEntityManager->clear();
+
+                $segment = $this->mCustomerSegmentRepository->find($segmentId);
+                $segmentWebsite = $this->mCustomerSegmentWebsiteRepository->findOneBy(['segment' => $segmentId, 'website' => $websiteId]);
+                if ($this->output !== null) {
+                    $msg = "<info>Count #{$i} Memory: {$this->getMemoryUsage()}MB</info>";
+                    $this->output->writeln($msg);
+                }
+            }
+
             $customer = $this->mCustomerRepository->findOneBy(['email' => $email, 'websiteId' => $websiteId]);
             if ($customer === null) {
                 continue;
@@ -65,26 +84,36 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
                 continue;
             }
 
-            if ($force) {
-                $item = new CustomerSegmentCustomer();
-                $item
-                    ->setSegment($segment)
-                    ->setWebsite($segmentWebsite->getWebsite())
-                    ->setCustomer($customer);
+            $item = new CustomerSegmentCustomer();
+            $item
+                ->setSegment($segment)
+                ->setWebsite($segmentWebsite->getWebsite())
+                ->setCustomer($customer);
 
-                $this->magentoEntityManager->persist($item);
-
-                if (($i % self::INSERT_BATCH_SIZE) === 0) {
-                    $this->magentoEntityManager->flush();
-                    $this->magentoEntityManager->clear();
-                }
-            }
-
-            $i++;
+            $this->magentoEntityManager->persist($item);
         }
 
-        if ($force) {
+        if ($this->force) {
             $this->magentoEntityManager->flush();
         }
+        $this->magentoEntityManager->clear();
+
+        $this->force = false;
+    }
+
+    public function setForce(bool $force): void
+    {
+        $this->force = $force;
+    }
+
+    public function setOutput(OutputInterface $output): void
+    {
+        $this->output = $output;
+    }
+
+    private function getMemoryUsage(): float
+    {
+        $memUsage = memory_get_usage(true);
+        return round($memUsage / 1048576, 2);
     }
 }

@@ -78,7 +78,9 @@ class CustomerSegmentImportFromCSVCommand extends Command
             $fileNameLocal = $this->fileImport->getFileNameLocal($segmentId);
             $output->writeln($fileNameLocal);
 
-            $this->customerSegmentImport->execute($segmentId, $websiteId, $fileNameLocal, $this->force);
+            $this->customerSegmentImport->setForce($this->force);
+            $this->customerSegmentImport->setOutput($output);
+            $this->customerSegmentImport->execute($segmentId, $websiteId, $fileNameLocal);
 
             if (file_exists($fileNameLocal)) {
                 unlink($fileNameLocal);
