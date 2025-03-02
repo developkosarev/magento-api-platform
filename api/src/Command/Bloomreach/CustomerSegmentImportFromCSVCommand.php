@@ -76,7 +76,8 @@ class CustomerSegmentImportFromCSVCommand extends Command
 
         if ($this->fileImport->uploadFile($segmentId)) {
             $fileNameLocal = $this->fileImport->getFileNameLocal($segmentId);
-            $output->writeln($fileNameLocal);
+            $msg = "<info>File: </info>{$fileNameLocal}";
+            $output->writeln($msg);
 
             $this->customerSegmentImport->setForce($this->force);
             $this->customerSegmentImport->setOutput($output);
