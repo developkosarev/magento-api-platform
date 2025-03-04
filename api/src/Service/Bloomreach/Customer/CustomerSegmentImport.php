@@ -151,7 +151,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private function getCustomersQuery(): string
     {
         return <<<SQL
-            SELECT entity_id, email FROM customer_entity WHERE website_id = :website_id;
+            SELECT entity_id, email FROM customer_entity WHERE website_id = :website_id AND confirmation IS NULL;
         SQL;
     }
 }
