@@ -138,7 +138,7 @@ pipelines:
                     - cd api
                     - ls
                     - docker version
-                    - docker build --tag $IMAGE_NAME:$TAG --target $TARGET_DEV --file Dockerfile .
+                    - docker build --tag $IMAGE_NAME:$TAG --target $TARGET_STAGE --file Dockerfile .
                     
                     # 4. Tag Docker Image
                     - docker tag $IMAGE_NAME:$TAG $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG
