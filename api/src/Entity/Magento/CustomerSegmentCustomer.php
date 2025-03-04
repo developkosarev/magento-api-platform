@@ -30,10 +30,10 @@ class CustomerSegmentCustomer
     private StoreWebsite $website;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private \DateTime $createdAt;
+    public \DateTime $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP', 'onUpdate' => 'CURRENT_TIMESTAMP'])]
-    private \DateTime $updatedAt;
+    public \DateTime $updatedAt;
 
     public function getId(): ?int
     {

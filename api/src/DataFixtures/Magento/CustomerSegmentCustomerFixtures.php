@@ -22,6 +22,8 @@ class CustomerSegmentCustomerFixtures extends Fixture implements FixtureGroupInt
         $item->setSegment($this->getReference(CustomerSegmentFixtures::CUSTOMER_SEGMENT_1_REFERENCE));
         $item->setCustomer($this->getReference(CustomerFixtures::CUSTOMER_1_REFERENCE));
         $item->setWebsite($this->getReference(StoreWebsiteFixtures::WEBSITE_1_REFERENCE));
+        $item->createdAt = new \DateTime();
+        $item->updatedAt = new \DateTime();
 
         $this->magentoEntityManager->persist($item);
         $this->magentoEntityManager->flush();
