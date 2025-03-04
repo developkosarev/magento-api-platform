@@ -17,12 +17,22 @@ class CustomerSegmentWebsiteFixtures extends Fixture implements FixtureGroupInte
 
     public function load(ObjectManager $manager): void
     {
-        $item = new CustomerSegmentWebsite();
-        $item->setSegment($this->getReference(CustomerSegmentFixtures::CUSTOMER_SEGMENT_1_REFERENCE));
-        $item->setWebsite($this->getReference(StoreWebsiteFixtures::WEBSITE_1_REFERENCE));
+        foreach ($this->getSegments() as [$reference]) {
+            $item = new CustomerSegmentWebsite();
+            $item->setSegment($this->getReference($reference));
+            $item->setWebsite($this->getReference(StoreWebsiteFixtures::WEBSITE_1_REFERENCE));
 
-        $this->magentoEntityManager->persist($item);
+            $this->magentoEntityManager->persist($item);
+        }
         $this->magentoEntityManager->flush();
+    }
+
+    private function getSegments(): array
+    {
+        return [
+            [CustomerSegmentFixtures::CUSTOMER_SEGMENT_1_REFERENCE],
+            [CustomerSegmentFixtures::CUSTOMER_SEGMENT_99_REFERENCE],
+        ];
     }
 
     public static function getGroups(): array
