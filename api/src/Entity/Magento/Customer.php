@@ -31,10 +31,10 @@ class Customer
     private int $storeId;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private \DateTime $createdAt;
+    public \DateTime $createdAt;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP', 'onUpdate' => 'CURRENT_TIMESTAMP'])]
-    private \DateTime $updatedAt;
+    public \DateTime $updatedAt;
 
     #[ORM\Column(name: 'is_active', type: 'boolean', options: ['unsigned' => true, 'default' => 1])]
     private int $isActive = 1;

@@ -44,6 +44,8 @@ class CustomerFixtures extends Fixture implements FixtureGroupInterface
         $item->setEmail(self::USER_TEST);
         $item->setGroupId(1);
         $item->setStoreId(1);
+        $item->createdAt = new \DateTime();
+        $item->updatedAt = new \DateTime();
         $item->setFirstName(self::USER_FIRSTNAME);
         $item->setLastName(self::USER_LASTNAME);
         $item->setCreatedIn('Germany');
