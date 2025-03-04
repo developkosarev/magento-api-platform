@@ -106,7 +106,7 @@ pipelines:
                     # 7. Push Docker Image to ECR
                     - docker push $REPOSITORY_URL/$REPOSITORY_URL_PREFIX/$IMAGE_NAME:$TAG                
         
-        build-push-dev:
+        build-push-stage:
             - step:
                 name: Build and Push to ECR
                 services:
@@ -120,8 +120,8 @@ pipelines:
                     - AWS_REGION=eu-central-1
                     - REPOSITORY_URL=801404438871.dkr.ecr.eu-central-1.amazonaws.com
                     - REPOSITORY_URL_PREFIX=sunday
-                    - TAG=dev
-                    - TARGET_DEV=frankenphp_dev
+                    - TAG=stage
+                    - TARGET_STAGE=frankenphp_stage
                     
                     # 2. Install MySql
                     - apt-get update && apt-get install -y default-mysql-client

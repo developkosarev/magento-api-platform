@@ -76,6 +76,34 @@ COPY --link frankenphp/conf.d/app.dev.ini $PHP_INI_DIR/conf.d/
 
 CMD [ "frankenphp", "run", "--config", "/etc/caddy/Caddyfile", "--watch" ]
 
+# Stage FrankenPHP image
+FROM frankenphp_base AS frankenphp_stage
+LABEL org.opencontainers.image.source https://github.com/developkosarev/magento-api-platform
+
+ENV APP_ENV=prod
+ENV FRANKENPHP_CONFIG="import worker.Caddyfile"
+
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+COPY --link frankenphp/conf.d/app.prod.ini $PHP_INI_DIR/conf.d/
+COPY --link frankenphp/worker.Caddyfile /etc/caddy/worker.Caddyfile
+
+# prevent the reinstallation of vendors at every changes in the source code
+COPY --link composer.* symfony.* ./
+RUN set -eux; \
+	composer install --no-cache --prefer-dist --no-autoloader --no-scripts --no-progress
+
+# copy sources
+COPY --link . ./
+RUN rm -Rf frankenphp/
+
+RUN set -eux; \
+	mkdir -p var/cache var/log; \
+	composer dump-autoload --classmap-authoritative; \
+	composer dump-env prod; \
+	composer run-script post-install-cmd; \
+	chmod +x bin/console; sync;
+
 # Prod FrankenPHP image
 FROM frankenphp_base AS frankenphp_prod
 LABEL org.opencontainers.image.source https://github.com/developkosarev/magento-api-platform
