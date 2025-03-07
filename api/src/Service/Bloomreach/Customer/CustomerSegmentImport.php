@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomerSegmentImport implements CustomerSegmentImportInterface
 {
-    private const INSERT_BATCH_SIZE = 10000;
+    private const INSERT_BATCH_SIZE = 50000;
 
     private bool $force;
     private array $customerHashTable;
@@ -59,6 +59,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $i = 0;
         foreach ($this->csvReader->read($fileName) as $row) {
             $email = $row[0];
+            $segmentValue = $row[1];
 
             $i++;
             if (($i % self::INSERT_BATCH_SIZE) === 0) {
@@ -77,11 +78,12 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
             }
 
             if ($this->force) {
-                $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), NOW())";
+                $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), NOW(), :segment_value_{$i})";
 
                 $params["segment_id_{$i}"] = $segmentId;
                 $params["customer_id_{$i}"] = $customer['entity_id'];
                 $params["website_id_{$i}"] = $websiteId;
+                $params["segment_value_{$i}"] = $segmentValue;
 
                 if (($i % self::INSERT_BATCH_SIZE) === 0) {
                     $this->executeBatchInsert($values, $params);
@@ -123,9 +125,9 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private function executeBatchInsert(array $values, array $params): void
     {
         $connection = $this->magentoEntityManager->getConnection();
-        $sql = "INSERT INTO sunday_customersegment_customer (segment_id, customer_id, website_id, created_at, updated_at)
+        $sql = "INSERT INTO sunday_customersegment_customer (segment_id, customer_id, website_id, created_at, updated_at, segment_value)
                 VALUES " . implode(', ', $values) .
-                " ON DUPLICATE KEY UPDATE updated_at = NOW()";
+                " ON DUPLICATE KEY UPDATE updated_at = NOW(), segment_value = VALUES(segment_value)";
 
         $stmt = $connection->prepare($sql);
         $stmt->executeStatement($params);

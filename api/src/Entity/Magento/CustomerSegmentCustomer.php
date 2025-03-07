@@ -35,6 +35,9 @@ class CustomerSegmentCustomer
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP', 'onUpdate' => 'CURRENT_TIMESTAMP'])]
     public \DateTime $updatedAt;
 
+    #[ORM\Column(name: "segment_value",type: Types::STRING, length: 255, nullable: true)]
+    private ?string $segmentValue = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,5 +84,16 @@ class CustomerSegmentCustomer
     public function getUpdatedAt(): \DateTime
     {
         return $this->updatedAt;
+    }
+
+    public function getSegmentValue(): ?string
+    {
+        return $this->segmentValue;
+    }
+
+    public function setSegmentValue(?string $value): self
+    {
+        $this->segmentValue = $value;
+        return $this;
     }
 }
