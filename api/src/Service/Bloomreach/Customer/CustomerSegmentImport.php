@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomerSegmentImport implements CustomerSegmentImportInterface
 {
-    private const INSERT_BATCH_SIZE = 1000;
+    private const INSERT_BATCH_SIZE = 5000;
 
     private int $segmentId;
     private int $websiteId;
@@ -128,7 +128,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
             $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), NOW(), :segment_value_{$i})";
 
             $params["segment_id_{$i}"] = $this->segmentId;
-            $params["customer_id_{$i}"] = $customer['entity_id'];
+            $params["customer_id_{$i}"] = $customer->getId();
             $params["website_id_{$i}"] = $this->websiteId;
             $params["segment_value_{$i}"] = $segmentValue;
         }
@@ -155,19 +155,10 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     {
         $this->customerHashTable = [];
 
-        //$customerEmails = implode(',', $emails);
-        //$customerEmails = "'test1@example.com', 'test2@example.com'";
-
-        //$sql = 'SELECT entity_id, email FROM customer_entity WHERE website_id = :website_id AND email IN (:emails) AND confirmation IS NULL';
-
-        //$connection = $this->magentoEntityManager->getConnection();
-        //$selectQuery = $connection->executeQuery($sql, ['website_id' => $websiteId, 'emails' => $customerEmails]);
-        //$customers = $selectQuery->fetchAllAssociative();
-
-        //$this->customerHashTable = [];
-        //foreach ($customers as $row) {
-        //    echo $row['email'];
-        //    $this->customerHashTable[$row['email']] = $row;
-        //}
+        $customers = $this->mCustomerRepository->getCustomersByEmail($websiteId, $emails);
+        foreach ($customers as $customer) {
+            $this->customerHashTable[$customer->getEmail()] = $customer;
+        }
+        $this->magentoEntityManager->clear();
     }
 }
