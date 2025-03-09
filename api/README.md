@@ -58,6 +58,8 @@ git push origin-xxx --tags
 php bin/console salesforce:lead:populate --start-date=2024-01-01 --end-date=2025-02-01
 php bin/console salesforce:lead:send
 php bin/console app:send:email xx.yy@gmail.com
+
+php bin/console bloomreach:customer-segment:import 99 1 -v
 ```
 
 ## Git

@@ -4,7 +4,6 @@ namespace App\Service\Bloomreach\Customer;
 
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerSegment;
-use App\Entity\Magento\CustomerSegmentCustomer;
 use App\Entity\Magento\CustomerSegmentWebsite;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -12,15 +11,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CustomerSegmentImport implements CustomerSegmentImportInterface
 {
-    private const INSERT_BATCH_SIZE = 50000;
+    private const INSERT_BATCH_SIZE = 5000;
 
+    private int $segmentId;
+    private int $websiteId;
     private bool $force;
     private array $customerHashTable;
     private ?OutputInterface $output = null;
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerSegmentRepository;
     private EntityRepository $mCustomerSegmentWebsiteRepository;
-    private EntityRepository $mCustomerSegmentCustomerRepository;
 
     public function __construct(
         private readonly CsvReader $csvReader,
@@ -29,7 +29,6 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerSegmentRepository = $this->magentoEntityManager->getRepository(CustomerSegment::class);
         $this->mCustomerSegmentWebsiteRepository = $this->magentoEntityManager->getRepository(CustomerSegmentWebsite::class);
-        $this->mCustomerSegmentCustomerRepository = $this->magentoEntityManager->getRepository(CustomerSegmentCustomer::class);
     }
 
     /**
@@ -45,58 +44,44 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         if ($segment === null) {
             throw new \Exception("Segment \"{$segmentId}\" not found!");
         }
+        $this->segmentId = $segmentId;
 
         $segmentWebsite = $this->mCustomerSegmentWebsiteRepository->findOneBy(['segment' => $segmentId, 'website' => $websiteId]);
         if ($segmentWebsite === null) {
             throw new \Exception("Website \"{$websiteId}\" not found!");
         }
+        $this->websiteId = $websiteId;
 
-        $this->populateCustomerHashTable($websiteId);
-
-        $values = [];
-        $params = [];
+        $emails = [];
+        $segments = [];
 
         $i = 0;
         foreach ($this->csvReader->read($fileName) as $row) {
             $email = $row[0];
             $segmentValue = $row[1];
 
+            $emails[] = $email;
+            $segments[] = ['email' => $email, 'segment_value' => $segmentValue];
+
             $i++;
             if (($i % self::INSERT_BATCH_SIZE) === 0) {
-                $this->magentoEntityManager->clear();
+                $this->populateCustomerHashTable($websiteId, $emails);
+                $this->createBatchInsert($segments);
+
+                $emails = [];
+                $segments = [];
 
                 if ($this->output !== null) {
                     $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
                     $this->output->writeln($msg);
                 }
             }
-
-            if (isset($this->customerHashTable[$email])) {
-                $customer = $this->customerHashTable[$email];
-            } else {
-                continue;
-            }
-
-            if ($this->force) {
-                $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), NOW(), :segment_value_{$i})";
-
-                $params["segment_id_{$i}"] = $segmentId;
-                $params["customer_id_{$i}"] = $customer['entity_id'];
-                $params["website_id_{$i}"] = $websiteId;
-                $params["segment_value_{$i}"] = $segmentValue;
-
-                if (($i % self::INSERT_BATCH_SIZE) === 0) {
-                    $this->executeBatchInsert($values, $params);
-                    $values = [];
-                    $params = [];
-                }
-            }
         }
 
-        if ($this->force && !empty($values)) {
-            $this->executeBatchInsert($values, $params);
+        if (!empty($emails)) {
+            $this->populateCustomerHashTable($websiteId, $emails);
+            $this->createBatchInsert($segments);
         }
-        $this->magentoEntityManager->clear();
 
         if ($this->output !== null) {
             $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
@@ -122,6 +107,37 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         return round($memUsage / 1048576, 2);
     }
 
+    private function createBatchInsert(array $segments): void
+    {
+        $values = [];
+        $params = [];
+
+        $i = 0;
+        foreach ($segments as $segment) {
+            $email = $segment['email'];
+            $segmentValue = $segment['segment_value'];
+
+            if (isset($this->customerHashTable[$email])) {
+                $customer = $this->customerHashTable[$email];
+            } else {
+                continue;
+            }
+
+            $i++;
+
+            $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), NOW(), :segment_value_{$i})";
+
+            $params["segment_id_{$i}"] = $this->segmentId;
+            $params["customer_id_{$i}"] = $customer->getId();
+            $params["website_id_{$i}"] = $this->websiteId;
+            $params["segment_value_{$i}"] = $segmentValue;
+        }
+
+        if (!empty($params)) {
+            $this->executeBatchInsert($values, $params);
+        }
+    }
+
     private function executeBatchInsert(array $values, array $params): void
     {
         $connection = $this->magentoEntityManager->getConnection();
@@ -129,31 +145,20 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
                 VALUES " . implode(', ', $values) .
                 " ON DUPLICATE KEY UPDATE updated_at = NOW(), segment_value = VALUES(segment_value)";
 
-        $stmt = $connection->prepare($sql);
-        $stmt->executeStatement($params);
+        if ($this->force) {
+            $stmt = $connection->prepare($sql);
+            $stmt->executeStatement($params);
+        }
     }
 
-    private function populateCustomerHashTable(int $websiteId): void
+    private function populateCustomerHashTable(int $websiteId, array $emails): void
     {
-        $connection = $this->magentoEntityManager->getConnection();
-        $selectQuery = $connection->executeQuery($this->getCustomersQuery(), ['website_id' => $websiteId]);
-        $customers = $selectQuery->fetchAllAssociative();
-
         $this->customerHashTable = [];
-        foreach ($customers as $row) {
-            $this->customerHashTable[$row['email']] = $row;
-        }
 
-        if ($this->output !== null) {
-            $msg = "<info>Customers hash table. Memory: {$this->getMemoryUsage()}MB</info>";
-            $this->output->writeln($msg);
+        $customers = $this->mCustomerRepository->getCustomersByEmail($websiteId, $emails);
+        foreach ($customers as $customer) {
+            $this->customerHashTable[$customer->getEmail()] = $customer;
         }
-    }
-
-    private function getCustomersQuery(): string
-    {
-        return <<<SQL
-            SELECT entity_id, email FROM customer_entity WHERE website_id = :website_id AND confirmation IS NULL;
-        SQL;
+        $this->magentoEntityManager->clear();
     }
 }
