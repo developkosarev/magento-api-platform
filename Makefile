@@ -32,7 +32,7 @@ help:
 	@echo "$(call format,app-stop-workers,'App stop workers')"
 	@echo "$(call red,===============================)"
 	@echo "$(call format,app-fixture,'App fixture load')"
-	@echo "$(call format,app-tests-fixture,'App tests fixture load')"
+	@echo "$(call format,app-tests-fixture,'App tests fixture load --env=test')"
 	@echo "$(call format,app-tests,'App tests')"
 	@echo "$(call format,app-tests-salesforce,'App tests salesforce')"
 	@echo "$(call red,===============================)"
@@ -78,7 +78,7 @@ app-fixture: ## app-fixture
 .PHONY:
 
 app-tests-fixture:
-	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --env=test
+	docker exec -it magento-api-platform-php-1 php bin/console doctrine:fixtures:load --group=main --env=test
 .PHONY: app-tests-fixture
 
 app-tests:
