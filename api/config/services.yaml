@@ -30,8 +30,7 @@ services:
         class: Aws\S3\S3Client
         autowire: false
         arguments:
-            -
-                version: '2006-03-01'
+            -   version: '2006-03-01'
                 region: 'eu-central-1'
                 credentials:
                     key: '%env(S3_AWS_KEY)%'
