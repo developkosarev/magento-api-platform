@@ -13,13 +13,28 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 class CustomerFixtures extends Fixture implements FixtureGroupInterface
 {
     public const CUSTOMER_1_REFERENCE = 'customer-1';
-    public const USER_ID = 1;
-    public const USER_TEST = 'test@example.com';
-    public const USER_PLAIN_PASSWORD = 'Password@2022';
-    public const USER_PASSWORD_HASH = 'abf1de8d537a1270237b9b56c8db9c67aeece6d89639a64d5ffd7264262541ab:PNK7gwTSnTc9L8AXZEvgZQ4SA66qirus:3_32_2_67108864';
-    public const USER_PASSWORD_RP_TOKEN = null;
-    public const USER_FIRSTNAME = 'Test';
-    public const USER_LASTNAME = 'Test';
+    public const CUSTOMER_2_REFERENCE = 'customer-2';
+    public const CUSTOMER_3_REFERENCE = 'customer-3';
+    public const CUSTOMER_4_REFERENCE = 'customer-4';
+
+    private const WEBSITE_1_ID = 1;
+    private const WEBSITE_2_ID = 2;
+
+    private const STORE_1_ID = 1;
+    private const STORE_16_ID = 16;
+
+    public const USER_1_ID = 1;
+    public const USER_2_ID = 2;
+    public const USER_3_ID = 3;
+    public const USER_4_ID = 4;
+
+    private const USER_TEST = 'test@example.com';
+    private const USER_2_TEST = 'test-2@example.com';
+    private const USER_PLAIN_PASSWORD = 'Password@2022';
+    private const USER_PASSWORD_HASH = 'abf1de8d537a1270237b9b56c8db9c67aeece6d89639a64d5ffd7264262541ab:PNK7gwTSnTc9L8AXZEvgZQ4SA66qirus:3_32_2_67108864';
+    private const USER_PASSWORD_RP_TOKEN = null;
+    private const USER_FIRSTNAME = 'Test';
+    private const USER_LASTNAME = 'Test';
 
     private EntityRepository $mCustomerRepository;
 
@@ -34,30 +49,42 @@ class CustomerFixtures extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        $item = $this->mCustomerRepository->findOneBy(['email' => self::USER_TEST]);
-        if (null === $item) {
-            $item = new Customer();
-            $item->setId(self::USER_ID);
+        foreach ($this->getCustomers() as [$id, $websiteId, $storeId, $email, $reference]) {
+            $item = $this->mCustomerRepository->findOneBy(['email' => $email, 'websiteId' => $websiteId]);
+            if (null === $item) {
+                $item = new Customer();
+                $item->setId($id);
+            }
+
+            $item->setWebsiteId($websiteId);
+            $item->setEmail($email);
+            $item->setGroupId(1);
+            $item->setStoreId($storeId);
+            $item->createdAt = new \DateTime();
+            $item->updatedAt = new \DateTime();
+            $item->setFirstName(self::USER_FIRSTNAME);
+            $item->setLastName(self::USER_LASTNAME);
+            $item->setCreatedIn('Germany');
+            $item->setPasswordHash(self::USER_PASSWORD_HASH);
+            $item->setRpToken(self::USER_PASSWORD_RP_TOKEN);
+            $item->setDefaultBilling($id);
+            $item->setDefaultShipping($id);
+
+            $this->magentoEntityManager->persist($item);
+
+            $this->addReference($reference, $item);
         }
-
-        $item->setWebsiteId(1);
-        $item->setEmail(self::USER_TEST);
-        $item->setGroupId(1);
-        $item->setStoreId(1);
-        $item->createdAt = new \DateTime();
-        $item->updatedAt = new \DateTime();
-        $item->setFirstName(self::USER_FIRSTNAME);
-        $item->setLastName(self::USER_LASTNAME);
-        $item->setCreatedIn('Germany');
-        $item->setPasswordHash(self::USER_PASSWORD_HASH);
-        $item->setRpToken(self::USER_PASSWORD_RP_TOKEN);
-        $item->setDefaultBilling(1);
-        $item->setDefaultShipping(1);
-
-        $this->magentoEntityManager->persist($item);
         $this->magentoEntityManager->flush();
+    }
 
-        $this->addReference(self::CUSTOMER_1_REFERENCE, $item);
+    private function getCustomers(): array
+    {
+        return [
+            [self::USER_1_ID, self::WEBSITE_1_ID, self::STORE_1_ID,  self::USER_TEST,   self::CUSTOMER_1_REFERENCE],
+            [self::USER_2_ID, self::WEBSITE_1_ID, self::STORE_1_ID,  self::USER_2_TEST, self::CUSTOMER_2_REFERENCE],
+            [self::USER_3_ID, self::WEBSITE_2_ID, self::STORE_16_ID, self::USER_TEST,   self::CUSTOMER_3_REFERENCE],
+            [self::USER_4_ID, self::WEBSITE_2_ID, self::STORE_16_ID, self::USER_2_TEST, self::CUSTOMER_4_REFERENCE],
+        ];
     }
 
     public static function getGroups(): array

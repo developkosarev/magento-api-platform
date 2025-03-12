@@ -16,6 +16,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private int $segmentId;
     private int $websiteId;
     private bool $force;
+    private int $limit = self::INSERT_BATCH_SIZE;
     private array $customerHashTable;
     private ?OutputInterface $output = null;
     private EntityRepository $mCustomerRepository;
@@ -64,7 +65,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
             $segments[] = ['email' => $email, 'segment_value' => $segmentValue];
 
             $i++;
-            if (($i % self::INSERT_BATCH_SIZE) === 0) {
+            if (($i % $this->limit) === 0) {
                 $this->populateCustomerHashTable($websiteId, $emails);
                 $this->createBatchInsert($segments);
 
@@ -99,6 +100,13 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     public function setOutput(OutputInterface $output): void
     {
         $this->output = $output;
+    }
+
+    public function setLimit(int $limit): void
+    {
+        if ($limit > 0) {
+            $this->limit = $limit;
+        }
     }
 
     private function getMemoryUsage(): float
