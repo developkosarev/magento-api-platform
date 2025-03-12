@@ -32,6 +32,23 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $this->mCustomerSegmentWebsiteRepository = $this->magentoEntityManager->getRepository(CustomerSegmentWebsite::class);
     }
 
+    public function setForce(bool $force): void
+    {
+        $this->force = $force;
+    }
+
+    public function setOutput(OutputInterface $output): void
+    {
+        $this->output = $output;
+    }
+
+    public function setLimit(int $limit): void
+    {
+        if ($limit > 0) {
+            $this->limit = $limit;
+        }
+    }
+
     /**
      * @throws \Exception
      */
@@ -90,23 +107,6 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         }
 
         $this->force = false;
-    }
-
-    public function setForce(bool $force): void
-    {
-        $this->force = $force;
-    }
-
-    public function setOutput(OutputInterface $output): void
-    {
-        $this->output = $output;
-    }
-
-    public function setLimit(int $limit): void
-    {
-        if ($limit > 0) {
-            $this->limit = $limit;
-        }
     }
 
     private function getMemoryUsage(): float
