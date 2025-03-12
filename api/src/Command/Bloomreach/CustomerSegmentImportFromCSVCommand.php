@@ -23,7 +23,11 @@ class CustomerSegmentImportFromCSVCommand extends Command
     private const SEGMENT_ID_ARGUMENT_NAME = 'segment_id';
     private const WEBSITE_ID_ARGUMENT_NAME = 'website_id';
     private const OPTION_FORCE = 'force';
+    private const OPTION_LIMIT = 'limit';
+    private const DEFAULT_LIMIT = 5000;
+
     private bool $force;
+    private int $limit = self::DEFAULT_LIMIT;
 
     public function __construct(
         private readonly CustomerSegmentFileImport $fileImport,
@@ -37,6 +41,7 @@ class CustomerSegmentImportFromCSVCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->force = $input->getOption(self::OPTION_FORCE);
+        $this->limit = (int) $input->getOption(self::OPTION_LIMIT);
     }
 
     protected function configure(): void
@@ -57,6 +62,13 @@ class CustomerSegmentImportFromCSVCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Create records in DB'
+            )
+            ->addOption(
+                self::OPTION_LIMIT,
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Limit of records to be added',
+                self::DEFAULT_LIMIT
             );
     }
 
@@ -80,6 +92,7 @@ class CustomerSegmentImportFromCSVCommand extends Command
             $output->writeln($msg);
 
             $this->customerSegmentImport->setForce($this->force);
+            $this->customerSegmentImport->setLimit($this->limit);
             $this->customerSegmentImport->setOutput($output);
             $this->customerSegmentImport->execute($segmentId, $websiteId, $fileNameLocal);
 
