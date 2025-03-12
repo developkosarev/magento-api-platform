@@ -5,6 +5,7 @@ namespace App\Service\Bloomreach\Customer;
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerSegment;
 use App\Entity\Magento\CustomerSegmentWebsite;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,6 +18,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private int $websiteId;
     private bool $force;
     private int $limit = self::INSERT_BATCH_SIZE;
+    private int $timestamp = 0;
     private array $customerHashTable;
     private ?OutputInterface $output = null;
     private EntityRepository $mCustomerRepository;
@@ -70,6 +72,8 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         }
         $this->websiteId = $websiteId;
 
+        $this->setTimestamp();
+
         $emails = [];
         $segments = [];
 
@@ -107,6 +111,12 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         }
 
         $this->force = false;
+    }
+
+    private function setTimestamp(): void
+    {
+        $date = new DateTimeImmutable();
+        $this->timestamp = $date->getTimestamp();
     }
 
     private function getMemoryUsage(): float
