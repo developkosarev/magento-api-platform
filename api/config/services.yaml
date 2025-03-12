@@ -26,7 +26,9 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     
-    Aws\S3\S3Client:
+    Aws\S3\S3Client.customer:
+        class: Aws\S3\S3Client
+        autowire: false
         arguments:
             -
                 version: '2006-03-01'
@@ -34,6 +36,16 @@ services:
                 credentials:
                     key: '%env(S3_AWS_KEY)%'
                     secret: '%env(S3_AWS_SECRET)%'
+    
+    Aws\S3\S3Client.bloomreach:
+        class: Aws\S3\S3Client
+        autowire: false
+        arguments:
+            -   version: '2006-03-01'
+                region: 'eu-central-1'
+                credentials:
+                    key: '%env(S3_AWS_KEY_BLOOMREACH)%'
+                    secret: '%env(S3_AWS_SECRET_BLOOMREACH)%'
     
     App\Service\Salesforce\Common\ApiTokenService:
         arguments:
