@@ -5,10 +5,10 @@ namespace App\Service\Bloomreach\Customer;
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerSegment;
 use App\Entity\Magento\CustomerSegmentWebsite;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Output\OutputInterface;
+use DateTime;
 
 class CustomerSegmentImport implements CustomerSegmentImportInterface
 {
@@ -18,7 +18,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private int $websiteId;
     private bool $force;
     private int $limit = self::INSERT_BATCH_SIZE;
-    private int $timestamp = 0;
+    private ?DateTime $updatedAt;
     private array $customerHashTable;
     private ?OutputInterface $output = null;
     private EntityRepository $mCustomerRepository;
@@ -72,7 +72,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         }
         $this->websiteId = $websiteId;
 
-        $this->setTimestamp();
+        $this->setUpdatedAt();
 
         $emails = [];
         $segments = [];
@@ -113,10 +113,14 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $this->force = false;
     }
 
-    private function setTimestamp(): void
+    private function getUpdatedAtFormat(): string
     {
-        $date = new DateTimeImmutable();
-        $this->timestamp = $date->getTimestamp();
+        return $this->updatedAt->format('Y-m-d H:i:s');
+    }
+
+    private function setUpdatedAt(): void
+    {
+        $this->updatedAt = new \DateTime();
     }
 
     private function getMemoryUsage(): float
@@ -161,7 +165,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $connection = $this->magentoEntityManager->getConnection();
         $sql = "INSERT INTO sunday_customersegment_customer (segment_id, customer_id, website_id, created_at, updated_at, segment_value)
                 VALUES " . implode(', ', $values) .
-                " ON DUPLICATE KEY UPDATE updated_at = NOW(), segment_value = VALUES(segment_value)";
+                " ON DUPLICATE KEY UPDATE updated_at = \"" . $this->getUpdatedAtFormat() . "\", segment_value = VALUES(segment_value)";
 
         if ($this->force) {
             $stmt = $connection->prepare($sql);
