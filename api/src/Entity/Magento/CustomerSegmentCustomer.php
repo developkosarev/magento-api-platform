@@ -2,10 +2,11 @@
 
 namespace App\Entity\Magento;
 
+use App\Repository\Magento\CustomerSegmentCustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CustomerSegmentCustomerRepository::class)]
 #[ORM\Table(name: "sunday_customersegment_customer")]
 #[ORM\Index(columns: ["customer_id"], name: "SUNDAY_CUSTOMERSEGMENT_CUSTOMER_CUSTOMER_ID")]
 #[ORM\Index(columns: ["website_id"], name: "SUNDAY_CUSTOMERSEGMENT_CUSTOMER_WEBSITE_ID")]
