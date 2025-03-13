@@ -8,6 +8,7 @@ use App\Entity\Magento\CustomerSegmentCustomer;
 use App\Entity\Magento\CustomerSegmentWebsite;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DateTime;
 
@@ -19,7 +20,6 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private ?CustomerSegment $segment;
     private int $websiteId;
     private ?CustomerSegmentWebsite $segmentWebsite;
-
     private bool $force;
     private int $limit = self::INSERT_BATCH_SIZE;
     private ?DateTime $updatedAt;
@@ -32,7 +32,8 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
 
     public function __construct(
         private readonly CsvReader $csvReader,
-        private readonly EntityManagerInterface $magentoEntityManager
+        private readonly EntityManagerInterface $magentoEntityManager,
+        private readonly LoggerInterface $logger
     ) {
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerSegmentRepository = $this->magentoEntityManager->getRepository(CustomerSegment::class);
@@ -99,10 +100,12 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
                 $emails = [];
                 $segments = [];
 
-                if ($this->output !== null) {
-                    $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
-                    $this->output->writeln($msg);
-                }
+                //if ($this->output !== null) {
+                //    $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
+                //    $this->output->writeln($msg);
+                //}
+                $msg = "Segment #{$segmentId} website #{$websiteId} count #{$i} Memory: {$this->getMemoryUsage()}MB";
+                $this->logger->warning($msg);
             }
         }
 
@@ -110,16 +113,20 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
             $this->populateCustomerHashTable($websiteId, $emails);
             $this->createBatchInsert($segments);
         }
-        if ($this->output !== null) {
-            $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
-            $this->output->writeln($msg);
-        }
+        //if ($this->output !== null) {
+        //    $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
+        //    $this->output->writeln($msg);
+        //}
+        $msg = "Segment #{$segmentId} website #{$websiteId} count #{$i} Memory: {$this->getMemoryUsage()}MB";
+        $this->logger->warning($msg);
 
         $this->removeSegmentsByUpdatedAt();
-        if ($this->output !== null) {
-            $msg = "<info>Remove segments. Memory: {$this->getMemoryUsage()}MB</info>";
-            $this->output->writeln($msg);
-        }
+        //if ($this->output !== null) {
+        //    $msg = "<info>Remove segments. Memory: {$this->getMemoryUsage()}MB</info>";
+        //    $this->output->writeln($msg);
+        //}
+        $msg = "Remove segments. Memory: {$this->getMemoryUsage()}MB";
+        $this->logger->warning($msg);
 
         $this->force = false;
     }
