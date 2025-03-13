@@ -4,6 +4,7 @@ namespace App\Service\Bloomreach\Customer;
 
 use App\Entity\Magento\Customer;
 use App\Entity\Magento\CustomerSegment;
+use App\Entity\Magento\CustomerSegmentCustomer;
 use App\Entity\Magento\CustomerSegmentWebsite;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -15,7 +16,10 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private const INSERT_BATCH_SIZE = 5000;
 
     private int $segmentId;
+    private ?CustomerSegment $segment;
     private int $websiteId;
+    private ?CustomerSegmentWebsite $segmentWebsite;
+
     private bool $force;
     private int $limit = self::INSERT_BATCH_SIZE;
     private ?DateTime $updatedAt;
@@ -24,6 +28,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
     private EntityRepository $mCustomerRepository;
     private EntityRepository $mCustomerSegmentRepository;
     private EntityRepository $mCustomerSegmentWebsiteRepository;
+    private EntityRepository $mCustomerSegmentCustomerRepository;
 
     public function __construct(
         private readonly CsvReader $csvReader,
@@ -32,6 +37,7 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         $this->mCustomerRepository = $this->magentoEntityManager->getRepository(Customer::class);
         $this->mCustomerSegmentRepository = $this->magentoEntityManager->getRepository(CustomerSegment::class);
         $this->mCustomerSegmentWebsiteRepository = $this->magentoEntityManager->getRepository(CustomerSegmentWebsite::class);
+        $this->mCustomerSegmentCustomerRepository = $this->magentoEntityManager->getRepository(CustomerSegmentCustomer::class);
     }
 
     public function setForce(bool $force): void
@@ -60,14 +66,14 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
             throw new \Exception("File of segments \"{$fileName}\" not found!");
         }
 
-        $segment = $this->mCustomerSegmentRepository->find($segmentId);
-        if ($segment === null) {
+        $this->segment = $this->mCustomerSegmentRepository->find($segmentId);
+        if ($this->segment === null) {
             throw new \Exception("Segment \"{$segmentId}\" not found!");
         }
         $this->segmentId = $segmentId;
 
-        $segmentWebsite = $this->mCustomerSegmentWebsiteRepository->findOneBy(['segment' => $segmentId, 'website' => $websiteId]);
-        if ($segmentWebsite === null) {
+        $this->segmentWebsite = $this->mCustomerSegmentWebsiteRepository->findOneBy(['segment' => $segmentId, 'website' => $websiteId]);
+        if ($this->segmentWebsite === null) {
             throw new \Exception("Website \"{$websiteId}\" not found!");
         }
         $this->websiteId = $websiteId;
@@ -104,9 +110,14 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
             $this->populateCustomerHashTable($websiteId, $emails);
             $this->createBatchInsert($segments);
         }
-
         if ($this->output !== null) {
             $msg = "<info>Count </info>#{$i}<info> Memory: {$this->getMemoryUsage()}MB</info>";
+            $this->output->writeln($msg);
+        }
+
+        $this->removeSegmentsByUpdatedAt();
+        if ($this->output !== null) {
+            $msg = "<info>Remove segments. Memory: {$this->getMemoryUsage()}MB</info>";
             $this->output->writeln($msg);
         }
 
@@ -170,6 +181,14 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
         if ($this->force) {
             $stmt = $connection->prepare($sql);
             $stmt->executeStatement($params);
+        }
+    }
+
+    private function removeSegmentsByUpdatedAt(): void
+    {
+        if ($this->force) {
+            $this->mCustomerSegmentCustomerRepository
+                ->removeByUpdatedAt($this->segmentWebsite, $this->updatedAt);
         }
     }
 
