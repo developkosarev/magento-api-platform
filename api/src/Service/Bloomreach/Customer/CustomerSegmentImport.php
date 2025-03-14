@@ -165,11 +165,12 @@ class CustomerSegmentImport implements CustomerSegmentImportInterface
 
             $i++;
 
-            $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), NOW(), :segment_value_{$i})";
+            $values[] = "(:segment_id_{$i}, :customer_id_{$i}, :website_id_{$i}, NOW(), :updated_at_{$i}, :segment_value_{$i})";
 
             $params["segment_id_{$i}"] = $this->segmentId;
             $params["customer_id_{$i}"] = $customer->getId();
             $params["website_id_{$i}"] = $this->websiteId;
+            $params["updated_at_{$i}"] = $this->getUpdatedAtFormat();
             $params["segment_value_{$i}"] = $segmentValue;
         }
 
