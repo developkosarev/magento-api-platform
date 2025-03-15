@@ -17,7 +17,8 @@ use DateTime;
         new GetCollection(uriTemplate: '/order/tracking'),
         new Post(uriTemplate: '/order/tracking'),
         new Patch(uriTemplate: '/order/tracking/{id}'),
-    ]
+    ],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[ORM\Entity(repositoryClass: TrackingRepository::class)]
 #[ORM\Table(name: 'order_tracking')]

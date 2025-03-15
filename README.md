@@ -72,6 +72,9 @@ php bin/console doctrine:fixtures:load
 curl -k -X GET https://localhost/salesforce/customer_lead
 ```
 
+## Example
+https://github.com/api-platform/demo/blob/4.1/api/src/Entity/User.php
+
 ## Docs
 https://github.com/dunglas/symfony-docker/blob/main/docs/production.md
 https://thomas-baier.medium.com/php-workers-in-docker-environments-the-right-way-27e822546014

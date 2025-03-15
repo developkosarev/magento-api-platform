@@ -13,7 +13,8 @@ use DateTime;
     operations: [
         new Get(uriTemplate: '/email_log/{id}'),
         new GetCollection(uriTemplate: '/email_log'),
-    ]
+    ],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[ORM\Entity(repositoryClass: EmailLogRepository::class)]
 #[ORM\Table(name: 'email_log')]
