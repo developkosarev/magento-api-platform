@@ -20,13 +20,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
+    uriTemplate: '/api/users{._format}',
     operations: [
         new GetCollection(),
-        new Get()
+        new Get(uriTemplate: '/api/users/{id}', security: "is_granted('ROLE_ADMIN')"),
+        new Post(validationContext: ['groups' => ['Default', 'user:create']]),
     ],
     normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:create', 'user:update']],
-    security: "is_granted('ROLE_ADMIN')",
+    denormalizationContext: ['groups' => ['user:create', 'user:update']]
 )]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -55,6 +56,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
+    #[Assert\NotBlank]
+    #[Groups(['user:create'])]
     #[ORM\Column]
     private ?string $password = null;
 
