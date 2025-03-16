@@ -2,9 +2,16 @@
 
 namespace App\Entity\Magento;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+    ]
+)]
 #[ORM\Entity]
 #[ORM\Table(name: "store_website")]
 #[ORM\Index(columns: ["default_group_id"], name: "STORE_WEBSITE_DEFAULT_GROUP_ID")]
