@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
         new Get(uriTemplate: '/salesforce/customer_lead/{id}'),
         new GetCollection(uriTemplate: '/salesforce/customer_lead'),
     ],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[ORM\Entity(repositoryClass: CustomerLeadRepository::class)]
 #[ORM\Table(name: 'customer_lead')]
