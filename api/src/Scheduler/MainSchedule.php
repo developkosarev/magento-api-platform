@@ -19,7 +19,7 @@ class MainSchedule implements ScheduleProviderInterface
             RecurringMessage::every('60 seconds', new LogHello(4)),
             RecurringMessage::every('3600 seconds', new LeadCustomer()), //1 hours
 
-            RecurringMessage::every('82800 seconds', new LoadSegment()) //23 hours
+            RecurringMessage::every($_ENV["SCHEDULER_LOAD_SEGMENT"], new LoadSegment()) //82800 seconds=23 hours
             //RecurringMessage::cron('0 10 * * *', new LoadSegment()) //10:00 //composer require dragonmantank/cron-expression
         );
     }
