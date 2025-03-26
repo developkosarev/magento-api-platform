@@ -29,7 +29,7 @@ final class LoadSegmentHandler
         if ($this->fileImport->uploadFile($segmentId)) {
             $fileNameLocal = $this->fileImport->getFileNameLocal($segmentId);
 
-            $this->customerSegmentImport->setForce(false);
+            $this->customerSegmentImport->setForce(true);
             $this->customerSegmentImport->execute($segmentId, $websiteId, $fileNameLocal);
 
             if (file_exists($fileNameLocal)) {
