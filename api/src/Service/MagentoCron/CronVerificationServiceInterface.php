@@ -4,5 +4,5 @@ namespace App\Service\MagentoCron;
 
 interface CronVerificationServiceInterface
 {
-    public function execute(): void;
+    public function execute(bool $force = true): void;
 }
