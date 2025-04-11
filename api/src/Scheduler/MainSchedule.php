@@ -3,6 +3,7 @@
 namespace App\Scheduler;
 
 use App\Scheduler\Message\Bloomreach\LoadSegment;
+use App\Scheduler\Message\CronVerification;
 use App\Scheduler\Message\LogHello;
 use App\Scheduler\Message\Salesforce\LeadCustomer;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
@@ -22,6 +23,7 @@ class MainSchedule implements ScheduleProviderInterface
     {
         return (new Schedule())->add(
             RecurringMessage::every($this->config->getSchedulerHello(), new LogHello(4)),
+            RecurringMessage::every($this->config->getSchedulerCronVerification(), new CronVerification()),
             RecurringMessage::every($this->config->getSchedulerLeadCustomer(), new LeadCustomer()), //1 hours
 
             RecurringMessage::every($this->config->getSchedulerLoadSegment(), new LoadSegment()) //82800 seconds=23 hours

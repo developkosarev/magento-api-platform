@@ -2,7 +2,7 @@
 
 namespace App\Scheduler\Message;
 
-final class MagentoCronVerification
+final class CronVerification
 {
     public function __construct()
     {
