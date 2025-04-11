@@ -2,16 +2,22 @@
 
 namespace App\Entity\Magento;
 
+use App\Repository\Magento\CronScheduleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CronScheduleRepository::class)]
 #[ORM\Table(name: 'cron_schedule')]
 #[ORM\Index(columns: ['execution_host'], name: 'CRON_SCHEDULE_EXECUTION_HOST')]
 #[ORM\Index(columns: ['job_code', 'status', 'scheduled_at'], name: 'CRON_SCHEDULE_JOB_CODE_STATUS_SCHEDULED_AT')]
 #[ORM\Index(columns: ['scheduled_at', 'execution_host', 'status'], name: 'CRON_SCHEDULE_SCHEDULED_AT_EXECUTION_HOST_STATUS')]
 class CronSchedule
 {
+    public const STATUS_RUNNING = 'running';
+    public const STATUS_MISSED = 'missed';
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_ERROR = 'error';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'schedule_id', type: 'integer', options: ['unsigned' => true, 'comment' => 'Schedule ID'])]
@@ -21,7 +27,7 @@ class CronSchedule
     private string $jobCode = '0';
 
     #[ORM\Column(type: Types::STRING, length: 7, options: ['default' => 'pending', 'comment' => 'Status'])]
-    private string $status = 'pending';
+    private string $status = self::STATUS_PENDING;
 
     #[ORM\Column(type: Types::TEXT, nullable: true, options: ['comment' => 'Messages'])]
     private ?string $messages = null;
