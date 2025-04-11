@@ -41,7 +41,7 @@ class CronVerificationService implements CronVerificationServiceInterface
                 $item->setStatusError();
                 $this->mCronScheduleRepository->save($item, $force);
 
-                $msg = "Cron more then {$timeout} min: id={$item->getId()} job_code={$item->getJobCode()} time {$executedAt->format('Y-m-d H:i:s')} Memory: {$this->getMemoryUsage()}MB";
+                $msg = "Cron more then {$timeout} min.: id={$item->getId()} job_code={$item->getJobCode()} time {$executedAt->format('Y-m-d H:i:s')}";
                 $this->logger->warning($msg);
             }
         }
