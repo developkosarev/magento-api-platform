@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 
 class CronScheduleRepository extends EntityRepository
 {
-    public function CancelTasks(int $minutes): array
+    public function getRunningCron(): array
     {
         $qb = $this->createQueryBuilder('cron');
 
@@ -16,5 +16,13 @@ class CronScheduleRepository extends EntityRepository
             ->setParameter('status', CronSchedule::STATUS_RUNNING);
 
         return $qb->getQuery()->execute();
+    }
+
+    public function save(CronSchedule $cronSchedule, $force = true): void
+    {
+        $this->getEntityManager()->persist($cronSchedule);
+        if ($force) {
+            $this->getEntityManager()->flush();
+        }
     }
 }

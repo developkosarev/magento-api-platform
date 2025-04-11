@@ -77,6 +77,11 @@ class CronSchedule
         $this->status = $status;
     }
 
+    public function setStatusError(): void
+    {
+        $this->status = self::STATUS_ERROR;
+    }
+
     public function getMessages(): ?string
     {
         return $this->messages;

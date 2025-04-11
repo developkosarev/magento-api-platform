@@ -46,12 +46,7 @@ class MagentoCronVerificationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $force = $this->force;
-
-        $this->cronVerificationService->execute();
-
-        $msg = "Done #{$force}";
-        $output->writeln($msg);
+        $this->cronVerificationService->execute($this->force);
 
         return Command::SUCCESS;
     }
